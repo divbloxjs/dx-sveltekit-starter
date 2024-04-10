@@ -1,3 +1,21 @@
-<h1 class="flex justify-normal text-2xl">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-<div class="h-32 w-full bg-red-500">ssofjbwefuob</div>
+<script lang="ts">
+    import { Dialog } from "bits-ui";
+    let dialogOpen = false;
+
+    let onOpenChange = (open) => {
+        console.log("dialogOpen", dialogOpen);
+    };
+</script>
+
+<button on:click={() => (dialogOpen = true)}>Open Dialog</button>
+<Dialog.Root bind:open={dialogOpen}>
+    <Dialog.Trigger />
+    <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Content>
+            <Dialog.Title />
+            <Dialog.Description />
+            <Dialog.Close />
+        </Dialog.Content>
+    </Dialog.Portal>
+</Dialog.Root>
