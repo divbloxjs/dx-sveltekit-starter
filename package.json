@@ -33,6 +33,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@prisma/client": "^5.12.1"
+		"@prisma/client": "^5.12.1",
+		"clsx": "^2.1.0",
+		"tailwind-merge": "^2.2.2",
+		"tailwind-variants": "^0.2.1"
 	}
 }
