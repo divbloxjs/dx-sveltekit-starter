@@ -2,10 +2,10 @@
 export default {
     // The Divblox data modeller uses the concept of modules that allows you
     // to create tables grouped into different schemas on the same database server
-    modules: [{ moduleName: "main", schemaName: "dxdatabase" }],
+    modules: [{ moduleName: "main", schemaName: "dx-sveltekit-starter" }],
     host: "localhost",
     user: "dxuser",
     password: "secret",
     port: 3307,
-    ssl: false,
+    ssl: false
 };

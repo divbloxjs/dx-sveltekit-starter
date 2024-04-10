@@ -1,1 +1,37 @@
-{}
+{
+	"userAccount": {
+		"module": "main",
+		"indexes": [],
+		"options": {
+			"isAuditEnabled": true,
+			"enforceLockingConstraints": true
+		},
+		"attributes": {
+			"lastName": {
+				"type": "VARCHAR",
+				"allowNull": true,
+				"lengthOrValues": "150"
+			},
+			"password": {
+				"type": "VARCHAR",
+				"allowNull": true,
+				"lengthOrValues": "50"
+			},
+			"firstName": {
+				"type": "VARCHAR",
+				"allowNull": true,
+				"lengthOrValues": "100"
+			},
+			"emailAddress": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "250"
+			}
+		},
+		"relationships": {},
+		"dataModellerCoordinates": {
+			"x": 846.5762079214761,
+			"y": 205.17066427040865
+		}
+	}
+}
