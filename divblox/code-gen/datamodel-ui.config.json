@@ -1,0 +1,28 @@
+{
+	"userAccount": {
+		"lastName": {
+			"type": "text",
+			"displayName": "lastName",
+			"placeholder": "lastName",
+			"default": ""
+		},
+		"password": {
+			"type": "text",
+			"displayName": "password",
+			"placeholder": "password",
+			"default": ""
+		},
+		"firstName": {
+			"type": "text",
+			"displayName": "firstName",
+			"placeholder": "firstName",
+			"default": ""
+		},
+		"emailAddress": {
+			"type": "text",
+			"displayName": "emailAddress",
+			"placeholder": "emailAddress",
+			"default": ""
+		}
+	}
+}
