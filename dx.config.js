@@ -1,7 +1,8 @@
 // Every property can be overwritten by node ENV variables of the same name
 export default {
     webFramework: "sveltekit",
-    dxApiKey: "d405a30d05b130e21bed5b544027672f", // Divblox API key used to access resources stored there
+    dxApiKey: "d405a30d05b130e21bed5b544027672f", //USE THIS FOR PUBLIC (PULL ONLY)
+    dxApiKey: "e9e033108ed4c26c1a1a84669eace67c",
     environment: "local", // Current environment,
     dataModelPath: "divblox/configs/datamodel.json", // Path from route to the data model JSON file
     databaseConfigPath: "divblox/configs/database.config.js", // Path from root to the database configuration file

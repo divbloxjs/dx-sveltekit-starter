@@ -15,3 +15,25 @@ model userAccount {
   emailAddress String   @db.VarChar(250)
   lastUpdated  DateTime @default(now()) @db.DateTime(0)
 }
+
+model fileUpload {
+  id             BigInt              @id @default(autoincrement())
+  type           fileUpload_type
+  sizeType       fileUpload_sizeType
+  finalFileUrl   String              @db.VarChar(1000)
+  bucketName     String              @db.VarChar(50)
+  objectKey      String              @db.VarChar(500)
+  linkedEntity   String?             @db.VarChar(100)
+  linkedEntityId BigInt?
+  displayName    String              @db.VarChar(500)
+}
+
+enum fileUpload_type {
+  Profile_Picture @map("Profile Picture")
+}
+
+enum fileUpload_sizeType {
+  original
+  web
+  thumbnail
+}
