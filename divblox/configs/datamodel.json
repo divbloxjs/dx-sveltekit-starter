@@ -60,6 +60,12 @@
 				"default": null,
 				"allowNull": true,
 				"lengthOrValues": 20
+			},
+			"uploadedFileExtension": {
+				"type": "varchar",
+				"default": null,
+				"allowNull": true,
+				"lengthOrValues": 50
 			}
 		},
 		"relationships": {},

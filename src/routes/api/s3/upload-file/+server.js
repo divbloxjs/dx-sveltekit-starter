@@ -4,13 +4,13 @@ import { S3Controller } from "$lib/server/s3.helpers";
 import { prisma } from "$lib/server/prisma-instance";
 import { getGuid } from "$lib/server/helpers";
 import { sleep } from "dx-utilities";
+import { AWS_BUCKET_NAME } from "$env/static/private";
+import { getFileExtension } from "$lib/components/file-uploader/functions";
 
 export async function POST({ request }) {
     const s3 = new S3Controller();
     const formData = Object.fromEntries(await request.formData());
-    console.log("formData", formData);
     const files = Object.values(formData);
-    console.log("files", files);
 
     if (files.length === 0) {
         return json({
@@ -18,9 +18,16 @@ export async function POST({ request }) {
         });
     }
 
-    // await sleep(1500);
+    // await sleep(3000);
     // return json({
-    //     success: true
+    //     success: true,
+    //     files: [
+    //         {
+    //             displayName: "asdasd",
+    //             guid: "asdasd",
+    //             url: "asdasd"
+    //         }
+    //     ]
     // });
 
     const filesInfoToReturn = [];
@@ -29,16 +36,17 @@ export async function POST({ request }) {
         const objectKey = getGuid();
 
         try {
-            const response = await s3.putObjectInBucket("danis0312testinguploads", fileBuffer, objectKey);
+            const response = await s3.putObjectInBucket(AWS_BUCKET_NAME, fileBuffer, objectKey);
 
             console.log("response", response);
             const result = await prisma.fileUpload.create({
                 data: {
-                    bucketName: "danis0312testinguploads",
+                    bucketName: AWS_BUCKET_NAME,
                     objectKey: objectKey,
                     displayName: files[i].name,
                     mimeType: files[i].type,
-                    finalFileUrl: s3.getUrlFromBucketAndObjectKey("danis0312testinguploads", objectKey),
+                    uploadedFileExtension: getFileExtension(files[i].name),
+                    finalFileUrl: s3.getUrlFromBucketAndObjectKey(AWS_BUCKET_NAME, objectKey),
                     type: "Profile_Picture",
                     sizeType: "original",
                     linkedEntity: "userAccount"
@@ -48,7 +56,8 @@ export async function POST({ request }) {
             filesInfoToReturn.push({
                 displayName: files[i].name,
                 guid: objectKey,
-                url: s3.createPresignedUrlForDownload({ bucketName: "danis0312testinguploads", objectKey })
+                mimeType: files[i].type,
+                url: s3.createPresignedUrlForDownload({ bucketName: AWS_BUCKET_NAME, objectKey })
             });
             console.log("prisma fileUpload result", result);
         } catch (err) {
@@ -92,6 +101,8 @@ export async function GET({ request }) {
         files.push({
             url,
             guid: fileUploads[i].objectKey,
+            mimeType: fileUploads[i].mimeType,
+            uploadedFileExtension: getFileExtension(fileUploads[i].displayName),
             displayName: fileUploads[i].displayName
         });
     }
@@ -104,7 +115,7 @@ export async function DELETE({ request }) {
     try {
         const fileUpload = await prisma.fileUpload.findFirstOrThrow({ where: { objectKey: body.guid } });
         const s3 = new S3Controller();
-        const result = await s3.deleteObjectFromBucket("danis0312testinguploads", body.guid);
+        const result = await s3.deleteObjectFromBucket(AWS_BUCKET_NAME, body.guid);
 
         await prisma.fileUpload.delete({ where: { id: fileUpload.id } });
         return json({ message: "success!" });

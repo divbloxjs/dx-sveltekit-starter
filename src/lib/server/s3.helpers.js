@@ -1,3 +1,4 @@
+import { AWS_KEY, AWS_SECRET, AWS_BUCKET_NAME } from "$env/static/private";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
     S3Client,
@@ -15,12 +16,12 @@ export class S3Controller {
         this.uploadPath = "/static";
         this.fileUploadMaxSizeInBytes = 20 * 1024 * 1024;
 
-        this.bucketName = "danis0312testinguploads";
+        this.bucketName = AWS_BUCKET_NAME;
         if (bucketName) this.bucketName = bucketName;
 
         this.s3Client = new S3Client({
             region: this.region,
-            credentials: { accessKeyId: "AKIATCKARLFLRJTJG2PW", secretAccessKey: "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" }
+            credentials: { accessKeyId: AWS_KEY, secretAccessKey: AWS_SECRET }
         });
     }
 

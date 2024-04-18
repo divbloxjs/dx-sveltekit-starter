@@ -17,16 +17,17 @@ model userAccount {
 }
 
 model fileUpload {
-  id             BigInt              @id @default(autoincrement())
-  type           fileUpload_type
-  sizeType       fileUpload_sizeType
-  finalFileUrl   String              @db.VarChar(1000)
-  bucketName     String              @db.VarChar(50)
-  objectKey      String              @db.VarChar(500)
-  linkedEntity   String?             @db.VarChar(100)
-  linkedEntityId BigInt?
-  displayName    String              @db.VarChar(500)
-  mimeType       String?             @db.VarChar(50)
+  id                    BigInt              @id @default(autoincrement())
+  type                  fileUpload_type
+  sizeType              fileUpload_sizeType
+  finalFileUrl          String              @db.VarChar(1000)
+  bucketName            String              @db.VarChar(50)
+  objectKey             String              @db.VarChar(500)
+  linkedEntity          String?             @db.VarChar(100)
+  linkedEntityId        BigInt?
+  displayName           String              @db.VarChar(500)
+  mimeType              String?             @db.VarChar(50)
+  uploadedFileExtension String?             @db.VarChar(50)
 }
 
 enum fileUpload_type {

@@ -11,8 +11,6 @@
     import MimeType from "./mimeType.svelte";
     import { Cross, LoaderCircle, Pencil, PencilIcon, X } from "lucide-svelte";
     import Button from "../ui/button/button.svelte";
-    import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
-    import UploadingFile from "./_partials/uploadingFile.svelte";
 
     let inputFileEl: HTMLInputElement;
     let files: FileList;
@@ -110,6 +108,15 @@
     };
     //#endregion
 
+    const removeFile = async (guid = "", toRemoveIndex) => {
+        const deleteResult = await fetch("api/s3/upload-file", { method: "DELETE", body: JSON.stringify({ guid }) });
+        if (deleteResult.ok) {
+            preloadedFiles = preloadedFiles.filter((file, index) => index !== toRemoveIndex);
+        }
+
+        return;
+    };
+
     const removeInputFiles = async () => {
         const dt = new DataTransfer();
         files = dt.files;
@@ -173,24 +180,90 @@
             />
 
             <button type="submit" on:click|stopPropagation={() => uploadNewFiles(files)} class="mt-4">
-                Click or drop <br /> files here
+                Drop and drop <br /> files here
             </button>
         </div>
 
         <div class="w-full" on:click|stopPropagation={() => {}}>
-            {#each preloadedFiles ?? [] as _, index}
-                <PreloadedFileRow
-                    bind:preloadedFiles
-                    {index}
-                    on:deleted={(event) => {
-                        preloadedFiles = preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex);
-                    }}
-                ></PreloadedFileRow>
+            {#each preloadedFiles ?? [] as fileInfo, index}
+                <div class="mt-1 flex w-full justify-between overflow-hidden rounded bg-gray-200" in:slide out:fade>
+                    <div class="flex h-12 w-12 min-w-12 overflow-hidden rounded bg-red-200">
+                        <MimeType file={fileInfo}></MimeType>
+                    </div>
+                    <span class="flex min-w-0 grow items-center justify-between bg-green-200 px-2">
+                        <a href={fileInfo.url} target="_blank" class="truncate">{fileInfo.displayName} </a>
+                    </span>
+                    <span class="flex flex-nowrap items-center gap-1 bg-red-200 px-2">
+                        <Button variant="outline" size="inline-icon" on:click={() => removeFile(fileInfo.guid, index)}>
+                            <Pencil class="h-4 w-4" />
+                        </Button>
+                        <Button variant="destructive-outline" size="inline-icon" on:click={() => removeFile(fileInfo.guid, index)}>
+                            <X class="h-4 w-4" />
+                        </Button>
+                    </span>
+                </div>
             {/each}
 
             {#each files ?? [] as file, index}
-                <UploadingFile {file} {isTransferComplete} progress={progressArray[index]}></UploadingFile>
+                <div class="m-1 flex w-full flex-col rounded bg-gray-200 px-2 py-1">
+                    <div class="flex w-full justify-between">
+                        <span>{file.name} </span>
+                    </div>
+
+                    <div class="flex w-full items-center">
+                        {#if !isTransferComplete && progressArray[index] === 100}
+                            <LoaderCircle class="mr-2 h-4 w-4 animate-spin" /> Processing...
+                        {:else}
+                            <span class="text-nowrap">{progressArray[index] ?? 0} %</span>
+                            <progress
+                                max="100"
+                                value={progressArray[index] ?? 0}
+                                class="h-2 flex-grow pl-2 [&::-moz-progress-bar]:bg-violet-400 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:rounded [&::-webkit-progress-value]:bg-violet-400"
+                            />
+                        {/if}
+                    </div>
+                </div>
             {/each}
         </div>
     </div>
+
+    <!-- {#each preloadedFiles ?? [] as fileInfo, index}
+        <div class="mt-1 flex w-[350px] justify-between overflow-hidden rounded bg-gray-200" in:slide out:fade>
+            <div class="flex h-12 w-12 min-w-12 overflow-hidden rounded bg-red-200">
+                <MimeType file={fileInfo}></MimeType>
+            </div>
+            <span class="flex min-w-0 grow items-center justify-between bg-green-200 px-2">
+                <a href={fileInfo.url} target="_blank" class="truncate">{fileInfo.displayName} </a>
+            </span>
+            <span class="flex flex-nowrap items-center gap-1 bg-red-200 px-2">
+                <Button variant="outline" size="inline-icon" on:click={() => removeFile(fileInfo.guid, index)}>
+                    <Pencil class="h-4 w-4" />
+                </Button>
+                <Button variant="destructive-outline" size="inline-icon" on:click={() => removeFile(fileInfo.guid, index)}>
+                    <X class="h-4 w-4" />
+                </Button>
+            </span>
+        </div>
+    {/each}
+
+    {#each files ?? [] as file, index}
+        <div class="m-1 flex w-[350px] flex-col rounded bg-gray-200 px-2 py-1">
+            <div class="flex w-full justify-between">
+                <span>{file.name} </span>
+            </div>
+
+            <div class="flex w-full items-center">
+                {#if !isTransferComplete && progressArray[index] === 100}
+                    Processing...
+                {:else}
+                    <span class="text-nowrap">{progressArray[index] ?? 0} %</span>
+                    <progress
+                        max="100"
+                        value={progressArray[index] ?? 0}
+                        class="h-2 flex-grow pl-2 [&::-moz-progress-bar]:bg-violet-400 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:rounded [&::-webkit-progress-value]:bg-violet-400"
+                    />
+                {/if}
+            </div>
+        </div>
+    {/each} -->
 </div>
