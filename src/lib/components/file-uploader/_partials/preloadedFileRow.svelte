@@ -7,7 +7,7 @@
 
     export let preloadedFiles;
     export let index;
-    export let deleteEndpoint = "api/s3/upload-file";
+    export let deleteEndpoint = "api/file-upload/user-account";
 
     const dispatch = createEventDispatcher();
 

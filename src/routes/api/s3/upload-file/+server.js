@@ -7,7 +7,8 @@ import { sleep } from "dx-utilities";
 import { AWS_BUCKET_NAME } from "$env/static/private";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
 
-export async function POST({ request }) {
+export async function POST({ request, params }) {
+    console.log("params", params);
     const s3 = new S3Controller();
     const formData = Object.fromEntries(await request.formData());
     const files = Object.values(formData);
@@ -57,7 +58,9 @@ export async function POST({ request }) {
     });
 }
 
-export async function GET({ request }) {
+export async function GET({ request, params, url }) {
+    console.log("params", params);
+    console.log("url", url.searchParams.get("id"));
     const fileUploads = await prisma.fileUpload.findMany({ where: { linkedEntity: "userAccount" } });
     const s3 = new S3Controller();
 

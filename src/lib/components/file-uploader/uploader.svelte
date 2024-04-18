@@ -12,7 +12,7 @@
     let preloadedFiles: [] = [];
 
     onMount(async () => {
-        const response = await fetch("/api/s3/upload-file");
+        const response = await fetch("/api/file-upload/user-account?id=1");
         const result = await response.json();
 
         preloadedFiles = result?.files ?? [];
@@ -82,7 +82,7 @@
         currentXHR.addEventListener("error", transferFailed);
         currentXHR.addEventListener("abort", transferCanceled);
 
-        currentXHR.open("POST", "/api/s3/upload-file", true);
+        currentXHR.open("POST", "/api/file-upload/user-account?id=1", true);
 
         currentXHR.send(formData);
     };
