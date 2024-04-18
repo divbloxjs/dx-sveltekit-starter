@@ -21,12 +21,9 @@
         const result = await response.json();
 
         preloadedFiles = result?.files ?? [];
-        console.log("preloadedFiles", files);
     });
 
-    const handleChange = (event) => {
-        console.log(event);
-    };
+    const handleChange = (event) => {};
 
     let currentXHR = undefined;
     let isTransferComplete = false;

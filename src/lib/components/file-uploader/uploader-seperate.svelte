@@ -70,9 +70,7 @@
         currentXHR.send(formData);
     };
 
-    const handleChange = (event) => {
-        console.log(event);
-    };
+    const handleChange = (event) => {};
 
     let startTime;
     let endTime;

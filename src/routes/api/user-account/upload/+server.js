@@ -1,10 +1,9 @@
+import { AWS_BUCKET_NAME } from "$env/static/private";
 import { fail, json } from "@sveltejs/kit";
-import { writeFileSync } from "fs";
+
 import { S3Controller } from "$lib/server/s3.helpers";
 import { prisma } from "$lib/server/prisma-instance";
 import { getGuid } from "$lib/server/helpers";
-import { sleep } from "dx-utilities";
-import { AWS_BUCKET_NAME } from "$env/static/private";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
 
 export async function POST({ request }) {
@@ -22,10 +21,9 @@ export async function POST({ request }) {
     for (let i = 0; i < files.length; i++) {
         const fileBuffer = await files[i].arrayBuffer();
         const objectKey = getGuid();
-
+        await s3.putObjectInBucket(AWS_BUCKET_NAME, fileBuffer, objectKey);
         try {
-            const response = await s3.putObjectInBucket(AWS_BUCKET_NAME, fileBuffer, objectKey);
-            const result = await prisma.fileUpload.create({
+            await prisma.fileUpload.create({
                 data: {
                     bucketName: AWS_BUCKET_NAME,
                     objectKey: objectKey,

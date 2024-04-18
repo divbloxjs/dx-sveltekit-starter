@@ -1,18 +1,11 @@
 <script lang="ts">
-    import Input from "../ui/input/input.svelte";
-    import Label from "../ui/label/label.svelte";
-    import { sleep } from "dx-utilities";
-    import { enhance } from "$app/forms";
     import InputFile from "../ui/input-file/input-file.svelte";
-    import { browser } from "$app/environment";
     import { onMount } from "svelte";
-    import { fade, slide } from "svelte/transition";
-    import { getFileExtension } from "./functions";
-    import MimeType from "./mimeType.svelte";
-    import { Cross, LoaderCircle, Pencil, PencilIcon, X } from "lucide-svelte";
-    import Button from "../ui/button/button.svelte";
     import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
     import UploadingFile from "./_partials/uploadingFile.svelte";
+
+    export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
+    export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
 
     let inputFileEl: HTMLInputElement;
     let files: FileList;
@@ -27,12 +20,41 @@
     });
 
     const handleChange = (event) => {
-        console.log(event);
+        const target = event.target;
+        if (target.files && target.files[0]) {
+            let totalSize = 0;
+            let maxSize = 0;
+            let sizes = [];
+            console.log("target.files", target.files);
+
+            for (let i = 0; i < target.files.length; i++) {
+                let file = target.files[i];
+                console.log("file.size", file.size);
+
+                totalSize = totalSize + file.size;
+                sizes.push(file.size);
+                if (file.size > SINGLE_MAX_UPLOAD_SIZE) {
+                    alert(`Choose max ${Math.round(TOTAL_MAX_UPLOAD_SIZE / 1023 / 1024)}mb files`);
+                    target.value = "";
+                    return;
+                }
+                if (file.size > maxSize) maxSize = file.size;
+            }
+
+            console.log("totalSize", totalSize);
+
+            if (totalSize > TOTAL_MAX_UPLOAD_SIZE) {
+                alert(`Choose total ${Math.round(TOTAL_MAX_UPLOAD_SIZE / 1023 / 1024)}mb files`);
+                target.value = "";
+            }
+        }
     };
 
     let currentXHR = undefined;
     let isTransferComplete = false;
+    let uploadingFiles = false;
     const uploadNewFiles = async (filesToUpload = []) => {
+        uploadingFiles = true;
         if (filesToUpload.length === 0) {
             inputFileEl.click();
             return;
@@ -99,13 +121,16 @@
 
     const transferComplete = (evt) => {
         isTransferComplete = true;
+        uploadingFiles = false;
     };
 
     const transferFailed = (evt) => {
+        uploadingFiles = false;
         console.log("An error occurred while transferring the file.");
     };
 
     const transferCanceled = (evt) => {
+        uploadingFiles = false;
         console.log("The transfer has been canceled by the user.");
     };
     //#endregion
@@ -118,6 +143,7 @@
 
     //#region Dragging Handlers
     const handleDrop = (e) => {
+        if (uploadingFiles) return;
         let newDataTransfer = e.dataTransfer;
         let droppedFiles = newDataTransfer.files;
 
@@ -135,13 +161,16 @@
 
     let isDraggingOver = false;
     const handleDragOver = () => {
+        if (uploadingFiles) return;
         isDraggingOver = true;
     };
 
     const handleDragEnter = () => {
+        if (uploadingFiles) return;
         isDraggingOver = true;
     };
     const handleDragLeave = () => {
+        if (uploadingFiles) return;
         isDraggingOver = false;
     };
     //#endregion
@@ -151,7 +180,9 @@
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
-        class="m-[2px] flex flex-col justify-center rounded bg-slate-400 p-2 hover:cursor-pointer"
+        class="cursor- m-[2px] flex flex-col justify-center rounded bg-slate-400 p-2 {uploadingFiles
+            ? 'hover:cursor-no-drop'
+            : 'hover:cursor-pointer'}"
         class:ring-2={isDraggingOver}
         class:ring-black={isDraggingOver}
         on:click={() => inputFileEl.click()}
@@ -177,7 +208,7 @@
             </button>
         </div>
 
-        <div class="w-full" on:click|stopPropagation={() => {}}>
+        <div class="w-full text-sm" on:click|stopPropagation={() => {}}>
             {#each preloadedFiles ?? [] as _, index}
                 <PreloadedFileRow
                     bind:preloadedFiles
