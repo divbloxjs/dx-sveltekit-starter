@@ -26,6 +26,7 @@ model fileUpload {
   linkedEntity   String?             @db.VarChar(100)
   linkedEntityId BigInt?
   displayName    String              @db.VarChar(500)
+  mimeType       String?             @db.VarChar(50)
 }
 
 enum fileUpload_type {

@@ -10,15 +10,18 @@ import {
 } from "@aws-sdk/client-s3";
 
 export class S3Controller {
-    constructor() {
+    constructor(bucketName = undefined) {
         this.region = "af-south-1";
+        this.uploadPath = "/static";
+        this.fileUploadMaxSizeInBytes = 20 * 1024 * 1024;
+
+        this.bucketName = "danis0312testinguploads";
+        if (bucketName) this.bucketName = bucketName;
+
         this.s3Client = new S3Client({
             region: this.region,
             credentials: { accessKeyId: "AKIATCKARLFLRJTJG2PW", secretAccessKey: "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" }
         });
-
-        this.uploadPath = "/static";
-        this.fileUploadMaxSizeInBytes = 20 * 1024 * 1024;
     }
 
     async createBucket(bucketName) {
@@ -71,9 +74,12 @@ export class S3Controller {
     async putObjectInBucket(bucketName, file, objectKey) {
         try {
             const result = await this.s3Client.send(new PutObjectCommand({ Body: file, Bucket: bucketName, Key: objectKey }));
+            return result;
         } catch (err) {
             console.error(err);
         }
+
+        return null;
     }
 
     async deleteObjectFromBucket(bucketName, objectKey) {
@@ -88,8 +94,32 @@ export class S3Controller {
         return `https://${bucketName}.s3.${this.region}.amazonaws.com/${objectKey}`;
     }
 
-    createPresignedUrl({ bucket, key }) {
-        const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-        return getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+    async createPresignedUrlForDownload({ bucketName, objectKey }) {
+        const command = new GetObjectCommand({ Bucket: bucketName, Key: objectKey });
+        return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+    }
+
+    async createPresignedUrlForUpload({ bucketName, objectKey }) {
+        const command = new PutObjectCommand({ Bucket: bucketName, Key: objectKey });
+        return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+    }
+
+    put(url, data) {
+        return new Promise((resolve, reject) => {
+            const req = https.request(url, { method: "PUT", headers: { "Content-Length": new Blob([data]).size } }, (res) => {
+                let responseBody = "";
+                res.on("data", (chunk) => {
+                    responseBody += chunk;
+                });
+                res.on("end", () => {
+                    resolve(responseBody);
+                });
+            });
+            req.on("error", (err) => {
+                reject(err);
+            });
+            req.write(data);
+            req.end();
+        });
     }
 }

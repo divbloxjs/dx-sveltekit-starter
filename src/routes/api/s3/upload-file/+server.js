@@ -18,11 +18,12 @@ export async function POST({ request }) {
         });
     }
 
-    await sleep(1500);
-    return json({
-        success: true
-    });
+    // await sleep(1500);
+    // return json({
+    //     success: true
+    // });
 
+    const filesInfoToReturn = [];
     for (let i = 0; i < files.length; i++) {
         const fileBuffer = await files[i].arrayBuffer();
         const objectKey = getGuid();
@@ -30,17 +31,26 @@ export async function POST({ request }) {
         try {
             const response = await s3.putObjectInBucket("danis0312testinguploads", fileBuffer, objectKey);
 
+            console.log("response", response);
             const result = await prisma.fileUpload.create({
                 data: {
                     bucketName: "danis0312testinguploads",
                     objectKey: objectKey,
                     displayName: files[i].name,
+                    mimeType: files[i].type,
                     finalFileUrl: s3.getUrlFromBucketAndObjectKey("danis0312testinguploads", objectKey),
                     type: "Profile_Picture",
                     sizeType: "original",
                     linkedEntity: "userAccount"
                 }
             });
+
+            filesInfoToReturn.push({
+                displayName: files[i].name,
+                guid: objectKey,
+                url: s3.createPresignedUrlForDownload({ bucketName: "danis0312testinguploads", objectKey })
+            });
+            console.log("prisma fileUpload result", result);
         } catch (err) {
             console.error(err);
             return fail(400);
@@ -48,7 +58,8 @@ export async function POST({ request }) {
     }
 
     return json({
-        success: true
+        success: true,
+        files: filesInfoToReturn
     });
 
     for (let i = 0; i < Object.keys(formData).length; i++) {
@@ -77,7 +88,7 @@ export async function GET({ request }) {
     const files = [];
 
     for (let i = 0; i < fileUploads.length; i++) {
-        const url = await s3.createPresignedUrl({ bucket: fileUploads[i].bucketName, key: fileUploads[i].objectKey });
+        const url = await s3.createPresignedUrlForDownload({ bucketName: fileUploads[i].bucketName, objectKey: fileUploads[i].objectKey });
         files.push({
             url,
             guid: fileUploads[i].objectKey,

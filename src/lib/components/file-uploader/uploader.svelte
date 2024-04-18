@@ -6,7 +6,7 @@
     import InputFile from "../ui/input-file/input-file.svelte";
     import { browser } from "$app/environment";
     import { onMount } from "svelte";
-    import { slide } from "svelte/transition";
+    import { fade, slide } from "svelte/transition";
     import { getFileExtension } from "./functions";
 
     let inputFileEl: HTMLInputElement;
@@ -14,7 +14,7 @@
     let preloadedFiles: [] = [];
 
     onMount(async () => {
-        const response = await fetch("/api/upload-file");
+        const response = await fetch("/api/s3/upload-file");
         const result = await response.json();
         console.log("result", result);
 
@@ -31,6 +31,7 @@
     let currentXHR = undefined;
 
     let isTransferComplete = false;
+    let newFileGuids = [];
     const uploadNewFiles = async (filesToUpload) => {
         // 1. Create a new XMLHttpRequest object
         currentXHR = new window.XMLHttpRequest();
@@ -42,12 +43,21 @@
             // previewFile(guid);
         }
 
+        currentXHR.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                const newFiles = JSON.parse(this.response).files;
+                preloadedFiles.push(...newFiles);
+                preloadedFiles = preloadedFiles;
+                removeInputFiles();
+            }
+        };
+
         currentXHR.upload.addEventListener("progress", updateProgress);
         currentXHR.addEventListener("load", transferComplete);
         currentXHR.addEventListener("error", transferFailed);
         currentXHR.addEventListener("abort", transferCanceled);
 
-        currentXHR.open("POST", "/api/upload-file", true);
+        currentXHR.open("POST", "/api/s3/upload-file", true);
 
         startTime = performance.now();
         // 3. Send the request over the network
@@ -107,24 +117,18 @@
     //#endregion
 
     const removeFile = async (guid = "", toRemoveIndex) => {
-        currentXHR?.abort();
-        const deleteResult = await fetch("api/upload-file", { method: "DELETE", body: JSON.stringify({ guid }) });
-        preloadedFiles = preloadedFiles.filter((file, index) => index !== toRemoveIndex);
+        const deleteResult = await fetch("api/s3/upload-file", { method: "DELETE", body: JSON.stringify({ guid }) });
+        if (deleteResult.ok) {
+            preloadedFiles = preloadedFiles.filter((file, index) => index !== toRemoveIndex);
+        }
+
         return;
     };
 
-    const cancelUpload = async (index) => {
-        currentXHR?.abort();
-        await sleep(1000);
+    const removeInputFiles = async () => {
         const dt = new DataTransfer();
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (index !== i) dt.items.add(file); // here you exclude the file. thus removing it.
-        }
-
-        files = dt.files; // Assign the updates list
+        files = dt.files;
         inputFileEl.files = files;
-        console.log("files", files);
     };
 
     //#region Dragging Handlers
@@ -159,36 +163,13 @@
     //#endregion
 
     let localFileTracker = {};
-
-    const updateFileList = () => {
-        if (!browser) return;
-        const dt = new DataTransfer();
-
-        localFileTracker.forEach(({ file, metadata }) => {
-            if (!metadata.processed) dt.items.add(file); // here you exclude the file. thus removing it.
-        });
-
-        files = dt.files; // Assign the updates list
-        inputFileEl.files = files;
-        console.log("files", files);
-    };
-
-    const previewFile = (guid) => {
-        let reader = new FileReader();
-        reader.readAsDataURL(localFileTracker[guid].file);
-        reader.onloadend = function () {
-            localFileTracker[guid].local.base64Url = reader.result;
-        };
-
-        console.log(localFileTracker);
-    };
 </script>
 
 <div class="h-full w-full">
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
-        class="flex h-52 w-52 justify-center rounded bg-slate-400 hover:cursor-pointer"
+        class="flex h-52 w-[350px] justify-center rounded bg-slate-400 hover:cursor-pointer"
         class:ring-2={isDraggingOver}
         class:ring-black={isDraggingOver}
         on:click={() => inputFileEl.click()}
@@ -215,15 +196,13 @@
         </div>
     </div>
 
-    <!-- {#each Object.entries(localFileTracker) as [guid, { server, local, file }], index}
-{index}<progress max="100" value={local.progress} class="w-full"></progress>
-<img src={local.base64Url} alt={file.name} width="30" height="30" />
-{/each} -->
     {#each preloadedFiles ?? [] as fileInfo, index}
-        <div class="mt-1 flex w-52 justify-between rounded bg-gray-200 px-2 py-1" transition:slide>
-            <!-- <span>{getFileExtension(fileInfo.url)}</span> -->
-            <a href={fileInfo.url} target="_blank">{fileInfo.displayName} </a>
-            <span>
+        <div class="mt-1 flex w-[350px] justify-between rounded bg-gray-200 px-2 py-1" in:slide out:fade>
+            <div class="flex h-12 min-w-12 rounded bg-red-200"></div>
+            <span class="flex min-w-0 grow justify-between bg-green-200">
+                <a href={fileInfo.url} target="_blank" class="truncate">{fileInfo.displayName} </a>
+            </span>
+            <span class="flex flex-nowrap bg-orange-400">
                 <button on:click={() => removeFile(index)}>e</button>
                 <button on:click={() => removeFile(fileInfo.guid, index)}>x</button>
             </span>
@@ -231,11 +210,11 @@
     {/each}
 
     {#each files ?? [] as file, index}
-        <div class="m-1 flex w-52 flex-col rounded bg-gray-200 px-2 py-1">
+        <div class="m-1 flex w-[350px] flex-col rounded bg-gray-200 px-2 py-1">
             <div class="flex w-full justify-between">
                 <span>{file.name} </span>
                 {#if progressArray[index] === 100}
-                    <button on:click={() => removeFile(fileInfo.guid, index)}>x</button>
+                    <button on:click={() => removeFile(newFileGuids[index], index)}>x</button>
                 {:else}
                     <!-- <button on:click={() => cancelUpload(index)}>cancel</button> -->
                 {/if}
