@@ -3,6 +3,9 @@
     import { onMount } from "svelte";
     import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
     import UploadingFile from "./_partials/uploadingFile.svelte";
+    import Button from "../ui/button/button.svelte";
+    import { fade } from "svelte/transition";
+    import { Download } from "lucide-svelte";
 
     export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
@@ -141,6 +144,7 @@
 
     //#region Dragging Handlers
     const handleDrop = (e) => {
+        isDraggingOver = false;
         if (uploadingFiles) return;
         let newDataTransfer = e.dataTransfer;
         let droppedFiles = newDataTransfer.files;
@@ -174,20 +178,15 @@
     //#endregion
 </script>
 
-<div class="h-full w-full overflow-hidden rounded bg-slate-400">
+<div class="relative h-full w-full overflow-hidden rounded-xl p-2">
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
-        class="cursor- m-[2px] flex flex-col justify-center rounded bg-slate-400 p-2 {uploadingFiles
+        class="flex w-full flex-col justify-center rounded-xl border-2 border-dashed border-red-200 {uploadingFiles
             ? 'hover:cursor-no-drop'
             : 'hover:cursor-pointer'}"
-        class:ring-2={isDraggingOver}
-        class:ring-black={isDraggingOver}
         on:click={() => inputFileEl.click()}
-        on:drop|preventDefault|stopPropagation={handleDrop}
-        on:dragenter|preventDefault|stopPropagation={handleDragEnter}
-        on:dragover|preventDefault|stopPropagation={handleDragOver}
-        on:dragleave|preventDefault|stopPropagation={handleDragLeave}
+        on:dragenter={() => (isDraggingOver = true)}
     >
         <div class="flex flex-col p-4 hover:cursor-default">
             <InputFile
@@ -200,13 +199,34 @@
                 on:input={handleChange}
                 multiple={true}
             />
-
-            <button type="submit" on:click|stopPropagation={() => uploadNewFiles(files)} class="mt-4">
-                Click or drop <br /> files here
-            </button>
+            {#if isDraggingOver}
+                <span
+                    class="absolute flex flex-col items-center justify-center self-center pt-5 text-center text-2xl"
+                    in:fade={{ delay: 100, duration: 150 }}
+                    out:fade={{ delay: 0, duration: 150 }}
+                >
+                    Drop to upload
+                    <!-- <span>owefnwiuefn erifub</span> -->
+                    <!-- <Download class="mt-4 text-xl"></Download> -->
+                </span>
+            {/if}
+            <span class="mx-auto text-xl opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver}>
+                Drag and Drop
+            </span>
+            <span class="dela mx-auto opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver}>or</span>
+            <div class="flex w-full justify-center opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver}>
+                <Button
+                    variant="secondary"
+                    class="mx-auto mt-4 w-fit rounded-lg"
+                    on:click={(e) => {
+                        // e.stopPropagation();
+                        inputFileEl.click();
+                    }}>Browse files</Button
+                >
+            </div>
         </div>
 
-        <div class="w-full text-sm" on:click|stopPropagation={() => {}}>
+        <div class="w-full p-2 text-sm" on:click|stopPropagation={() => {}}>
             {#each preloadedFiles ?? [] as _, index}
                 <PreloadedFileRow
                     bind:preloadedFiles
@@ -222,4 +242,14 @@
             {/each}
         </div>
     </div>
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div
+        class:hidden={!isDraggingOver}
+        class="absolute left-0 top-0 h-full w-full bg-red-200/20"
+        on:drop|preventDefault|stopPropagation={handleDrop}
+        on:dragenter|preventDefault|stopPropagation={handleDragEnter}
+        on:dragover|preventDefault|stopPropagation={handleDragOver}
+        on:dragleave|preventDefault|stopPropagation={handleDragLeave}
+    ></div>
 </div>

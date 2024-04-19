@@ -17,14 +17,14 @@
     };
 </script>
 
-<div class="mt-1 flex w-full justify-between overflow-hidden rounded bg-gray-200" in:slide out:fade>
-    <div class="flex h-12 w-12 min-w-12 overflow-hidden rounded bg-red-200">
+<div class="mt-1 flex w-full justify-between overflow-hidden rounded-xl bg-gray-200" in:slide out:fade>
+    <div class="flex h-12 w-12 min-w-12 overflow-hidden rounded-xl">
         <MimeType file={preloadedFiles[index]}></MimeType>
     </div>
     <span class="flex min-w-0 grow items-center justify-between bg-green-200 px-2">
         <a href={preloadedFiles[index].url} target="_blank" class="truncate">{preloadedFiles[index].displayName} </a>
     </span>
-    <span class="flex flex-nowrap items-center gap-1 bg-red-200 px-2">
+    <span class="flex flex-nowrap items-center gap-1 px-2">
         <Button variant="outline" size="inline-icon" on:click={() => removeFile(preloadedFiles[index].guid)}>
             <Pencil class="h-4 w-4" />
         </Button>
