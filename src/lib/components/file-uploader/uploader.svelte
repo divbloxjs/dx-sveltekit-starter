@@ -14,9 +14,7 @@
     onMount(async () => {
         const response = await fetch("/api/file-upload/user-account?id=1");
         const result = await response.json();
-
         preloadedFiles = result?.files ?? [];
-        console.log("preloadedFiles", files);
     });
 
     const handleChange = (event) => {

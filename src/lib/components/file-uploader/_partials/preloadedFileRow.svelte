@@ -1,7 +1,7 @@
 <script>
     import { Button } from "$lib/components/ui/button/index.js";
     import { Pencil, X } from "lucide-svelte";
-    import MimeType from "../mimeType.svelte";
+    import MimeType from "./mimeType.svelte";
     import { fade, slide } from "svelte/transition";
     import { createEventDispatcher } from "svelte";
 

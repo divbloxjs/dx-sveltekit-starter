@@ -1,5 +1,5 @@
 <script>
-    import { getFileExtension } from "./functions";
+    import { getFileExtension } from "../functions";
 
     export let file;
 </script>
