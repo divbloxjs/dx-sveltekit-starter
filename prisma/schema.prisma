@@ -28,6 +28,7 @@ model fileUpload {
   displayName           String              @db.VarChar(500)
   mimeType              String?             @db.VarChar(50)
   uploadedFileExtension String?             @db.VarChar(50)
+  sizeInBytes           Int
 }
 
 enum fileUpload_type {

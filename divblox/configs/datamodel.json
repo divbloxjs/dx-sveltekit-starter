@@ -43,6 +43,12 @@
 				"allowNull": false,
 				"lengthOrValues": 500
 			},
+			"sizeInBytes": {
+				"type": "int",
+				"default": null,
+				"allowNull": false,
+				"lengthOrValues": null
+			},
 			"finalFileUrl": {
 				"type": "varchar",
 				"default": null,

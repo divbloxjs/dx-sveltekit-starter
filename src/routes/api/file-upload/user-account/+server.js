@@ -35,6 +35,7 @@ export async function POST({ request, url }) {
                     objectKey: objectKey,
                     displayName: files[i].name,
                     mimeType: files[i].type,
+                    sizeInBytes: files[i].size,
                     uploadedFileExtension: getFileExtension(files[i].name),
                     finalFileUrl: s3.getUrlFromBucketAndObjectKey(AWS_BUCKET_NAME, objectKey),
                     type: UPLOAD_TYPE,
@@ -48,6 +49,7 @@ export async function POST({ request, url }) {
                 displayName: files[i].name,
                 guid: objectKey,
                 mimeType: files[i].type,
+                sizeInBytes: files[i].size,
                 url: await s3.createPresignedUrlForDownload({ bucketName: AWS_BUCKET_NAME, objectKey })
             });
         } catch (err) {
@@ -75,6 +77,7 @@ export async function GET({ request, url }) {
             url,
             guid: fileUploads[i].objectKey,
             mimeType: fileUploads[i].mimeType,
+            sizeInBytes: fileUploads[i].sizeInBytes,
             uploadedFileExtension: getFileExtension(fileUploads[i].displayName),
             displayName: fileUploads[i].displayName
         });
