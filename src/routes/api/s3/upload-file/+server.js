@@ -31,6 +31,7 @@ export async function POST({ request, params }) {
                     bucketName: AWS_BUCKET_NAME,
                     objectKey: objectKey,
                     displayName: files[i].name,
+                    sizeInBytes: files[i].size,
                     mimeType: files[i].type,
                     uploadedFileExtension: getFileExtension(files[i].name),
                     finalFileUrl: s3.getUrlFromBucketAndObjectKey(AWS_BUCKET_NAME, objectKey),
@@ -72,6 +73,7 @@ export async function GET({ request, params, url }) {
             url,
             guid: fileUploads[i].objectKey,
             mimeType: fileUploads[i].mimeType,
+            sizeInBytes: fileUploads[i].sizeInBytes,
             uploadedFileExtension: getFileExtension(fileUploads[i].displayName),
             displayName: fileUploads[i].displayName
         });

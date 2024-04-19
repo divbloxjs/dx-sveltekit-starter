@@ -5,7 +5,6 @@
     import UploadingFile from "./_partials/uploadingFile.svelte";
     import Button from "../ui/button/button.svelte";
     import { fade } from "svelte/transition";
-    import { Download } from "lucide-svelte";
 
     export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
@@ -22,11 +21,17 @@
 
     const handleChange = (event) => {
         const target = event.target;
+
+        if (!validateFileSize(target)) return;
+
+        uploadNewFiles(target.files);
+    };
+
+    const validateFileSize = (target) => {
         if (target.files && target.files[0]) {
             let totalSize = 0;
             let maxSize = 0;
             let sizes = [];
-            console.log("target.files", target.files);
 
             for (let i = 0; i < target.files.length; i++) {
                 let file = target.files[i];
@@ -35,26 +40,32 @@
                 totalSize = totalSize + file.size;
                 sizes.push(file.size);
                 if (file.size > SINGLE_MAX_UPLOAD_SIZE) {
-                    alert(`Choose max ${Math.round(TOTAL_MAX_UPLOAD_SIZE / 1023 / 1024)}mb files`);
+                    removeInputFiles();
+                    alert(`Choose max ${Math.round(SINGLE_MAX_UPLOAD_SIZE / 1024 / 1024)} mb files`);
                     target.value = "";
-                    return;
+                    files;
+                    return false;
                 }
                 if (file.size > maxSize) maxSize = file.size;
             }
 
-            console.log("totalSize", totalSize);
-
             if (totalSize > TOTAL_MAX_UPLOAD_SIZE) {
-                alert(`Choose total ${Math.round(TOTAL_MAX_UPLOAD_SIZE / 1023 / 1024)}mb files`);
+                removeInputFiles();
+                alert(`Choose total ${Math.round(TOTAL_MAX_UPLOAD_SIZE / 1024 / 1024)} mb files`);
                 target.value = "";
+
+                return false;
             }
         }
+
+        return true;
     };
 
     let currentXHR = undefined;
     let isTransferComplete = false;
     let uploadingFiles = false;
     const uploadNewFiles = async (filesToUpload = []) => {
+        isTransferComplete = false;
         uploadingFiles = true;
         if (filesToUpload.length === 0) {
             inputFileEl.click();
@@ -89,9 +100,11 @@
     };
 
     //#region Request Handlers
-    const progressArray = [];
+    let progressArray = [];
     let percentComplete = 0;
     const updateProgress = (event) => {
+        console.log("updateProgress", JSON.stringify(progressArray));
+
         if (event.lengthComputable) {
             percentComplete = (event.loaded / event.total) * 100;
             // …
@@ -178,14 +191,13 @@
     //#endregion
 </script>
 
-<div class="relative h-full w-full overflow-hidden rounded-xl p-2">
+<div class="relative h-full w-full overflow-hidden rounded-xl bg-neutral-100 p-2">
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
-        class="flex w-full flex-col justify-center rounded-xl border-2 border-dashed border-red-200 {uploadingFiles
+        class="flex w-full flex-col justify-center rounded-xl border-2 border-dashed border-blue-200 {uploadingFiles
             ? 'hover:cursor-no-drop'
             : 'hover:cursor-pointer'}"
-        on:click={() => inputFileEl.click()}
         on:dragenter={() => (isDraggingOver = true)}
     >
         <div class="flex flex-col p-4 hover:cursor-default">
@@ -196,7 +208,6 @@
                 class="hidden"
                 bind:files
                 on:change={handleChange}
-                on:input={handleChange}
                 multiple={true}
             />
             {#if isDraggingOver}
@@ -206,30 +217,43 @@
                     out:fade={{ delay: 0, duration: 150 }}
                 >
                     Drop to upload
-                    <!-- <span>owefnwiuefn erifub</span> -->
-                    <!-- <Download class="mt-4 text-xl"></Download> -->
                 </span>
             {/if}
-            <span class="mx-auto text-xl opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver}>
+            {#if uploadingFiles}
+                <span
+                    class="absolute flex flex-col items-center justify-center self-center pt-5 text-center text-2xl"
+                    in:fade={{ delay: 100, duration: 150 }}
+                    out:fade={{ delay: 0, duration: 150 }}
+                >
+                    Uploading...
+                </span>
+            {/if}
+            <span class="mx-auto text-xl opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver && !uploadingFiles}>
                 Drag and Drop
             </span>
-            <span class="dela mx-auto opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver}>or</span>
-            <div class="flex w-full justify-center opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver}>
+            <span class="dela mx-auto opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver && !uploadingFiles}
+                >or</span
+            >
+            <div
+                class="flex w-full justify-center opacity-0 transition-opacity duration-100"
+                class:opacity-100={!isDraggingOver && !uploadingFiles}
+            >
                 <Button
-                    variant="secondary"
+                    variant="default"
                     class="mx-auto mt-4 w-fit rounded-lg"
                     on:click={(e) => {
-                        // e.stopPropagation();
+                        e.stopPropagation();
                         inputFileEl.click();
                     }}>Browse files</Button
                 >
             </div>
         </div>
 
-        <div class="w-full p-2 text-sm" on:click|stopPropagation={() => {}}>
+        <div class="w-full p-2 text-sm transition-all" on:click|stopPropagation={() => {}}>
             {#each preloadedFiles ?? [] as _, index}
                 <PreloadedFileRow
                     bind:preloadedFiles
+                    disable={uploadingFiles}
                     {index}
                     on:deleted={(event) => {
                         preloadedFiles = preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex);
@@ -246,7 +270,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
         class:hidden={!isDraggingOver}
-        class="absolute left-0 top-0 h-full w-full bg-red-200/20"
+        class="absolute left-0 top-0 h-full w-full bg-blue-100/40"
         on:drop|preventDefault|stopPropagation={handleDrop}
         on:dragenter|preventDefault|stopPropagation={handleDragEnter}
         on:dragover|preventDefault|stopPropagation={handleDragOver}
