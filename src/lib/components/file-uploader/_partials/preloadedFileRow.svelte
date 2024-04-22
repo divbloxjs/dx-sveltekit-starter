@@ -9,18 +9,21 @@
     export let preloadedFiles;
     export let index;
     export let disable;
-    export let deleteEndpoint = "api/file-upload/user-account";
-    export let updateEndpoint = "api/file-upload";
+    export let deleteFileEndpoint;
+    export let updateFileNameEndpoint;
 
     const dispatch = createEventDispatcher();
 
     const removeFile = async (guid = "") => {
-        const deleteResult = await fetch(deleteEndpoint, { method: "DELETE", body: JSON.stringify({ guid }) });
+        const deleteResult = await fetch(deleteFileEndpoint, { method: "DELETE", body: JSON.stringify({ guid }) });
         if (deleteResult.ok) dispatch("deleted", { toRemoveIndex: index });
     };
 
     const updateFileDisplayName = async (guid = "") => {
-        const updateResult = await fetch(updateEndpoint, { method: "PUT", body: JSON.stringify({ guid, displayName: "New name" }) });
+        const updateResult = await fetch(updateFileNameEndpoint, {
+            method: "PUT",
+            body: JSON.stringify({ guid, displayName: "New name" })
+        });
         if (updateResult.ok) dispatch("updated", { updatedIndex: index });
     };
 
