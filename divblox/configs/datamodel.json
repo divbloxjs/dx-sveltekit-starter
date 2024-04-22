@@ -1,125 +1,125 @@
 {
-	"fileUpload": {
-		"module": "main",
-		"indexes": [
-			{
-				"type": "HASH",
-				"attribute": "object_key",
-				"indexName": "file_upload_object_key",
-				"indexChoice": "unique"
-			}
-		],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": false
-		},
-		"attributes": {
-			"type": {
-				"type": "enum",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": "'Profile Picture'"
-			},
-			"mimeType": {
-				"type": "varchar",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": 50
-			},
-			"sizeType": {
-				"type": "enum",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": "'original','web','thumbnail'"
-			},
-			"objectKey": {
-				"type": "varchar",
-				"default": "",
-				"allowNull": false,
-				"lengthOrValues": 500
-			},
-			"bucketName": {
-				"type": "varchar",
-				"default": "",
-				"allowNull": false,
-				"lengthOrValues": 50
-			},
-			"displayName": {
-				"type": "varchar",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": 500
-			},
-			"sizeInBytes": {
-				"type": "int",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"finalFileUrl": {
-				"type": "varchar",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": 1000
-			},
-			"linkedEntity": {
-				"type": "varchar",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": 100
-			},
-			"linkedEntityId": {
-				"type": "bigint",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": 20
-			},
-			"uploadedFileExtension": {
-				"type": "varchar",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": 50
-			}
-		},
-		"relationships": {},
-		"dataModellerCoordinates": {
-			"x": 0,
-			"y": 0
-		}
-	},
-	"userAccount": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"lastName": {
-				"type": "VARCHAR",
-				"allowNull": true,
-				"lengthOrValues": "150"
-			},
-			"password": {
-				"type": "VARCHAR",
-				"allowNull": true,
-				"lengthOrValues": "50"
-			},
-			"firstName": {
-				"type": "VARCHAR",
-				"allowNull": true,
-				"lengthOrValues": "100"
-			},
-			"emailAddress": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "250"
-			}
-		},
-		"relationships": {},
-		"dataModellerCoordinates": {
-			"x": 846.5762079214761,
-			"y": 205.17066427040865
-		}
-	}
+    "fileUpload": {
+        "module": "main",
+        "indexes": [
+            {
+                "type": "HASH",
+                "attribute": "objectKey",
+                "indexName": "file_upload_object_key",
+                "indexChoice": "unique"
+            }
+        ],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": false
+        },
+        "attributes": {
+            "type": {
+                "type": "ENUM",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": "'Profile Picture'"
+            },
+            "mimeType": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "50"
+            },
+            "sizeType": {
+                "type": "ENUM",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": "'original','web','thumbnail'"
+            },
+            "objectKey": {
+                "type": "varchar",
+                "default": "",
+                "allowNull": false,
+                "lengthOrValues": "500"
+            },
+            "bucketName": {
+                "type": "VARCHAR",
+                "default": "",
+                "allowNull": false,
+                "lengthOrValues": "50"
+            },
+            "displayName": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": "500"
+            },
+            "sizeInBytes": {
+                "type": "INT",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "finalFileUrl": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": "1000"
+            },
+            "linkedEntity": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "100"
+            },
+            "linkedEntityId": {
+                "type": "BIGINT",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "20"
+            },
+            "uploadedFileExtension": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "50"
+            }
+        },
+        "relationships": {},
+        "dataModellerCoordinates": {
+            "x": 698.0725522775323,
+            "y": 206.0730781631088
+        }
+    },
+    "userAccount": {
+        "module": "main",
+        "indexes": [],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "lastName": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "password": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "50"
+            },
+            "firstName": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "100"
+            },
+            "emailAddress": {
+                "type": "VARCHAR",
+                "allowNull": false,
+                "lengthOrValues": "250"
+            }
+        },
+        "relationships": {},
+        "dataModellerCoordinates": {
+            "x": 274.72341601884955,
+            "y": 189.71518340817553
+        }
+    }
 }
