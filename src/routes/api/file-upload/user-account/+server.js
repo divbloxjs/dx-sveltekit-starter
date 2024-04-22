@@ -5,12 +5,15 @@ import { S3Controller } from "$lib/server/s3.helpers";
 import { prisma } from "$lib/server/prisma-instance";
 import { getGuid } from "$lib/server/helpers";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
+import { sleep } from "dx-utilities";
 
 const LINKED_ENTITY = "userAccount";
 const UPLOAD_TYPE = "Profile_Picture";
 const SIZE_TYPE = "original";
 
 export async function POST({ request, url }) {
+    // TODO Auth on who you are and what files you can update
+
     const linkedEntityId = url.searchParams.get("id");
 
     const s3 = new S3Controller();
@@ -19,7 +22,8 @@ export async function POST({ request, url }) {
 
     if (files.length === 0) {
         return json({
-            success: true
+            success: true,
+            files: []
         });
     }
 
@@ -65,6 +69,8 @@ export async function POST({ request, url }) {
 }
 
 export async function GET({ request, url }) {
+    // TODO Auth on who you are and what files you can update
+
     const linkedEntityId = url.searchParams.get("id");
 
     const fileUploads = await prisma.fileUpload.findMany({ where: { linkedEntity: LINKED_ENTITY, linkedEntityId } });
@@ -87,6 +93,8 @@ export async function GET({ request, url }) {
 }
 
 export async function DELETE({ request }) {
+    // TODO Auth on who you are and what files you can update
+
     const body = await request.json();
     try {
         const fileUpload = await prisma.fileUpload.findFirstOrThrow({ where: { objectKey: body.guid } });
