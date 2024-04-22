@@ -46,6 +46,7 @@
                     files;
                     return false;
                 }
+
                 if (file.size > maxSize) maxSize = file.size;
             }
 

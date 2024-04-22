@@ -22,7 +22,7 @@ model fileUpload {
   sizeType              fileUpload_sizeType
   finalFileUrl          String              @db.VarChar(1000)
   bucketName            String              @db.VarChar(50)
-  objectKey             String              @db.VarChar(500)
+  objectKey             String              @unique(map: "file_upload_object_key") @db.VarChar(500)
   linkedEntity          String?             @db.VarChar(100)
   linkedEntityId        BigInt?
   displayName           String              @db.VarChar(500)

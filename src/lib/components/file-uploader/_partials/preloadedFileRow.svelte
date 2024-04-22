@@ -10,12 +10,18 @@
     export let index;
     export let disable;
     export let deleteEndpoint = "api/file-upload/user-account";
+    export let updateEndpoint = "api/file-upload";
 
     const dispatch = createEventDispatcher();
 
     const removeFile = async (guid = "") => {
         const deleteResult = await fetch(deleteEndpoint, { method: "DELETE", body: JSON.stringify({ guid }) });
         if (deleteResult.ok) dispatch("deleted", { toRemoveIndex: index });
+    };
+
+    const updateFileDisplayName = async (guid = "") => {
+        const updateResult = await fetch(updateEndpoint, { method: "PUT", body: JSON.stringify({ guid, displayName: "New name" }) });
+        if (updateResult.ok) dispatch("updated", { updatedIndex: index });
     };
 
     let humanReadableSize = "";
@@ -31,7 +37,9 @@
               : `${Math.floor((sizeInKb / 10) * 10)} kb`;
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
+    on:dragstart|preventDefault|stopPropagation={() => {}}
     class="mt-1 flex w-full justify-between overflow-hidden rounded-xl bg-gray-200"
     transition:slide={{ delay: 250, duration: 300, easing: quintOut, axis: "y" }}
 >
@@ -39,7 +47,7 @@
         <MimeType file={preloadedFiles[index]}></MimeType>
     </div>
     <span class="items-left flex min-w-0 grow flex-col justify-center bg-green-200 px-2">
-        <a href={preloadedFiles[index].url} on:dragstart|preventDefault|stopPropagation={() => {}} target="_blank" class="truncate">
+        <a href={preloadedFiles[index].url} target="_blank" class="truncate">
             {preloadedFiles[index].displayName}
         </a>
         <a href={preloadedFiles[index].url} target="_blank" class="truncate text-xs italic">{humanReadableSize} </a>
@@ -48,7 +56,7 @@
         <Button
             class="bg-tranparent hover:slate-800 border border-slate-600 text-slate-600 hover:text-white"
             size="inline-icon"
-            on:click={() => removeFile(preloadedFiles[index].guid)}
+            on:click={() => updateFileDisplayName(preloadedFiles[index].guid)}
         >
             <Pencil class="h-4 w-4" />
         </Button>

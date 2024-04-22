@@ -1,7 +1,14 @@
 {
 	"fileUpload": {
 		"module": "main",
-		"indexes": [],
+		"indexes": [
+			{
+				"type": "HASH",
+				"attribute": "object_key",
+				"indexName": "file_upload_object_key",
+				"indexChoice": "unique"
+			}
+		],
 		"options": {
 			"isAuditEnabled": true,
 			"enforceLockingConstraints": false
