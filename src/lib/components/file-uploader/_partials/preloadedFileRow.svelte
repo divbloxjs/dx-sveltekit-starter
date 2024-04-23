@@ -20,6 +20,7 @@
     };
 
     const updateFileDisplayName = async (guid = "") => {
+        // TODO comment about editing actual file
         const updateResult = await fetch(updateFileNameEndpoint, {
             method: "PUT",
             body: JSON.stringify({ guid, displayName: "New name" })
@@ -44,12 +45,11 @@
 <div
     on:dragstart|preventDefault|stopPropagation={() => {}}
     class="mt-1 flex w-full justify-between overflow-hidden rounded-xl bg-gray-200"
-    transition:slide={{ delay: 250, duration: 300, easing: quintOut, axis: "y" }}
->
-    <div class="flex h-12 w-12 min-w-12 overflow-hidden rounded-xl">
+    transition:slide={{ delay: 250, duration: 300, easing: quintOut, axis: "y" }}>
+    <div class="flex h-12 w-12 min-w-12 overflow-hidden">
         <MimeType file={preloadedFiles[index]}></MimeType>
     </div>
-    <span class="items-left flex min-w-0 grow flex-col justify-center bg-green-200 px-2">
+    <span class="items-left flex min-w-0 grow flex-col justify-center px-2">
         <a href={preloadedFiles[index].url} target="_blank" class="truncate">
             {preloadedFiles[index].displayName}
         </a>
@@ -57,13 +57,16 @@
     </span>
     <span class="flex flex-nowrap items-center gap-1 px-2">
         <Button
-            class="bg-tranparent hover:slate-800 border border-slate-600 text-slate-600 hover:text-white"
+            class=" bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600 hover:text-white"
             size="inline-icon"
-            on:click={() => updateFileDisplayName(preloadedFiles[index].guid)}
-        >
+            on:click={() => updateFileDisplayName(preloadedFiles[index].guid)}>
             <Pencil class="h-4 w-4" />
         </Button>
-        <Button variant="destructive-outline" size="inline-icon" on:click={() => removeFile(preloadedFiles[index].guid)}>
+        <Button
+            class="border-none"
+            variant="destructive-outline"
+            size="inline-icon"
+            on:click={() => removeFile(preloadedFiles[index].guid)}>
             <X class="h-4 w-4" />
         </Button>
     </span>

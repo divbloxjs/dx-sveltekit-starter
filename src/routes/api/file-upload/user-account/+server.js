@@ -11,11 +11,14 @@ const LINKED_ENTITY = "userAccount";
 const UPLOAD_TYPE = "Profile_Picture";
 const SIZE_TYPE = "original";
 
+// TODO COMMENT
+// const UPLOAD_AS_PUBLIC = false;
+
 export async function POST({ request, url }) {
     // TODO Auth on who you are and what files you can update
-
     const linkedEntityId = url.searchParams.get("id");
 
+    // return fail(400);
     const s3 = new S3Controller();
     const formData = Object.fromEntries(await request.formData());
     const files = Object.values(formData);
