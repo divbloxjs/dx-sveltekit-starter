@@ -24,5 +24,73 @@
 			"placeholder": "emailAddress",
 			"default": ""
 		}
+	},
+	"fileUpload": {
+		"type": {
+			"type": "select",
+			"displayName": "type",
+			"placeholder": "type",
+			"default": ""
+		},
+		"mimeType": {
+			"type": "text",
+			"displayName": "mimeType",
+			"placeholder": "mimeType",
+			"default": ""
+		},
+		"sizeType": {
+			"type": "select",
+			"displayName": "sizeType",
+			"placeholder": "sizeType",
+			"default": ""
+		},
+		"objectKey": {
+			"type": "text",
+			"displayName": "objectKey",
+			"placeholder": "objectKey",
+			"default": ""
+		},
+		"bucketName": {
+			"type": "text",
+			"displayName": "bucketName",
+			"placeholder": "bucketName",
+			"default": ""
+		},
+		"displayName": {
+			"type": "text",
+			"displayName": "displayName",
+			"placeholder": "displayName",
+			"default": ""
+		},
+		"sizeInBytes": {
+			"type": "number",
+			"displayName": "sizeInBytes",
+			"placeholder": "sizeInBytes",
+			"default": ""
+		},
+		"finalFileUrl": {
+			"type": "text",
+			"displayName": "finalFileUrl",
+			"placeholder": "finalFileUrl",
+			"default": ""
+		},
+		"linkedEntity": {
+			"type": "text",
+			"displayName": "linkedEntity",
+			"placeholder": "linkedEntity",
+			"default": ""
+		},
+		"linkedEntityId": {
+			"type": "number",
+			"displayName": "linkedEntityId",
+			"placeholder": "linkedEntityId",
+			"default": ""
+		},
+		"uploadedFileExtension": {
+			"type": "text",
+			"displayName": "uploadedFileExtension",
+			"placeholder": "uploadedFileExtension",
+			"default": ""
+		}
 	}
 }
