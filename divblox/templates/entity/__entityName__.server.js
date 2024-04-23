@@ -9,8 +9,8 @@ const RELATIONSHIP_LOAD_LIMIT = 50;
 const searchConfig = {
     attributes: ["__entityName__Name"],
     relationships: {
-        parent__entityNamePascalCase__: { attributes: ["__entityName__Name"] },
-    },
+        parent__entityNamePascalCase__: { attributes: ["__entityName__Name"] }
+    }
 };
 
 export const load__entityNamePascalCase__Array = async (constraints = {}) => {
@@ -20,7 +20,7 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
     const __entityName__Array = await prisma.__entityName__.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
-        ...prismaConditions,
+        ...prismaConditions
     });
 
     try {
@@ -33,8 +33,6 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
 };
 
 export const create__entityNamePascalCase__ = async (data) => {
-    data.isDefault = parseInt(data.isDefault);
-
     try {
         await prisma.__entityName__.create({ data });
         return true;
@@ -57,12 +55,10 @@ export const update__entityNamePascalCase__ = async (data) => {
         }
     });
 
-    data.isDefault = parseInt(data.isDefault);
-
     try {
         const result = await prisma.__entityName__.update({
             data,
-            where: { id: data.id },
+            where: { id: data.id }
         });
         return true;
     } catch (err) {
@@ -83,7 +79,7 @@ export const delete__entityNamePascalCase__ = async (id = -1) => {
 
 export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions = true) => {
     const __entityName__ = await prisma.__entityName__.findUnique({
-        where: { id: id },
+        where: { id: id }
     });
 
     __entityName__.id = getIntId(__entityName__.id);

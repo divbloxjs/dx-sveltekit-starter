@@ -46,7 +46,7 @@ export const getPrismaConditions = (entityName = "", searchConfig = {}, constrai
             prismaConditions.where.OR.push({ [attributeName]: { contains: constraints.search } });
         });
 
-        Object.keys(searchConfig.relationships).forEach((entityName) => {
+        Object.keys(searchConfig.relationships ?? []).forEach((entityName) => {
             if (!prismaConditions.where.OR) prismaConditions.where.OR = [];
             const relationshipConstraint = { [entityName]: {} };
             searchConfig.relationships[entityName].attributes.forEach((attributeName) => {
@@ -71,7 +71,6 @@ const convertFilterClauseToPrismaClause = (filterConstraint = {}, prismaFilterCo
 
         const depth = getObjectDepth(filterConstraint[filterValue]);
         if (depth > 1) {
-            console.log("DEPTH 1");
             // Nested relationship
             convertFilterClauseToPrismaClause(filterConstraint[filterValue], prismaFilterConditions[filterValue], filterValue);
             return;

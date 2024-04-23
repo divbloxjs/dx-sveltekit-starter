@@ -62,7 +62,13 @@ const config = {
                 sans: [...fontFamily.sans]
             }
         }
-    }
+    },
+    plugins: [
+        function ({ addVariant }) {
+            addVariant("child", "& > *");
+            addVariant("child-hover", "& > *:hover");
+        }
+    ]
 };
 
 export default config;
