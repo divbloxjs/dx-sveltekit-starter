@@ -32,7 +32,6 @@
 	};
 </script>
 
-<a href="/userAccount/overview">back</a>
 <form method="POST" action="/userAccount/new?/create" use:enhance class="flex max-w-sm flex-col">
     	<Label for="lastName">lastName</Label>
 	<InputText bind:value={formValues.lastName} attributeName="lastName" name="lastName" />

@@ -14,7 +14,6 @@
     __formValues__;
 </script>
 
-<a href="/__entityName__/overview">back</a>
 <form method="POST" action="/userAccount/new?/create" use:enhance class="flex max-w-sm flex-col">
     __formValueComponents__
     <div class="mt-2 flex flex-row justify-between">

@@ -18,7 +18,6 @@
     __formValues__;
 </script>
 
-<a href="/__entityName__/overview">back</a>
 <form method="POST" action="/__entityName__/{formValues.id}?/update" use:enhance class="max-w-sm">
     __formValueComponents__
 

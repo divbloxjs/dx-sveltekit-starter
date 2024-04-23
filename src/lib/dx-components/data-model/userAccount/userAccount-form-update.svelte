@@ -36,7 +36,6 @@
 	};
 </script>
 
-<a href="/userAccount/overview">back</a>
 <form method="POST" action="/userAccount/{formValues.id}?/update" use:enhance class="max-w-sm">
     	<Label for="lastName">lastName</Label>
 	<InputText bind:value={formValues.lastName} attributeName="lastName" name="lastName" />
