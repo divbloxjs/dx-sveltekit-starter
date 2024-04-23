@@ -1,0 +1,22 @@
+{
+	"lastName": {
+		"displayName": "lastName",
+		"type": "text",
+		"column": 1
+	},
+	"password": {
+		"displayName": "password",
+		"type": "text",
+		"column": 2
+	},
+	"firstName": {
+		"displayName": "firstName",
+		"type": "text",
+		"column": 3
+	},
+	"emailAddress": {
+		"displayName": "emailAddress",
+		"type": "text",
+		"column": 4
+	}
+}

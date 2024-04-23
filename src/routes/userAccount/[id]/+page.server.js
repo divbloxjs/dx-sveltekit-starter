@@ -1,4 +1,4 @@
-import { getIntId, getRefererFromRequest } from "$lib/dx-components/data-model/_helpers/helpers";
+import { getIntId, getRefererFromRequest, getRequestBody } from "$lib/dx-components/data-model/_helpers/helpers";
 import { getRequestBody } from "$lib/dx-components/data-model/_helpers/helpers.server";
 import { fail, redirect } from "@sveltejs/kit";
 
@@ -6,7 +6,7 @@ import {
     createUserAccount,
     deleteUserAccount,
     loadUserAccount,
-    updateUserAccount
+    updateUserAccount,
 } from "$lib/dx-components/data-model/userAccount/userAccount.server";
 
 let redirectPath = "/userAccount/overview";
@@ -50,5 +50,5 @@ export const actions = {
         if (!result) return fail(400, requestBody);
 
         redirect(302, redirectPath);
-    }
+    },
 };

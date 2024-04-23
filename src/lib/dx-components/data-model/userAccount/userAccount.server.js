@@ -7,34 +7,34 @@ import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/p
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
 const searchConfig = {
-    attributes: ["__allAttributesString__"]
+    attributes: ["lastName", "password", "firstName", "emailAddress"]
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
 };
 
-export const load__entityNamePascalCase__Array = async (constraints = {}) => {
-    const selectClause = getPrismaSelectAllFromEntity("__entityName__");
-    const prismaConditions = getPrismaConditions("__entityName__", searchConfig, constraints);
+export const loadUserAccountArray = async (constraints = {}) => {
+    const selectClause = getPrismaSelectAllFromEntity("userAccount");
+    const prismaConditions = getPrismaConditions("userAccount", searchConfig, constraints);
 
-    const __entityName__Array = await prisma.__entityName__.findMany({
+    const userAccountArray = await prisma.userAccount.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
         ...prismaConditions
     });
 
     try {
-        normalizeDatabaseArray(__entityName__Array);
+        normalizeDatabaseArray(userAccountArray);
     } catch (err) {
         console.error(err);
     }
 
-    return { __entityName__Array };
+    return { userAccountArray };
 };
 
-export const create__entityNamePascalCase__ = async (data) => {
+export const createUserAccount = async (data) => {
     try {
-        await prisma.__entityName__.create({ data });
+        await prisma.userAccount.create({ data });
         return true;
     } catch (err) {
         console.error(err);
@@ -42,8 +42,8 @@ export const create__entityNamePascalCase__ = async (data) => {
     }
 };
 
-export const update__entityNamePascalCase__ = async (data) => {
-    const relationships = getRelatedEntities("__entityName__");
+export const updateUserAccount = async (data) => {
+    const relationships = getRelatedEntities("userAccount");
 
     Object.values(relationships).forEach((relationshipName) => {
         if (data.hasOwnProperty(relationshipName)) {
@@ -56,7 +56,7 @@ export const update__entityNamePascalCase__ = async (data) => {
     });
 
     try {
-        const result = await prisma.__entityName__.update({
+        const result = await prisma.userAccount.update({
             data,
             where: { id: data.id }
         });
@@ -67,9 +67,9 @@ export const update__entityNamePascalCase__ = async (data) => {
     }
 };
 
-export const delete__entityNamePascalCase__ = async (id = -1) => {
+export const deleteUserAccount = async (id = -1) => {
     try {
-        await prisma.__entityName__.delete({ where: { id } });
+        await prisma.userAccount.delete({ where: { id } });
         return true;
     } catch (err) {
         console.error(err);
@@ -77,32 +77,32 @@ export const delete__entityNamePascalCase__ = async (id = -1) => {
     }
 };
 
-export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions = true) => {
-    const __entityName__ = await prisma.__entityName__.findUnique({
+export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
+    const userAccount = await prisma.userAccount.findUnique({
         where: { id: id }
     });
 
-    __entityName__.id = getIntId(__entityName__.id);
-    Object.keys(getRelatedEntities("__entityName__")).forEach((relationshipName) => {
-        __entityName__[relationshipName] = getIntId(__entityName__[relationshipName]);
+    userAccount.id = getIntId(userAccount.id);
+    Object.keys(getRelatedEntities("userAccount")).forEach((relationshipName) => {
+        userAccount[relationshipName] = getIntId(userAccount[relationshipName]);
     });
 
-    const returnObject = { __entityName__ };
+    const returnObject = { userAccount };
     if (!relationshipOptions) return returnObject;
 
-    __relatedEntityOptionAssignment__;
+    ;
 
-    if (getEntitiesRelatedTo("__entityName__").length === 0) return returnObject;
+    if (getEntitiesRelatedTo("userAccount").length === 0) return returnObject;
 
     returnObject.associatedEntities = {};
-    __associatedEntityAssignment__;
+    ;
 
     return returnObject;
 };
 
 //#region RelatedEntity / AssociatedEntity Helpers
 
-__getRelatedEntityOptionsFunctionDeclarations__;
-__getAssociatedEntityArrayFunctionDeclarations__;
+;
+;
 
 //#endregion RelatedEntity / AssociatedEntity Helpers

@@ -7,9 +7,8 @@ import { parse } from "qs";
 /** @type {import('./$types').PageServerLoad} */
 export const load = async ({ url, params }) => {
     const urlSearchParams = parse(url.search, { ignoreQueryPrefix: true });
-    const constraints = {};
 
-    console.log(urlSearchParams);
+    const constraints = {};
 
     if (urlSearchParams.hasOwnProperty("search")) {
         constraints.search = urlSearchParams.search;
@@ -31,6 +30,5 @@ export const load = async ({ url, params }) => {
         constraints.filter = urlSearchParams.filter;
     }
 
-    console.log("constraints", constraints);
     return await loadUserAccountArray(constraints);
 };
