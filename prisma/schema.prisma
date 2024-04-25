@@ -7,6 +7,93 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model customer {
+  id             BigInt        @id @default(autoincrement())
+  customerName   String        @db.VarChar(250)
+  emailAddress   String        @db.VarChar(250)
+  contactNumber  String        @db.VarChar(10)
+  lastUpdated    DateTime      @default(now()) @db.DateTime(0)
+  organisationId BigInt?
+  organisation   organisation? @relation(fields: [organisationId], references: [id], map: "6f2ac032222594066028acd11b61ce3c")
+
+  @@index([organisationId], map: "6f2ac032222594066028acd11b61ce3c")
+}
+
+model organisation {
+  id                   BigInt              @id @default(autoincrement())
+  effort               String              @db.VarChar(23)
+  description          String?             @db.VarChar(25)
+  isDefault            Int?                @default(0) @db.TinyInt
+  organisationName     String?             @db.VarChar(25)
+  lastUpdated          DateTime            @default(now()) @db.DateTime(0)
+  placeId              BigInt?
+  parentOrganisationId BigInt?
+  customer             customer[]
+  parentOrganisation   parentOrganisation? @relation(fields: [parentOrganisationId], references: [id], map: "06a959c631dce7b13a219ca3629bc830")
+  place                place?              @relation(fields: [placeId], references: [id], map: "7b8f21bf7d92c4c804eff7dca0a1f8b7")
+
+  @@index([organisationName], map: "exampleEntityTwo_exampleTwoBigInt")
+  @@index([parentOrganisationId], map: "06a959c631dce7b13a219ca3629bc830")
+  @@index([placeId], map: "7b8f21bf7d92c4c804eff7dca0a1f8b7")
+}
+
+model place {
+  id            BigInt         @id @default(autoincrement())
+  placeName     String?        @db.VarChar(15)
+  lastUpdated   DateTime       @default(now()) @db.DateTime(0)
+  parentPlaceId BigInt?
+  organisation  organisation[]
+  parentPlace   parentPlace?   @relation(fields: [parentPlaceId], references: [id], map: "1cedcfcb2a4149f671010ad8c53f3e4a")
+
+  @@index([parentPlaceId], map: "1cedcfcb2a4149f671010ad8c53f3e4a")
+}
+
+model fileUpload {
+  id                    BigInt              @id @default(autoincrement())
+  type                  fileUpload_type
+  mimeType              String?             @db.VarChar(50)
+  sizeType              fileUpload_sizeType
+  objectKey             String              @unique(map: "file_upload_object_key") @db.VarChar(500)
+  bucketName            String              @db.VarChar(50)
+  displayName           String              @db.VarChar(500)
+  sizeInBytes           Int
+  finalFileUrl          String              @db.VarChar(1000)
+  linkedEntity          String?             @db.VarChar(100)
+  linkedEntityId        BigInt?
+  uploadedFileExtension String?             @db.VarChar(50)
+}
+
+model grandParentOrganisation {
+  id                 BigInt               @id @default(autoincrement())
+  effort             String               @db.Text
+  isDefault          Int?                 @default(0) @db.TinyInt
+  description        String?              @db.MediumText
+  organisationName   String?              @db.LongText
+  lastUpdated        DateTime             @default(now()) @db.DateTime(0)
+  parentOrganisation parentOrganisation[]
+}
+
+model parentOrganisation {
+  id                        BigInt                   @id @default(autoincrement())
+  effort                    Float
+  isDefault                 Int?                     @default(0) @db.TinyInt
+  description               String?                  @db.LongText
+  organisationName          String?                  @db.Text
+  lastUpdated               DateTime                 @default(now()) @db.DateTime(0)
+  grandParentOrganisationId BigInt?
+  organisation              organisation[]
+  grandParentOrganisation   grandParentOrganisation? @relation(fields: [grandParentOrganisationId], references: [id], map: "2dfd2df8efa5e9e16388ba299ce8f556")
+
+  @@index([grandParentOrganisationId], map: "2dfd2df8efa5e9e16388ba299ce8f556")
+}
+
+model parentPlace {
+  id          BigInt   @id @default(autoincrement())
+  placeName   String?  @db.VarChar(250)
+  lastUpdated DateTime @default(now()) @db.DateTime(0)
+  place       place[]
+}
+
 model userAccount {
   id           BigInt   @id @default(autoincrement())
   lastName     String?  @db.VarChar(150)
@@ -14,21 +101,6 @@ model userAccount {
   firstName    String?  @db.VarChar(100)
   emailAddress String   @db.VarChar(250)
   lastUpdated  DateTime @default(now()) @db.DateTime(0)
-}
-
-model fileUpload {
-  id                    BigInt              @id @default(autoincrement())
-  type                  fileUpload_type
-  sizeType              fileUpload_sizeType
-  finalFileUrl          String              @db.VarChar(1000)
-  bucketName            String              @db.VarChar(50)
-  objectKey             String              @unique(map: "file_upload_object_key") @db.VarChar(500)
-  linkedEntity          String?             @db.VarChar(100)
-  linkedEntityId        BigInt?
-  displayName           String              @db.VarChar(500)
-  mimeType              String?             @db.VarChar(50)
-  uploadedFileExtension String?             @db.VarChar(50)
-  sizeInBytes           Int
 }
 
 enum fileUpload_type {

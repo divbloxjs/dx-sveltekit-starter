@@ -3,14 +3,22 @@
     import { Pencil, X } from "lucide-svelte";
     import MimeType from "./mimeType.svelte";
     import { slide } from "svelte/transition";
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { quintOut } from "svelte/easing";
+    import { sleep } from "dx-utilities";
 
     export let preloadedFiles;
     export let index;
     export let disable;
     export let deleteFileEndpoint;
     export let updateFileNameEndpoint;
+
+    let isNew = true;
+
+    onMount(async () => {
+        await sleep(1000);
+        isNew = false;
+    });
 
     const dispatch = createEventDispatcher();
 
@@ -44,12 +52,12 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
     on:dragstart|preventDefault|stopPropagation={() => {}}
-    class="mt-1 flex w-full justify-between overflow-hidden rounded-xl bg-gray-200"
+    class="mt-1 flex w-full min-w-0 justify-between overflow-hidden rounded-xl bg-gray-200"
     transition:slide={{ delay: 250, duration: 300, easing: quintOut, axis: "y" }}>
     <div class="flex h-12 w-12 min-w-12 overflow-hidden">
         <MimeType file={preloadedFiles[index]}></MimeType>
     </div>
-    <span class="items-left flex min-w-0 grow flex-col justify-center px-2">
+    <span class="items-left flex min-w-0 grow flex-col justify-center px-2 transition-colors duration-1000" class:bg-green-200={isNew}>
         <a href={preloadedFiles[index].url} target="_blank" class="truncate">
             {preloadedFiles[index].displayName}
         </a>

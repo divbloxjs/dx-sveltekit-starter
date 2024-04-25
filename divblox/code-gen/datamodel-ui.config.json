@@ -92,5 +92,119 @@
 			"placeholder": "uploadedFileExtension",
 			"default": ""
 		}
+	},
+	"place": {
+		"placeName": {
+			"type": "text",
+			"displayName": "placeName",
+			"placeholder": "placeName",
+			"default": ""
+		}
+	},
+	"customer": {
+		"customerName": {
+			"type": "text",
+			"displayName": "customerName",
+			"placeholder": "customerName",
+			"default": ""
+		},
+		"emailAddress": {
+			"type": "text",
+			"displayName": "emailAddress",
+			"placeholder": "emailAddress",
+			"default": ""
+		},
+		"contactNumber": {
+			"type": "text",
+			"displayName": "contactNumber",
+			"placeholder": "contactNumber",
+			"default": ""
+		}
+	},
+	"parentPlace": {
+		"placeName": {
+			"type": "text",
+			"displayName": "placeName",
+			"placeholder": "placeName",
+			"default": ""
+		}
+	},
+	"organisation": {
+		"effort": {
+			"type": "text",
+			"displayName": "effort",
+			"placeholder": "effort",
+			"default": ""
+		},
+		"isDefault": {
+			"type": "checkbox",
+			"displayName": "isDefault",
+			"placeholder": "isDefault",
+			"default": ""
+		},
+		"description": {
+			"type": "text",
+			"displayName": "description",
+			"placeholder": "description",
+			"default": ""
+		},
+		"organisationName": {
+			"type": "text",
+			"displayName": "organisationName",
+			"placeholder": "organisationName",
+			"default": ""
+		}
+	},
+	"parentOrganisation": {
+		"effort": {
+			"type": "number",
+			"displayName": "effort",
+			"placeholder": "effort",
+			"default": ""
+		},
+		"isDefault": {
+			"type": "checkbox",
+			"displayName": "isDefault",
+			"placeholder": "isDefault",
+			"default": ""
+		},
+		"description": {
+			"type": "textarea",
+			"displayName": "description",
+			"placeholder": "description",
+			"default": ""
+		},
+		"organisationName": {
+			"type": "textarea",
+			"displayName": "organisationName",
+			"placeholder": "organisationName",
+			"default": ""
+		}
+	},
+	"grandParentOrganisation": {
+		"effort": {
+			"type": "textarea",
+			"displayName": "effort",
+			"placeholder": "effort",
+			"default": ""
+		},
+		"isDefault": {
+			"type": "checkbox",
+			"displayName": "isDefault",
+			"placeholder": "isDefault",
+			"default": ""
+		},
+		"description": {
+			"type": "textarea",
+			"displayName": "description",
+			"placeholder": "description",
+			"default": ""
+		},
+		"organisationName": {
+			"type": "textarea",
+			"displayName": "organisationName",
+			"placeholder": "organisationName",
+			"default": ""
+		}
 	}
 }

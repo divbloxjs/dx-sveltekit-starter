@@ -1,6 +1,4 @@
 <script>
-    import PreloadedFileRow from "$lib/components/file-uploader/_partials/preloadedFileRow.svelte";
-    import UploadingFile from "$lib/components/file-uploader/_partials/uploadingFile.svelte";
     import Uploader from "$lib/components/file-uploader/uploader.svelte";
 </script>
 

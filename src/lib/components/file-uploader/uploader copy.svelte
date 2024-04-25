@@ -4,10 +4,10 @@
 
     import InputFile from "../ui/input-file/input-file.svelte";
     import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
+    import UploadingFile from "./_partials/uploadingFile.svelte";
     import Button from "../ui/button/button.svelte";
-    import { LoaderCircle } from "lucide-svelte";
 
-    export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024 * 1024;
+    export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
 
     export let getFilesEndpoint: string;
@@ -109,32 +109,52 @@
     };
 
     //#region Request Handlers
+    let progressArray = [];
     let percentComplete = 0;
     const updateProgress = (event) => {
-        console.log("event", event);
-        console.log("updateProgress", percentComplete);
+        console.log("updateProgress", JSON.stringify(progressArray));
 
         if (event.lengthComputable) {
             percentComplete = (event.loaded / event.total) * 100;
-            percentComplete = Math.round(Math.min(percentComplete, 100));
+            // …
+        } else {
+            // Unable to compute progress information since the total size is unknown
+        }
+
+        let innerComplete = percentComplete;
+
+        for (let i = 0; i < files.length; i++) {
+            progressArray[i] = 0;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const uploadNumber = i + 1;
+            if (i === 0) {
+                progressArray[i] = Math.round(Math.min(percentComplete * files.length, 100));
+                continue;
+            }
+
+            if (percentComplete > (100 * i) / files.length) {
+                innerComplete = (percentComplete - (i / files.length) * 100) * uploadNumber;
+
+                progressArray[i] = Math.round(Math.min(innerComplete * (files.length - i), 100));
+            }
         }
     };
 
     const transferComplete = (evt) => {
-        console.log("COMPLETE");
-
         isTransferComplete = true;
         uploadingFiles = false;
     };
 
     const transferFailed = (evt) => {
-        console.error("An error occurred while transferring the file");
         uploadingFiles = false;
+        console.log("An error occurred while transferring the file.");
     };
 
     const transferCanceled = (evt) => {
-        console.log("The transfer has been canceled by the user");
         uploadingFiles = false;
+        console.log("The transfer has been canceled by the user.");
     };
     //#endregion
 
@@ -148,7 +168,6 @@
     const handleDrop = (e) => {
         isDraggingOver = false;
         if (uploadingFiles) return;
-
         let newDataTransfer = e.dataTransfer;
         let droppedFiles = newDataTransfer.files;
 
@@ -211,29 +230,7 @@
                     class="absolute flex flex-col items-center justify-center self-center pt-5 text-center text-2xl"
                     in:fade={{ delay: 100, duration: 150 }}
                     out:fade={{ delay: 0, duration: 150 }}>
-                    <div class="flex w-full flex-col items-center">
-                        {#if !isTransferComplete && percentComplete === 100}
-                            <LoaderCircle class="mr-2 h-8 w-8 animate-spin" /> Processing...
-                        {:else}
-                            <span class="text-nowrap">
-                                Uploading
-                                {#if files?.length === 1}
-                                    file
-                                {:else}
-                                    files
-                                {/if}
-                                ...
-                            </span>
-
-                            <span class="mt-2 flex items-center text-base">
-                                <span class="text-nowrap">{percentComplete ?? 0} %</span>
-                                <progress
-                                    max="100"
-                                    value={percentComplete ?? 0}
-                                    class="h-2 flex-grow pl-2 [&::-moz-progress-bar]:bg-violet-400 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:rounded [&::-webkit-progress-value]:bg-violet-400" />
-                            </span>
-                        {/if}
-                    </div>
+                    Uploading...
                 </span>
             {/if}
             <span class="mx-auto text-xl opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver && !uploadingFiles}>
@@ -254,8 +251,9 @@
             </div>
         </div>
 
-        <div class="w-full p-2 text-sm transition-all">
+        <div class="w-full p-2 text-sm transition-all" on:click|stopPropagation={() => {}}>
             {#each preloadedFiles ?? [] as _, index}
+                <!-- <slot {preloadedFiles} disable={uploadingFiles} {index}>No row...</slot> -->
                 <PreloadedFileRow
                     {deleteFileEndpoint}
                     {updateFileNameEndpoint}
@@ -266,6 +264,11 @@
                         preloadedFiles = preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex);
                     }}>
                 </PreloadedFileRow>
+            {/each}
+
+            {#each files ?? [] as file, uploadingIndex}
+                <!-- <slot {file} {isTransferComplete} progress={progressArray[uploadingIndex]} /> -->
+                <UploadingFile {file} {isTransferComplete} progress={progressArray[uploadingIndex]}></UploadingFile>
             {/each}
         </div>
     </div>
