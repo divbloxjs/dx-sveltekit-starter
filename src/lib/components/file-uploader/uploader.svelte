@@ -10,7 +10,7 @@
     export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024 * 1024;
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
 
-    export let getFilesEndpoint: string;
+    export let getFilesEndpoint: string | undefined;
     export let postFilesEndpoint: string;
     export let deleteFileEndpoint: string;
     export let updateFileNameEndpoint: string;
@@ -74,8 +74,10 @@
     let uploadingFiles = false;
 
     const uploadNewFiles = async (filesToUpload = []) => {
+        hasTransferFailed = false;
         isTransferComplete = false;
         uploadingFiles = true;
+
         if (filesToUpload.length === 0) {
             inputFileEl.click();
             return;
@@ -88,15 +90,6 @@
             const guid = crypto.randomUUID();
             formData.append(guid, filesToUpload[i]);
         }
-
-        currentXHR.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                const newFiles = JSON.parse(this.response).files;
-                preloadedFiles.push(...newFiles);
-                preloadedFiles = preloadedFiles;
-                removeInputFiles();
-            }
-        };
 
         currentXHR.upload.addEventListener("progress", updateProgress);
         currentXHR.addEventListener("load", transferComplete);
@@ -111,9 +104,6 @@
     //#region Request Handlers
     let percentComplete = 0;
     const updateProgress = (event) => {
-        console.log("event", event);
-        console.log("updateProgress", percentComplete);
-
         if (event.lengthComputable) {
             percentComplete = (event.loaded / event.total) * 100;
             percentComplete = Math.round(Math.min(percentComplete, 100));
@@ -121,20 +111,31 @@
     };
 
     const transferComplete = (evt) => {
-        console.log("COMPLETE");
-
         isTransferComplete = true;
         uploadingFiles = false;
+
+        if (evt.currentTarget.status !== 200) {
+            hasTransferFailed = true;
+            return;
+        }
+
+        const newFiles = JSON.parse(evt.currentTarget.response).files;
+        preloadedFiles.push(...newFiles);
+        preloadedFiles = preloadedFiles;
+        removeInputFiles();
     };
 
+    let hasTransferFailed = false;
     const transferFailed = (evt) => {
         console.error("An error occurred while transferring the file");
+        hasTransferFailed = true;
         uploadingFiles = false;
     };
 
     const transferCanceled = (evt) => {
         console.log("The transfer has been canceled by the user");
         uploadingFiles = false;
+        hasTransferFailed = true;
     };
     //#endregion
 
@@ -180,6 +181,15 @@
     };
     //#endregion
 </script>
+
+<svelte:window
+    on:paste={(event) => {
+        if (event.clipboardData.files.length > 0) {
+            files = event.clipboardData.files;
+            inputFileEl.files = event.clipboardData.files;
+            uploadNewFiles(files);
+        }
+    }} />
 
 <div class="relative h-full w-full overflow-hidden rounded-xl bg-neutral-100 p-2">
     <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -236,22 +246,41 @@
                     </div>
                 </span>
             {/if}
-            <span class="mx-auto text-xl opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver && !uploadingFiles}>
-                Drag and Drop
-            </span>
-            <span class="dela mx-auto opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver && !uploadingFiles}
-                >or</span>
-            <div
-                class="flex w-full justify-center opacity-0 transition-opacity duration-100"
-                class:opacity-100={!isDraggingOver && !uploadingFiles}>
+            {#if !hasTransferFailed}
+                <span
+                    class="mx-auto text-xl opacity-0 transition-opacity duration-100"
+                    class:opacity-100={!isDraggingOver && !uploadingFiles}>
+                    Drag and Drop
+                </span>
+                <span class="mx-auto opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver && !uploadingFiles}>
+                    or</span>
+                <div
+                    class="flex w-full justify-center opacity-0 transition-opacity duration-100"
+                    class:opacity-100={!isDraggingOver && !uploadingFiles}>
+                    <Button
+                        variant="default"
+                        class="mx-auto mt-4 w-fit rounded-lg"
+                        on:click={(e) => {
+                            e.stopPropagation();
+                            inputFileEl.click();
+                        }}>Browse files</Button>
+                </div>
+            {:else}
+                <span
+                    class="animate-shake mx-auto text-xl text-destructive opacity-0 transition-opacity duration-100"
+                    class:opacity-100={!isDraggingOver && !uploadingFiles}>
+                    Something went wrong!
+                </span>
+                <span class="mx-auto opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver && !uploadingFiles}>
+                    Click below to re-upload {files.length} file {files.length > 1 ? "s" : ""}</span>
                 <Button
                     variant="default"
                     class="mx-auto mt-4 w-fit rounded-lg"
                     on:click={(e) => {
                         e.stopPropagation();
-                        inputFileEl.click();
-                    }}>Browse files</Button>
-            </div>
+                        uploadNewFiles(files);
+                    }}>Retry</Button>
+            {/if}
         </div>
 
         <div class="w-full p-2 text-sm transition-all">
@@ -260,7 +289,6 @@
                     {deleteFileEndpoint}
                     {updateFileNameEndpoint}
                     bind:preloadedFiles
-                    disable={uploadingFiles}
                     {index}
                     on:deleted={(event) => {
                         preloadedFiles = preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex);

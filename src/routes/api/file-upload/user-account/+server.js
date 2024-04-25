@@ -1,5 +1,5 @@
 import { AWS_BUCKET_NAME } from "$env/static/private";
-import { fail, json } from "@sveltejs/kit";
+import { error, fail, json } from "@sveltejs/kit";
 
 import { S3Controller } from "$lib/server/s3.helpers";
 import { prisma } from "$lib/server/prisma-instance";
@@ -17,12 +17,30 @@ const SIZE_TYPE = "original";
 export async function POST({ request, url }) {
     // TODO Auth on who you are and what files you can update
     const linkedEntityId = url.searchParams.get("id");
+    console.log(1);
+    if (Math.random() > 0.5) {
+        error(400, "something went wrong");
+    }
+    console.log(2);
+    // else {
+    //     return json({
+    //         success: true,
+    //         files: [
+    //             {
+    //                 displayName: "asdadas",
+    //                 guid: "asdadas",
+    //                 mimeType: "asdadas",
+    //                 sizeInBytes: 123,
+    //                 url: "asdadas"
+    //             }
+    //         ]
+    //     });
+    // }
 
-    // return fail(400);
     const s3 = new S3Controller();
     const formData = Object.fromEntries(await request.formData());
     const files = Object.values(formData);
-
+    console.log(3);
     if (files.length === 0) {
         return json({
             success: true,
@@ -30,10 +48,12 @@ export async function POST({ request, url }) {
         });
     }
 
+    console.log(4);
     const filesInfoToReturn = [];
     for (let i = 0; i < files.length; i++) {
         const fileBuffer = await files[i].arrayBuffer();
         const objectKey = getGuid();
+        console.log("loop", i);
         try {
             await s3.putObjectInBucket(AWS_BUCKET_NAME, fileBuffer, objectKey);
             await prisma.fileUpload.create({
@@ -59,12 +79,15 @@ export async function POST({ request, url }) {
                 sizeInBytes: files[i].size,
                 url: await s3.createPresignedUrlForDownload({ bucketName: AWS_BUCKET_NAME, objectKey })
             });
+            console.log("loop success", i);
         } catch (err) {
             console.error(err);
-            return fail(400);
+            console.log("loop error", i);
+            return error(400);
         }
     }
 
+    console.log("final success");
     return json({
         success: true,
         files: filesInfoToReturn

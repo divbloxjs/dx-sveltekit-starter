@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { Button } from "$lib/components/ui/button/index.js";
     import { Pencil, X } from "lucide-svelte";
     import MimeType from "./mimeType.svelte";
@@ -7,11 +7,11 @@
     import { quintOut } from "svelte/easing";
     import { sleep } from "dx-utilities";
 
-    export let preloadedFiles;
-    export let index;
-    export let disable;
-    export let deleteFileEndpoint;
-    export let updateFileNameEndpoint;
+    export let preloadedFiles: [];
+    export let index: number;
+    export let deleteFileEndpoint: string;
+    export let updateFileNameEndpoint: string;
+    export let rowType: string = "new";
 
     let isNew = true;
 
