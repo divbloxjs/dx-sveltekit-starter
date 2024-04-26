@@ -5,7 +5,7 @@ import { S3Controller } from "$lib/server/s3.helpers";
 import { prisma } from "$lib/server/prisma-instance";
 import { getGuid } from "$lib/server/helpers";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
-import { sleep } from "dx-utilities";
+import { UploadController } from "$lib/components/file-uploader/server/upload.server";
 
 const LINKED_ENTITY = "userAccount";
 const UPLOAD_TYPE = "Profile_Picture";
@@ -17,80 +17,34 @@ const SIZE_TYPE = "original";
 export async function POST({ request, url }) {
     // TODO Auth on who you are and what files you can update
     const linkedEntityId = url.searchParams.get("id");
-    console.log(1);
-    if (Math.random() > 0.5) {
-        error(400, "something went wrong");
-    }
-    console.log(2);
-    // else {
-    //     return json({
-    //         success: true,
-    //         files: [
-    //             {
-    //                 displayName: "asdadas",
-    //                 guid: "asdadas",
-    //                 mimeType: "asdadas",
-    //                 sizeInBytes: 123,
-    //                 url: "asdadas"
-    //             }
-    //         ]
-    //     });
-    // }
 
-    const s3 = new S3Controller();
     const formData = Object.fromEntries(await request.formData());
-    const files = Object.values(formData);
-    console.log(3);
-    if (files.length === 0) {
+    const filesToUpload = Object.values(formData);
+
+    if (filesToUpload.length === 0) {
         return json({
             success: true,
             files: []
         });
     }
 
-    console.log(4);
-    const filesInfoToReturn = [];
-    for (let i = 0; i < files.length; i++) {
-        const fileBuffer = await files[i].arrayBuffer();
-        const objectKey = getGuid();
-        console.log("loop", i);
-        try {
-            await s3.putObjectInBucket(AWS_BUCKET_NAME, fileBuffer, objectKey);
-            await prisma.fileUpload.create({
-                data: {
-                    bucketName: AWS_BUCKET_NAME,
-                    objectKey: objectKey,
-                    displayName: files[i].name,
-                    mimeType: files[i].type,
-                    sizeInBytes: files[i].size,
-                    uploadedFileExtension: getFileExtension(files[i].name),
-                    finalFileUrl: s3.getUrlFromBucketAndObjectKey(AWS_BUCKET_NAME, objectKey),
-                    type: UPLOAD_TYPE,
-                    sizeType: SIZE_TYPE,
-                    linkedEntity: LINKED_ENTITY,
-                    linkedEntityId
-                }
-            });
+    console.log("filesToUpload", filesToUpload[0]);
+    const uploadController = new UploadController(new S3Controller());
 
-            filesInfoToReturn.push({
-                displayName: files[i].name,
-                guid: objectKey,
-                mimeType: files[i].type,
-                sizeInBytes: files[i].size,
-                url: await s3.createPresignedUrlForDownload({ bucketName: AWS_BUCKET_NAME, objectKey })
-            });
-            console.log("loop success", i);
-        } catch (err) {
-            console.error(err);
-            console.log("loop error", i);
-            return error(400);
-        }
-    }
+    const files = await uploadController.uploadFiles({
+        files: filesToUpload,
+        linkedEntityId,
+        linkedEntity: LINKED_ENTITY,
+        uploadType: UPLOAD_TYPE,
+        sizeType: SIZE_TYPE
+    });
+
+    if (!files) error(400, "Some Message");
 
     console.log("final success");
     return json({
         success: true,
-        files: filesInfoToReturn
+        files
     });
 }
 
