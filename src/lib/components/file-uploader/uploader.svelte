@@ -267,7 +267,7 @@
                 </div>
             {:else}
                 <span
-                    class="animate-shake mx-auto text-xl text-destructive opacity-0 transition-opacity duration-100"
+                    class="mx-auto animate-shake text-xl text-destructive opacity-0 transition-opacity duration-100"
                     class:opacity-100={!isDraggingOver && !uploadingFiles}>
                     Something went wrong!
                 </span>

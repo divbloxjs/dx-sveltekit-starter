@@ -12,27 +12,56 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { getFileExtension } from "../functions";
 
-export class s3Controller {
-    constructor(bucketName = undefined) {
-        this.region = "af-south-1";
-        this.fileUploadMaxSizeInBytes = 20 * 1024 * 1024;
+export class S3Controller {
+    #region;
+    #fileUploadMaxSizeInBytes;
+    #s3Client;
+    constructor({ bucketName = undefined, fileUploadMaxSizeInBytes = 20 * 1024 * 1024 }) {
+        this.#region = "af-south-1";
+        this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes;
 
         this.bucketName = AWS_BUCKET_NAME;
         if (bucketName) this.bucketName = bucketName;
 
-        this.s3Client = new S3Client({
-            region: this.region,
+        this.#s3Client = new S3Client({
+            region: this.#region,
             credentials: { accessKeyId: AWS_KEY, secretAccessKey: AWS_SECRET }
         });
     }
 
-    async uploadFile({ file, objectKey }) {
+    getContainerIdentifier() {
+        return this.bucketName;
+    }
+
+    getStaticUrl({ containerIdentifier = undefined, objectIdentifier }) {
+        if (containerIdentifier) this.bucketName = containerIdentifier;
+        return this.#getUrlFromBucketAndObjectKey({ bucketName: this.bucketName, objectKey: objectIdentifier });
+    }
+
+    async uploadFile({ file, objectIdentifier, containerIdentifier = undefined }) {
+        if (containerIdentifier) this.bucketName = containerIdentifier;
         const fileBuffer = await file.arrayBuffer();
-        await this.#putObjectInBucket(AWS_BUCKET_NAME, fileBuffer, objectKey);
+        await this.#putObjectInBucket({ bucketName: this.bucketName, objectKey: objectIdentifier, file: fileBuffer });
+    }
+
+    async getPresignedUrlForDownload({ containerIdentifier = undefined, objectIdentifier }) {
+        if (containerIdentifier) this.bucketName = containerIdentifier;
+
+        const command = new GetObjectCommand({ Bucket: this.bucketName, Key: objectIdentifier });
+
+        return await getSignedUrl(this.#s3Client, command, { expiresIn: 3600 });
+    }
+
+    async getPresignedUrlForUpload({ containerIdentifier = undefined, objectIdentifier }) {
+        if (containerIdentifier) this.bucketName = containerIdentifier;
+
+        const command = new PutObjectCommand({ Bucket: this.bucketName, Key: objectIdentifier });
+
+        return await getSignedUrl(this.#s3Client, command, { expiresIn: 3600 });
     }
 
     async #createBucket(bucketName) {
-        await this.s3Client.send(
+        await this.#s3Client.send(
             new CreateBucketCommand({
                 Bucket: bucketName
             })
@@ -50,7 +79,7 @@ export class s3Controller {
         let isTruncated = true;
         const objects = [];
         while (isTruncated) {
-            const { Contents, IsTruncated, NextContinuationToken } = await this.s3Client.send(command);
+            const { Contents, IsTruncated, NextContinuationToken } = await this.#s3Client.send(command);
             isTruncated = IsTruncated;
             if (!IsTruncated) break;
             objects.push(...Contents);
@@ -62,31 +91,24 @@ export class s3Controller {
 
     async #listBuckets() {
         try {
-            const result = await this.s3Client.send(new ListBucketsCommand({}));
+            const result = await this.#s3Client.send(new ListBucketsCommand({}));
         } catch (err) {
             console.error(err);
         }
     }
 
-    async #putObjectInBucket(bucketName, file, objectKey) {
-        await this.s3Client.send(new PutObjectCommand({ Body: file, Bucket: bucketName, Key: objectKey }));
+    async #putObjectInBucket({ bucketName, objectKey, file }) {
+        console.log("bucketName", bucketName);
+        console.log({ Bucket: bucketName, Key: objectKey, Body: file });
+        await this.#s3Client.send(new PutObjectCommand({ Bucket: bucketName, Key: objectKey, Body: file }));
     }
 
     async #deleteObjectFromBucket(bucketName, objectKey) {
-        await this.s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: objectKey }));
+        await this.#s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: objectKey }));
     }
 
-    #getUrlFromBucketAndObjectKey(bucketName, objectKey) {
-        return `https://${bucketName}.s3.${this.region}.amazonaws.com/${objectKey}`;
-    }
-
-    async #createPresignedUrlForDownload({ bucketName, objectKey }) {
-        const command = new GetObjectCommand({ Bucket: bucketName, Key: objectKey });
-        return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
-    }
-
-    async #createPresignedUrlForUpload({ bucketName, objectKey }) {
-        const command = new PutObjectCommand({ Bucket: bucketName, Key: objectKey });
-        return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+    #getUrlFromBucketAndObjectKey({ bucketName, objectKey }) {
+        console.log({ bucketName, objectKey });
+        return `https://${bucketName}.s3.${this.#region}.amazonaws.com/${objectKey}`;
     }
 }

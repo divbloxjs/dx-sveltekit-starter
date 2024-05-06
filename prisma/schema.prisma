@@ -49,18 +49,19 @@ model place {
 }
 
 model fileUpload {
-  id                    BigInt              @id @default(autoincrement())
-  type                  fileUpload_type
-  mimeType              String?             @db.VarChar(50)
-  sizeType              fileUpload_sizeType
-  objectKey             String              @unique(map: "file_upload_object_key") @db.VarChar(500)
-  bucketName            String              @db.VarChar(50)
-  displayName           String              @db.VarChar(500)
-  sizeInBytes           Int
-  finalFileUrl          String              @db.VarChar(1000)
-  linkedEntity          String?             @db.VarChar(100)
-  linkedEntityId        BigInt?
-  uploadedFileExtension String?             @db.VarChar(50)
+  id                       BigInt                        @id @default(autoincrement())
+  mimeType                 String?                       @db.VarChar(150)
+  displayName              String                        @db.VarChar(500)
+  sizeInBytes              Int
+  linkedEntity             String?                       @db.VarChar(150)
+  linkedEntityId           BigInt?
+  uploadedFileExtension    String?                       @db.VarChar(150)
+  category                 String                        @db.VarChar(300)
+  sizeClassification       fileUpload_sizeClassification
+  staticFileUrl            String                        @db.VarChar(1000)
+  cloudContainerIdentifier String?                       @db.VarChar(150)
+  cloudIsPubliclyAvailable Boolean                       @default(false)
+  objectIdentifier         String?                       @unique(map: "file_upload_unique_identifier") @db.VarChar(500)
 }
 
 model grandParentOrganisation {
@@ -103,11 +104,7 @@ model userAccount {
   lastUpdated  DateTime @default(now()) @db.DateTime(0)
 }
 
-enum fileUpload_type {
-  Profile_Picture @map("Profile Picture")
-}
-
-enum fileUpload_sizeType {
+enum fileUpload_sizeClassification {
   original
   web
   thumbnail
