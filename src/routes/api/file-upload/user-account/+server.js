@@ -1,9 +1,6 @@
-import { AWS_BUCKET_NAME } from "$env/static/private";
 import { error, fail, json } from "@sveltejs/kit";
 
-import { S3Controller } from "$lib/server/s3.helpers";
 import { prisma } from "$lib/server/prisma-instance";
-import { getGuid } from "$lib/server/helpers";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
 import { UploadController } from "$lib/components/file-uploader/server/upload.server";
 import { sleep } from "dx-utilities";
