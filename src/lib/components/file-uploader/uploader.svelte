@@ -9,6 +9,7 @@
 
     export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024 * 1024;
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
+    export let FILE_NUMBER_LIMIT: number = 3;
 
     export let getFilesEndpoint: string | undefined;
     export let postFilesEndpoint: string;
@@ -26,12 +27,14 @@
         const result = await response.json();
 
         preloadedFiles = result?.files ?? [];
+        console.log(preloadedFiles);
     });
 
     const handleChange = (event: Event) => {
         const target = event.target;
 
         if (!validateFileSize(target)) return;
+        if (!validateFileNumber(target)) return;
 
         uploadNewFiles(target.files);
     };
@@ -65,6 +68,15 @@
 
                 return false;
             }
+        }
+
+        return true;
+    };
+
+    const validateFileNumber = (target) => {
+        if (target.files && target.files[0]) {
+            console.log(target.files);
+            console.log(preloadedFiles);
         }
 
         return true;

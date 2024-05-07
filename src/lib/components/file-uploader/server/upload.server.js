@@ -133,7 +133,23 @@ export class UploadController {
 
                 fileUploadToCreateArray.push(data);
 
+                const url = await this.getUrlForDownload({
+                    containerIdentifier: data.cloudContainerIdentifier,
+                    objectIdentifier: data.objectIdentifier
+                });
+                const file = {
+                    url,
+                    objectIdentifier: data.objectIdentifier,
+                    sizeClassification: data.sizeClassification,
+                    linkedEntity: data.linkedEntity,
+                    linkedEntityId: data.linkedEntityId?.toString(),
+                    mimeType: data.mimeType,
+                    sizeInBytes: data.sizeInBytes,
+                    uploadedFileExtension: getFileExtension(data.displayName),
+                    displayName: data.displayName
+                };
                 filesDataToReturn.push({
+                    uniqueFileRef: `${linkedEntity}_${linkedEntityId}_${objectIdentifier}`,
                     ...filesToUpload[i].sizeClassifications
                 });
             }

@@ -27,9 +27,8 @@ export async function POST({ request, url }) {
         });
     }
 
-    const uploadController = new UploadController({});
-
     try {
+        const uploadController = new UploadController();
         const files = await uploadController.uploadFiles({
             files: filesToUpload,
             linkedEntityId,
@@ -38,7 +37,7 @@ export async function POST({ request, url }) {
             sizeClassification: SIZE_TYPE
         });
 
-        if (!files) error(400, "Some Message");
+        if (!files) error(400, "Could not upload files");
 
         return json({
             success: true,
@@ -54,7 +53,8 @@ export async function GET({ request, url }) {
     // TODO Auth on who you are and what files you can update
     try {
         const linkedEntityId = url.searchParams.get("id");
-        const fileUploads = await prisma.fileUpload.findMany({ where: { linkedEntity: LINKED_ENTITY, linkedEntityId } });
+        const category = url.searchParams.get("category") ?? "";
+        const fileUploads = await prisma.fileUpload.findMany({ where: { linkedEntity: LINKED_ENTITY, linkedEntityId, category } });
 
         const uploadController = new UploadController();
         const files = [];
