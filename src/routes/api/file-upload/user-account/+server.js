@@ -7,6 +7,7 @@ import { getGuid } from "$lib/server/helpers";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
 import { UploadController } from "$lib/components/file-uploader/server/upload.server";
 import { sleep } from "dx-utilities";
+import { getIntId } from "$lib/dx-components/data-model/_helpers/helpers";
 
 const LINKED_ENTITY = "userAccount";
 const UPLOAD_TYPE = "Profile_Picture";
@@ -18,11 +19,6 @@ const SIZE_TYPE = "original";
 export async function POST({ request, url }) {
     // TODO Auth on who you are and what files you can update
     const linkedEntityId = url.searchParams.get("id");
-    await sleep(1000);
-
-    if (Math.random() < 0.5) {
-        return error(500, "asd");
-    }
 
     const formData = Object.fromEntries(await request.formData());
     const filesToUpload = Object.values(formData);
@@ -34,10 +30,8 @@ export async function POST({ request, url }) {
         });
     }
 
-    console.log(1);
     const uploadController = new UploadController({});
 
-    console.log(2);
     try {
         const files = await uploadController.uploadFiles({
             files: filesToUpload,
@@ -47,7 +41,6 @@ export async function POST({ request, url }) {
             sizeClassification: SIZE_TYPE
         });
 
-        console.log(3);
         if (!files) error(400, "Some Message");
 
         return json({
@@ -62,15 +55,11 @@ export async function POST({ request, url }) {
 
 export async function GET({ request, url }) {
     // TODO Auth on who you are and what files you can update
-
     try {
         const linkedEntityId = url.searchParams.get("id");
-
         const fileUploads = await prisma.fileUpload.findMany({ where: { linkedEntity: LINKED_ENTITY, linkedEntityId } });
-        const s3 = new S3Controller();
 
-        const uploadController = new UploadController({ saveInCloud: true });
-
+        const uploadController = new UploadController();
         const files = [];
         for (let i = 0; i < fileUploads.length; i++) {
             const url = await uploadController.getUrlForDownload({
@@ -80,7 +69,10 @@ export async function GET({ request, url }) {
 
             files.push({
                 url,
-                guid: fileUploads[i].objectIdentifier,
+                objectIdentifier: fileUploads[i].objectIdentifier,
+                sizeClassification: fileUploads[i].sizeClassification,
+                linkedEntity: fileUploads[i].linkedEntity,
+                linkedEntityId: fileUploads[i].linkedEntityId?.toString(),
                 mimeType: fileUploads[i].mimeType,
                 sizeInBytes: fileUploads[i].sizeInBytes,
                 uploadedFileExtension: getFileExtension(fileUploads[i].displayName),
@@ -88,7 +80,24 @@ export async function GET({ request, url }) {
             });
         }
 
-        return json({ files });
+        let finalFiles = [];
+        files.forEach((file) => {
+            const uniqueFileRef = `${file.linkedEntity}_${file.linkedEntityId}_${file.objectIdentifier}`;
+            const foundFile = finalFiles.find((finalFile) => finalFile.uniqueFileRef === uniqueFileRef);
+            if (!foundFile) {
+                finalFiles.push({ uniqueFileRef: uniqueFileRef, sizes: { [file.sizeClassification]: file } });
+            } else {
+                finalFiles = finalFiles.map((finalFile) => {
+                    if (finalFile.uniqueFileRef === uniqueFileRef) {
+                        return { ...finalFile, sizes: { ...finalFile.sizes, [file.sizeClassification]: file } };
+                    } else {
+                        return finalFile;
+                    }
+                });
+            }
+        });
+
+        return json({ files: finalFiles });
     } catch (err) {
         console.error(err);
     }
@@ -98,11 +107,11 @@ export async function DELETE({ request }) {
     // TODO Auth on who you are and what files you can update
 
     const body = await request.json();
+    console.log(body);
     try {
-        const fileUpload = await prisma.fileUpload.findFirstOrThrow({ where: { objectKey: body.guid } });
-        const s3 = new S3Controller();
-        await s3.deleteObjectFromBucket(AWS_BUCKET_NAME, body.guid);
-        await prisma.fileUpload.delete({ where: { id: fileUpload.id } });
+        const uploadController = new UploadController();
+        await uploadController.deleteFile({ objectIdentifier: body.guid });
+        await prisma.fileUpload.deleteMany({ where: { objectIdentifier: body.guid } });
 
         return json({ message: "Deleted successfully!" });
     } catch (err) {

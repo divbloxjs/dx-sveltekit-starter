@@ -24,6 +24,7 @@
 
         const response = await fetch(getFilesEndpoint);
         const result = await response.json();
+
         preloadedFiles = result?.files ?? [];
     });
 
@@ -284,14 +285,19 @@
         </div>
 
         <div class="w-full p-2 text-sm transition-all">
-            {#each preloadedFiles ?? [] as _, index}
+            {#each preloadedFiles ?? [] as preloadedFile, index}
                 <PreloadedFileRow
                     {deleteFileEndpoint}
                     {updateFileNameEndpoint}
-                    bind:preloadedFiles
+                    {preloadedFile}
                     {index}
                     on:deleted={(event) => {
-                        preloadedFiles = preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex);
+                        preloadedFiles = JSON.parse(
+                            JSON.stringify(preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex))
+                        );
+
+                        preloadedFiles = preloadedFiles;
+                        index = index;
                     }}>
                 </PreloadedFileRow>
             {/each}

@@ -19,7 +19,5 @@ export const getFileWithoutExtension = (filePath) => {
  * @returns {string} the processed filePath
  */
 export const insertBeforeFileExtension = (filePath, stringToInsert = "") => {
-    console.log("without", getFileWithoutExtension(filePath));
-    console.log("ext", getFileExtension(filePath));
     return `${getFileWithoutExtension(filePath)}${stringToInsert}.${getFileExtension(filePath)}`;
 };

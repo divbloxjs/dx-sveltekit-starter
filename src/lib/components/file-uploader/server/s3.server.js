@@ -16,13 +16,12 @@ export class S3Controller {
     #region;
     #fileUploadMaxSizeInBytes;
     #s3Client;
-    constructor({ bucketName = undefined, fileUploadMaxSizeInBytes = 20 * 1024 * 1024 }) {
+    constructor({ bucketName = undefined, fileUploadMaxSizeInBytes = 20 * 1024 * 1024 } = {}) {
         this.#region = "af-south-1";
         this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes;
 
         this.bucketName = AWS_BUCKET_NAME;
         if (bucketName) this.bucketName = bucketName;
-
         this.#s3Client = new S3Client({
             region: this.#region,
             credentials: { accessKeyId: AWS_KEY, secretAccessKey: AWS_SECRET }
@@ -40,8 +39,21 @@ export class S3Controller {
 
     async uploadFile({ file, objectIdentifier, containerIdentifier = undefined }) {
         if (containerIdentifier) this.bucketName = containerIdentifier;
-        const fileBuffer = await file.arrayBuffer();
-        await this.#putObjectInBucket({ bucketName: this.bucketName, objectKey: objectIdentifier, file: fileBuffer });
+
+        let fileBuffer = file;
+        if (file instanceof File) {
+            fileBuffer = await file.arrayBuffer();
+        }
+
+        await this.#putObjectInBucket({
+            bucketName: this.bucketName,
+            objectKey: objectIdentifier,
+            file: fileBuffer
+        });
+    }
+
+    async deleteFile({ containerIdentifier, objectIdentifier }) {
+        await this.#deleteObjectFromBucket(containerIdentifier, objectIdentifier);
     }
 
     async getPresignedUrlForDownload({ containerIdentifier = undefined, objectIdentifier }) {
@@ -98,17 +110,22 @@ export class S3Controller {
     }
 
     async #putObjectInBucket({ bucketName, objectKey, file }) {
-        console.log("bucketName", bucketName);
-        console.log({ Bucket: bucketName, Key: objectKey, Body: file });
-        await this.#s3Client.send(new PutObjectCommand({ Bucket: bucketName, Key: objectKey, Body: file }));
+        try {
+            await this.#s3Client.send(
+                new PutObjectCommand({ Bucket: bucketName, Key: objectKey, Body: file, ContentLength: Buffer.byteLength(file) })
+            );
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     async #deleteObjectFromBucket(bucketName, objectKey) {
-        await this.#s3Client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: objectKey }));
+        if (bucketName) this.bucketName = bucketName;
+
+        await this.#s3Client.send(new DeleteObjectCommand({ Bucket: this.bucketName, Key: objectKey }));
     }
 
     #getUrlFromBucketAndObjectKey({ bucketName, objectKey }) {
-        console.log({ bucketName, objectKey });
         return `https://${bucketName}.s3.${this.#region}.amazonaws.com/${objectKey}`;
     }
 }

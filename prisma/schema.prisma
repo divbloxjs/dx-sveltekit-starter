@@ -61,7 +61,7 @@ model fileUpload {
   staticFileUrl            String                        @db.VarChar(1000)
   cloudContainerIdentifier String?                       @db.VarChar(150)
   cloudIsPubliclyAvailable Boolean                       @default(false)
-  objectIdentifier         String?                       @unique(map: "file_upload_unique_identifier") @db.VarChar(500)
+  objectIdentifier         String?                       @db.VarChar(500)
 }
 
 model grandParentOrganisation {
