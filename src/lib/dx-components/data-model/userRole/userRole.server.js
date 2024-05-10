@@ -7,34 +7,34 @@ import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/p
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
 const searchConfig = {
-    attributes: ["lastName", "firstName", "emailAddress"]
+    attributes: ["roleName"]
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
 };
 
-export const loadUserAccountArray = async (constraints = {}) => {
-    const selectClause = getPrismaSelectAllFromEntity("userAccount");
-    const prismaConditions = getPrismaConditions("userAccount", searchConfig, constraints);
+export const loadUserRoleArray = async (constraints = {}) => {
+    const selectClause = getPrismaSelectAllFromEntity("userRole");
+    const prismaConditions = getPrismaConditions("userRole", searchConfig, constraints);
 
-    const userAccountArray = await prisma.userAccount.findMany({
+    const userRoleArray = await prisma.userRole.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
         ...prismaConditions
     });
 
     try {
-        normalizeDatabaseArray(userAccountArray);
+        normalizeDatabaseArray(userRoleArray);
     } catch (err) {
         console.error(err);
     }
 
-    return { userAccountArray };
+    return { userRoleArray };
 };
 
-export const createUserAccount = async (data) => {
+export const createUserRole = async (data) => {
     try {
-        await prisma.userAccount.create({ data });
+        await prisma.userRole.create({ data });
         return true;
     } catch (err) {
         console.error(err);
@@ -42,8 +42,8 @@ export const createUserAccount = async (data) => {
     }
 };
 
-export const updateUserAccount = async (data) => {
-    const relationships = getRelatedEntities("userAccount");
+export const updateUserRole = async (data) => {
+    const relationships = getRelatedEntities("userRole");
 
     Object.values(relationships).forEach((relationshipName) => {
         if (data.hasOwnProperty(relationshipName)) {
@@ -61,7 +61,7 @@ export const updateUserAccount = async (data) => {
     });
 
     try {
-        const result = await prisma.userAccount.update({
+        const result = await prisma.userRole.update({
             data,
             where: { id: data.id }
         });
@@ -72,9 +72,9 @@ export const updateUserAccount = async (data) => {
     }
 };
 
-export const deleteUserAccount = async (id = -1) => {
+export const deleteUserRole = async (id = -1) => {
     try {
-        await prisma.userAccount.delete({ where: { id } });
+        await prisma.userRole.delete({ where: { id } });
         return true;
     } catch (err) {
         console.error(err);
@@ -82,25 +82,41 @@ export const deleteUserAccount = async (id = -1) => {
     }
 };
 
-export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
-    const userAccount = await prisma.userAccount.findUnique({
+export const loadUserRole = async (id = -1, relationshipOptions = true) => {
+    const userRole = await prisma.userRole.findUnique({
         where: { id: id }
     });
 
-    userAccount.id = getIntId(userAccount.id);
-    Object.keys(getRelatedEntities("userAccount")).forEach((relationshipName) => {
-        userAccount[relationshipName] = getIntId(userAccount[relationshipName]);
+    userRole.id = getIntId(userRole.id);
+    Object.keys(getRelatedEntities("userRole")).forEach((relationshipName) => {
+        userRole[relationshipName] = getIntId(userRole[relationshipName]);
     });
 
-    const returnObject = { userAccount };
+    const returnObject = { userRole };
     if (!relationshipOptions) return returnObject;
 
-    if (getEntitiesRelatedTo("userAccount").length === 0) return returnObject;
+    ;
+
+    if (getEntitiesRelatedTo("userRole").length === 0) return returnObject;
 
     returnObject.associatedEntities = {};
+    	returnObject.associatedEntities.userAccount = await getAssociatedUserAccountArray(userRole.id);
+;
+
     return returnObject;
 };
 
 //#region RelatedEntity / AssociatedEntity Helpers
+
+;
+const getAssociatedUserAccountArray = async (userRoleId) => {
+    const userAccountArray = await prisma.userAccount.findMany({
+        where: { userRoleId: userRoleId },
+        take: RELATIONSHIP_LOAD_LIMIT,
+    });
+
+    return userAccountArray;
+};
+;
 
 //#endregion RelatedEntity / AssociatedEntity Helpers

@@ -6,12 +6,6 @@
 			"placeholder": "lastName",
 			"default": ""
 		},
-		"password": {
-			"type": "text",
-			"displayName": "password",
-			"placeholder": "password",
-			"default": ""
-		},
 		"firstName": {
 			"type": "text",
 			"displayName": "firstName",
@@ -22,6 +16,18 @@
 			"type": "text",
 			"displayName": "emailAddress",
 			"placeholder": "emailAddress",
+			"default": ""
+		},
+		"hashedPassword": {
+			"type": "text",
+			"displayName": "hashedPassword",
+			"placeholder": "hashedPassword",
+			"default": ""
+		},
+		"userName": {
+			"type": "text",
+			"displayName": "userName",
+			"placeholder": "userName",
 			"default": ""
 		}
 	},
@@ -90,6 +96,42 @@
 			"type": "text",
 			"displayName": "uploadedFileExtension",
 			"placeholder": "uploadedFileExtension",
+			"default": ""
+		},
+		"category": {
+			"type": "text",
+			"displayName": "category",
+			"placeholder": "category",
+			"default": ""
+		},
+		"staticFileUrl": {
+			"type": "text",
+			"displayName": "staticFileUrl",
+			"placeholder": "staticFileUrl",
+			"default": ""
+		},
+		"objectIdentifier": {
+			"type": "text",
+			"displayName": "objectIdentifier",
+			"placeholder": "objectIdentifier",
+			"default": ""
+		},
+		"sizeClassification": {
+			"type": "select",
+			"displayName": "sizeClassification",
+			"placeholder": "sizeClassification",
+			"default": ""
+		},
+		"cloudContainerIdentifier": {
+			"type": "text",
+			"displayName": "cloudContainerIdentifier",
+			"placeholder": "cloudContainerIdentifier",
+			"default": ""
+		},
+		"cloudIsPubliclyAvailable": {
+			"type": "checkbox",
+			"displayName": "cloudIsPubliclyAvailable",
+			"placeholder": "cloudIsPubliclyAvailable",
 			"default": ""
 		}
 	},
@@ -204,6 +246,46 @@
 			"type": "textarea",
 			"displayName": "organisationName",
 			"placeholder": "organisationName",
+			"default": ""
+		}
+	},
+	"userRole": {
+		"roleName": {
+			"type": "text",
+			"displayName": "roleName",
+			"placeholder": "roleName",
+			"default": ""
+		}
+	},
+	"userSession": {
+		"sessionId": {
+			"type": "text",
+			"displayName": "sessionId",
+			"placeholder": "sessionId",
+			"default": ""
+		},
+		"userAgent": {
+			"type": "text",
+			"displayName": "userAgent",
+			"placeholder": "userAgent",
+			"default": ""
+		},
+		"sessionData": {
+			"type": "textarea",
+			"displayName": "sessionData",
+			"placeholder": "sessionData",
+			"default": ""
+		},
+		"expiryDateTime": {
+			"type": "datetime",
+			"displayName": "expiryDateTime",
+			"placeholder": "expiryDateTime",
+			"default": ""
+		},
+		"durationInMinutes": {
+			"type": "number",
+			"displayName": "durationInMinutes",
+			"placeholder": "durationInMinutes",
 			"default": ""
 		}
 	}

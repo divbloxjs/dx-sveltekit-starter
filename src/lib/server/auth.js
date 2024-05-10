@@ -37,6 +37,8 @@ export const authenticateUser = async ({ cookies }) => {
     }
 
     // Update session expiry date
+
+    // DX-NOTE: You can update logic here to handle standalone applications differently
     await prisma.userSession.update({
         where: { id: userSession.id },
         data: { expiryDateTime: addMinutes(new Date(), 20) }

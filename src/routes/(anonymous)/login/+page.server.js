@@ -3,17 +3,18 @@ import { superValidate, message } from "sveltekit-superforms";
 import { loginSchema, initialData } from "./login.schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { prisma } from "$lib/server/prisma-instance";
-import { addDays } from "date-fns";
+import { addDays, addMinutes } from "date-fns";
 import { getGuid } from "$lib/server/helpers";
 import argon2 from "argon2";
 import { deleteAllExpiredUserSessions } from "$lib/server/auth";
+import { SESSION_LENGTH_IN_MINS } from "$env/static/private";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async ({ cookies }) => {
     const returnData = {
         loginForm: await superValidate(initialData, zod(loginSchema))
     };
-    console.log(cookies.get("sessionId"));
+
     const sessionId = cookies.get("sessionId");
     if (!sessionId) return returnData;
 
@@ -24,7 +25,6 @@ export const load = async ({ cookies }) => {
 
     if (!userSession) return { ...returnData, message: "No session ID set" };
 
-    console.log("userSession", userSession);
     return returnData;
 };
 
@@ -39,7 +39,7 @@ export const actions = {
             });
         }
 
-        const existingUser = await prisma.userAccount.findFirst({ where: { emailAddress: form.data.emailAddress } });
+        const existingUser = await prisma.userAccount.findFirst({ where: { userName: form.data.userName } });
 
         if (!existingUser) return message(form, "Invalid credentials. Please try again");
 
@@ -56,8 +56,8 @@ export const actions = {
 
         const newSession = await prisma.userSession.create({
             data: {
-                durationInMinutes: 20,
-                expiryDateTime: addDays(new Date(), 20),
+                durationInMinutes: parseInt(SESSION_LENGTH_IN_MINS ?? 20),
+                expiryDateTime: addMinutes(new Date(), parseInt(SESSION_LENGTH_IN_MINS ?? 20)),
                 sessionData: {},
                 sessionId: getGuid(),
                 userAgent: request.headers.get("user-agent"),

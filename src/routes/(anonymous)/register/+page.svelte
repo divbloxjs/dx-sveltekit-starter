@@ -12,27 +12,12 @@
     const form = superForm(data.registerForm, {
         validators: zodClient(registerSchema)
     });
-
-    const { form: formData, enhance, message } = form;
+    const { form: formData, enhance, message, errors } = form;
+    $errors: console.log($errors);
 </script>
 
 <div class="flex h-full w-full items-center justify-center">
     <form action="?/register" method="POST" class="w-96" use:enhance>
-        <!-- <Form.Field {form} name="firstName">
-            <Form.Control let:attrs>
-                <Form.Label>FirstName</Form.Label>
-                <Input {...attrs} bind:value={$formData.firstName} />
-            </Form.Control>
-            <Form.Description>This is your public display name.</Form.Description>
-            <Form.FieldErrors />
-        </Form.Field>
-        <Form.Field {form} name="lastName">
-            <Form.Control let:attrs>
-                <Form.Label>Last Name</Form.Label>
-                <Input {...attrs} bind:value={$formData.lastName} />
-            </Form.Control>
-            <Form.FieldErrors />
-        </Form.Field> -->
         <Form.Field {form} name="emailAddress">
             <Form.Control let:attrs>
                 <Form.Label>Email Address</Form.Label>
@@ -56,6 +41,9 @@
         </Form.Field>
         {#if $message}
             <span class="text-sm font-medium text-destructive">{$message}</span>
+        {/if}
+        {#if $errors?._errors}
+            {$errors?._errors}
         {/if}
         <div class="flex justify-between">
             <a href="/login" class={buttonVariants({ variant: "outline" })}>Back to Login</a>

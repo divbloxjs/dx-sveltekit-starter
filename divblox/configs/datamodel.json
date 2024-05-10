@@ -188,7 +188,14 @@
 	},
 	"userAccount": {
 		"module": "main",
-		"indexes": [],
+		"indexes": [
+			{
+				"type": "BTREE",
+				"attribute": "username",
+				"indexName": "userAccountUsername",
+				"indexChoice": "unique"
+			}
+		],
 		"options": {
 			"isAuditEnabled": true,
 			"enforceLockingConstraints": true
@@ -198,6 +205,11 @@
 				"type": "VARCHAR",
 				"allowNull": true,
 				"lengthOrValues": "150"
+			},
+			"username": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "250"
 			},
 			"firstName": {
 				"type": "VARCHAR",

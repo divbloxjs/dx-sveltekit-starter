@@ -2,7 +2,6 @@
     import { buttonVariants } from "$lib/components/ui/button";
     import * as Form from "$lib/components/ui/form";
     import { Input } from "$lib/components/ui/input";
-    import Button from "$lib/dx-components/form-elements/button.svelte";
 
     import { loginSchema } from "./login.schema";
     import { superForm } from "sveltekit-superforms";
@@ -37,6 +36,7 @@
         {#if $message}
             <span class="text-sm font-medium text-destructive">{$message}</span>
         {/if}
+
         <div class="flex justify-between">
             <a href="/register" class={buttonVariants({ variant: "outline" })}>No Account?</a>
             <Form.Button>Login</Form.Button>

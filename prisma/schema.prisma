@@ -103,6 +103,7 @@ model userAccount {
   lastUpdated    DateTime      @default(now()) @db.DateTime(0)
   hashedPassword String        @db.VarChar(100)
   userRoleId     BigInt?
+  username       String        @unique(map: "userAccountUsername") @db.VarChar(250)
   userRole       userRole?     @relation(fields: [userRoleId], references: [id], map: "43d85944f6e9ff959d4cbeb181dc2595")
   userSession    userSession[]
 

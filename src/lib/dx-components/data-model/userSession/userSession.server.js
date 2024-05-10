@@ -7,34 +7,34 @@ import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/p
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
 const searchConfig = {
-    attributes: ["lastName", "firstName", "emailAddress"]
+    attributes: ["sessionId", "userAgent", "sessionData", "expiryDateTime", "durationInMinutes"]
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
 };
 
-export const loadUserAccountArray = async (constraints = {}) => {
-    const selectClause = getPrismaSelectAllFromEntity("userAccount");
-    const prismaConditions = getPrismaConditions("userAccount", searchConfig, constraints);
+export const loadUserSessionArray = async (constraints = {}) => {
+    const selectClause = getPrismaSelectAllFromEntity("userSession");
+    const prismaConditions = getPrismaConditions("userSession", searchConfig, constraints);
 
-    const userAccountArray = await prisma.userAccount.findMany({
+    const userSessionArray = await prisma.userSession.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
         ...prismaConditions
     });
 
     try {
-        normalizeDatabaseArray(userAccountArray);
+        normalizeDatabaseArray(userSessionArray);
     } catch (err) {
         console.error(err);
     }
 
-    return { userAccountArray };
+    return { userSessionArray };
 };
 
-export const createUserAccount = async (data) => {
+export const createUserSession = async (data) => {
     try {
-        await prisma.userAccount.create({ data });
+        await prisma.userSession.create({ data });
         return true;
     } catch (err) {
         console.error(err);
@@ -42,8 +42,8 @@ export const createUserAccount = async (data) => {
     }
 };
 
-export const updateUserAccount = async (data) => {
-    const relationships = getRelatedEntities("userAccount");
+export const updateUserSession = async (data) => {
+    const relationships = getRelatedEntities("userSession");
 
     Object.values(relationships).forEach((relationshipName) => {
         if (data.hasOwnProperty(relationshipName)) {
@@ -61,7 +61,7 @@ export const updateUserAccount = async (data) => {
     });
 
     try {
-        const result = await prisma.userAccount.update({
+        const result = await prisma.userSession.update({
             data,
             where: { id: data.id }
         });
@@ -72,9 +72,9 @@ export const updateUserAccount = async (data) => {
     }
 };
 
-export const deleteUserAccount = async (id = -1) => {
+export const deleteUserSession = async (id = -1) => {
     try {
-        await prisma.userAccount.delete({ where: { id } });
+        await prisma.userSession.delete({ where: { id } });
         return true;
     } catch (err) {
         console.error(err);
@@ -82,25 +82,45 @@ export const deleteUserAccount = async (id = -1) => {
     }
 };
 
-export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
-    const userAccount = await prisma.userAccount.findUnique({
+export const loadUserSession = async (id = -1, relationshipOptions = true) => {
+    const userSession = await prisma.userSession.findUnique({
         where: { id: id }
     });
 
-    userAccount.id = getIntId(userAccount.id);
-    Object.keys(getRelatedEntities("userAccount")).forEach((relationshipName) => {
-        userAccount[relationshipName] = getIntId(userAccount[relationshipName]);
+    userSession.id = getIntId(userSession.id);
+    Object.keys(getRelatedEntities("userSession")).forEach((relationshipName) => {
+        userSession[relationshipName] = getIntId(userSession[relationshipName]);
     });
 
-    const returnObject = { userAccount };
+    const returnObject = { userSession };
     if (!relationshipOptions) return returnObject;
 
-    if (getEntitiesRelatedTo("userAccount").length === 0) return returnObject;
+    	returnObject.userAccountOptions = await getUserAccountOptions();
+;
+
+    if (getEntitiesRelatedTo("userSession").length === 0) return returnObject;
 
     returnObject.associatedEntities = {};
+    ;
+
     return returnObject;
 };
 
 //#region RelatedEntity / AssociatedEntity Helpers
+
+const getUserAccountOptions = async () => {
+    const userAccountArray = await prisma.userAccount.findMany({
+        take: RELATIONSHIP_LOAD_LIMIT,
+    });
+
+    const userAccountOptions = userAccountArray.map((userAccount) => {
+        userAccount.id = userAccount.id.toString();
+        return userAccount;
+    });
+
+    return userAccountOptions;
+};
+;
+;
 
 //#endregion RelatedEntity / AssociatedEntity Helpers
