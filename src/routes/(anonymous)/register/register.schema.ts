@@ -2,8 +2,8 @@ import { z } from "zod";
 
 export const registerSchema = z
     .object({
-        firstName: z.string().min(2).max(50),
-        lastName: z.string().min(2).max(50),
+        // firstName: z.string().min(2).max(50),
+        // lastName: z.string().min(2).max(50),
         emailAddress: z.string().email().max(150),
         password: z.string().min(8),
         confirmPassword: z.string().min(8)
@@ -14,8 +14,8 @@ export const registerSchema = z
     });
 
 export const initialData = {
-    firstName: "First Name",
-    lastName: "Last Name",
+    // firstName: "First Name",
+    // lastName: "Last Name",
     emailAddress: "dani.simeonov@gmail.com",
     password: "12345678",
     confirmPassword: "12345678"

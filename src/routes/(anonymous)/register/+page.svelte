@@ -18,7 +18,7 @@
 
 <div class="flex h-full w-full items-center justify-center">
     <form action="?/register" method="POST" class="w-96" use:enhance>
-        <Form.Field {form} name="firstName">
+        <!-- <Form.Field {form} name="firstName">
             <Form.Control let:attrs>
                 <Form.Label>FirstName</Form.Label>
                 <Input {...attrs} bind:value={$formData.firstName} />
@@ -32,7 +32,7 @@
                 <Input {...attrs} bind:value={$formData.lastName} />
             </Form.Control>
             <Form.FieldErrors />
-        </Form.Field>
+        </Form.Field> -->
         <Form.Field {form} name="emailAddress">
             <Form.Control let:attrs>
                 <Form.Label>Email Address</Form.Label>

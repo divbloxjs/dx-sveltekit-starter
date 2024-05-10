@@ -75,6 +75,6 @@ export const actions = {
         // Clear up expired tokens from DB
         await deleteAllExpiredUserSessions();
 
-        redirect(307, "/dashboard");
+        redirect(301, "/dashboard");
     }
 };
