@@ -96,12 +96,38 @@ model parentPlace {
 }
 
 model userAccount {
-  id           BigInt   @id @default(autoincrement())
-  lastName     String?  @db.VarChar(150)
-  password     String?  @db.VarChar(50)
-  firstName    String?  @db.VarChar(100)
-  emailAddress String   @db.VarChar(250)
-  lastUpdated  DateTime @default(now()) @db.DateTime(0)
+  id             BigInt        @id @default(autoincrement())
+  lastName       String?       @db.VarChar(150)
+  firstName      String?       @db.VarChar(100)
+  emailAddress   String        @db.VarChar(250)
+  lastUpdated    DateTime      @default(now()) @db.DateTime(0)
+  hashedPassword String        @db.VarChar(100)
+  userRoleId     BigInt?
+  userRole       userRole?     @relation(fields: [userRoleId], references: [id], map: "43d85944f6e9ff959d4cbeb181dc2595")
+  userSession    userSession[]
+
+  @@index([userRoleId], map: "43d85944f6e9ff959d4cbeb181dc2595")
+}
+
+model userRole {
+  id          BigInt        @id @default(autoincrement())
+  roleName    String        @db.VarChar(100)
+  lastUpdated DateTime      @default(now()) @db.DateTime(0)
+  userAccount userAccount[]
+}
+
+model userSession {
+  id                BigInt       @id @default(autoincrement())
+  sessionId         String       @db.VarChar(50)
+  userAgent         String?      @db.VarChar(200)
+  sessionData       Json
+  expiryDateTime    DateTime     @db.DateTime(0)
+  durationInMinutes Int
+  lastUpdated       DateTime     @default(now()) @db.DateTime(0)
+  userAccountId     BigInt?
+  userAccount       userAccount? @relation(fields: [userAccountId], references: [id], map: "3bfab05d2a59594f76772b050c763b45")
+
+  @@index([userAccountId], map: "3bfab05d2a59594f76772b050c763b45")
 }
 
 enum fileUpload_sizeClassification {

@@ -58,6 +58,26 @@
 			"y": 692.2278481012656
 		}
 	},
+	"userRole": {
+		"module": "main",
+		"indexes": [],
+		"options": {
+			"isAuditEnabled": true,
+			"enforceLockingConstraints": true
+		},
+		"attributes": {
+			"roleName": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "100"
+			}
+		},
+		"relationships": {},
+		"dataModellerCoordinates": {
+			"x": 2489.2766171234107,
+			"y": 141.57392433193624
+		}
+	},
 	"fileUpload": {
 		"module": "main",
 		"indexes": [],
@@ -141,8 +161,8 @@
 		},
 		"relationships": {},
 		"dataModellerCoordinates": {
-			"x": 1477.9990539981889,
-			"y": 42.41292154372151
+			"x": 2501.003113538108,
+			"y": 390.1801745883764
 		}
 	},
 	"parentPlace": {
@@ -179,11 +199,6 @@
 				"allowNull": true,
 				"lengthOrValues": "150"
 			},
-			"password": {
-				"type": "VARCHAR",
-				"allowNull": true,
-				"lengthOrValues": "50"
-			},
 			"firstName": {
 				"type": "VARCHAR",
 				"allowNull": true,
@@ -193,12 +208,65 @@
 				"type": "VARCHAR",
 				"allowNull": false,
 				"lengthOrValues": "250"
+			},
+			"hashedPassword": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "100"
 			}
 		},
-		"relationships": {},
+		"relationships": {
+			"userRole": [
+				"userRoleId"
+			]
+		},
 		"dataModellerCoordinates": {
-			"x": 1873.4549308752407,
-			"y": 97.92136607120524
+			"x": 1950.5861893326153,
+			"y": 95.21500612533242
+		}
+	},
+	"userSession": {
+		"module": "main",
+		"indexes": [],
+		"options": {
+			"isAuditEnabled": true,
+			"enforceLockingConstraints": true
+		},
+		"attributes": {
+			"sessionId": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "50"
+			},
+			"userAgent": {
+				"type": "VARCHAR",
+				"allowNull": true,
+				"lengthOrValues": "200"
+			},
+			"sessionData": {
+				"type": "JSON",
+				"allowNull": false,
+				"lengthOrValues": null
+			},
+			"expiryDateTime": {
+				"type": "DATETIME",
+				"allowNull": false,
+				"lengthOrValues": null
+			},
+			"durationInMinutes": {
+				"type": "INT",
+				"allowNull": false,
+				"lengthOrValues": null
+			}
+		},
+		"relationships": {
+			"userAccount": [
+				"userAccountId"
+			]
+		},
+		"dataModellerCoordinates": {
+			"x": 1952.6634227254897,
+			"y": 434.8581480657176
 		}
 	},
 	"organisation": {
