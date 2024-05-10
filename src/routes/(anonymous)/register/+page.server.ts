@@ -24,7 +24,6 @@ export const actions = {
                 form
             });
         }
-
         const existingUser = await prisma.userAccount.findFirst({ where: { emailAddress: form.data.emailAddress } });
 
         if (existingUser) return message(form, "Email address already taken! Please try another one");

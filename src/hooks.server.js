@@ -3,17 +3,17 @@ import { redirect } from "@sveltejs/kit";
 
 /** @type {import('@sveltejs/kit').Handle} */
 export const handle = async ({ event, resolve }) => {
+    // If in the (authed) route group, check sessionId for current user
     if (event.route.id?.includes("(authed)")) {
         event.locals.user = await authenticateUser(event);
-        console.log("IN authed", event.locals.user);
         if (!event.locals.user) {
             throw redirect(303, "/login");
         }
     }
 
+    // If in (anonymous) route group, check for current user and if set - navigate to landing page
     if (event.route.id?.includes("(anonymous)") && event.cookies.get("sessionId")) {
         event.locals.user = await authenticateUser(event);
-        console.log("IN anonymous");
         if (event.locals.user) {
             throw redirect(303, "/dashboard");
         }
