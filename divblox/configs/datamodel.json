@@ -227,7 +227,14 @@
 	},
 	"userSession": {
 		"module": "main",
-		"indexes": [],
+		"indexes": [
+			{
+				"type": "BTREE",
+				"attribute": "sessionId",
+				"indexName": "userSessionSessionid",
+				"indexChoice": "unique"
+			}
+		],
 		"options": {
 			"isAuditEnabled": true,
 			"enforceLockingConstraints": true

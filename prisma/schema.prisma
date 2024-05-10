@@ -118,7 +118,7 @@ model userRole {
 
 model userSession {
   id                BigInt       @id @default(autoincrement())
-  sessionId         String       @db.VarChar(50)
+  sessionId         String       @unique(map: "userSessionSessionid") @db.VarChar(50)
   userAgent         String?      @db.VarChar(200)
   sessionData       Json
   expiryDateTime    DateTime     @db.DateTime(0)

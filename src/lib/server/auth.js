@@ -1,13 +1,15 @@
 import { redirect } from "@sveltejs/kit";
 import { prisma } from "./prisma-instance";
 import { addMinutes, isBefore } from "date-fns";
+import { goto } from "$app/navigation";
 
 /** @param {import('@sveltejs/kit').RequestEvent} event */
 export const authenticateUser = async ({ cookies }) => {
     const sessionId = cookies.get("sessionId");
+    if (!sessionId) return null;
 
     const userSession = await prisma.userSession.findFirst({
-        where: { sessionId },
+        where: { sessionId: sessionId },
         select: {
             id: true,
             sessionId: true,
@@ -26,16 +28,26 @@ export const authenticateUser = async ({ cookies }) => {
         }
     });
 
+    console.log(userSession);
     if (!userSession) return null;
 
     if (isBefore(userSession.expiryDateTime, new Date())) {
-        prisma.userSession.delete({ where: { id: userSession.id } });
+        await prisma.userSession.delete({ where: { id: userSession.id } });
         return null;
     }
 
-    prisma.userSession.update({
+    // Update session expiry date
+    await prisma.userSession.update({
         where: { id: userSession.id },
         data: { expiryDateTime: addMinutes(new Date(), 20) }
+    });
+
+    // Match cookie expiry date and max age to new session data
+    cookies.set("sessionId", userSession.sessionId, {
+        path: "/",
+        httpOnly: true,
+        maxAge: 60 * userSession.durationInMinutes,
+        expires: userSession.expiryDateTime
     });
 
     let userInfo = {
@@ -53,12 +65,15 @@ export const authenticateUser = async ({ cookies }) => {
         };
     }
 
-    console.log("userInfo", userInfo);
     return userInfo;
 };
 
 /** @param {import('@sveltejs/kit').RequestEvent} event */
 export const logoutUser = async ({ cookies }) => {
     cookies.delete("sessionId", { path: "/" });
-    redirect(307, "/login");
+    goto("login");
+};
+
+export const deleteAllExpiredUserSessions = async () => {
+    await prisma.userSession.deleteMany({ where: { expiryDateTime: { lte: new Date() } } });
 };
