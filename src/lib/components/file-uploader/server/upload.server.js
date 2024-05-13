@@ -32,7 +32,7 @@ export class UploadController {
         linkedEntity,
         linkedEntityId,
         category,
-        sizeClassification = "original",
+        createThumbnailAndWebImages = false,
         cloudIsPubliclyAvailable = false
     }) {
         if (files.length === 0) return [];
@@ -47,53 +47,51 @@ export class UploadController {
 
             filesToUpload.push({
                 isImage: false,
-                sizeClassifications: {
-                    [sizeClassification]: {
+                objectIdentifier: formattedTimestampedFileName,
+                sizesSaved: {
+                    original: {
                         fileArrayBuffer: arrayBuffer,
-                        objectIdentifier: formattedTimestampedFileName
+                        objectIdentifier: `original_${formattedTimestampedFileName}`
                     }
                 }
             });
 
-            const isImage = await imageType(filesToUpload[i].sizeClassifications[sizeClassification].fileArrayBuffer);
-            if (isImage) {
-                filesToUpload[i].isImage = true;
+            if (!createThumbnailAndWebImages) continue;
 
-                const { original, web, thumbnail } = await this.getAllImageBuffers(
-                    filesToUpload[i].sizeClassifications.original.fileArrayBuffer
-                );
+            const isImage = await imageType(filesToUpload[i].sizesSaved.original.fileArrayBuffer);
 
-                filesToUpload[i].sizeClassifications.original = {
-                    fileArrayBuffer: original,
-                    objectIdentifier: formattedTimestampedFileName
-                };
-                filesToUpload[i].sizeClassifications.web = { fileArrayBuffer: web, objectIdentifier: formattedTimestampedFileName };
-                filesToUpload[i].sizeClassifications.thumbnail = {
-                    fileArrayBuffer: thumbnail,
-                    objectIdentifier: formattedTimestampedFileName
-                };
-            }
+            if (!isImage) continue;
+
+            filesToUpload[i].isImage = true;
+
+            const { original, web, thumbnail } = await this.getAllImageBuffers(filesToUpload[i].sizesSaved.original.fileArrayBuffer);
+
+            filesToUpload[i].sizesSaved.original = {
+                fileArrayBuffer: original,
+                objectIdentifier: `original_${formattedTimestampedFileName}`
+            };
+            filesToUpload[i].sizesSaved.web = { fileArrayBuffer: web, objectIdentifier: `web_${formattedTimestampedFileName}` };
+            filesToUpload[i].sizesSaved.thumbnail = {
+                fileArrayBuffer: thumbnail,
+                objectIdentifier: `thumbnail_${formattedTimestampedFileName}`
+            };
         }
 
         let localStaticFileUrls = [];
         if (this.#saveLocally) {
             for (let i = 0; i < filesToUpload.length; i++) {
                 localStaticFileUrls[i] = {};
-                for (let [sizeClassification, { fileArrayBuffer, objectIdentifier }] of Object.entries(
-                    filesToUpload[i].sizeClassifications
-                )) {
+                for (let [sizeType, { fileArrayBuffer, objectIdentifier }] of Object.entries(filesToUpload[i].sizesSaved)) {
                     const localStaticFilePath = `${LOCAL_STORAGE_FOLDER_PATH}/${objectIdentifier}`;
                     writeFileSync(localStaticFilePath, fileArrayBuffer);
-                    localStaticFileUrls[i][sizeClassification] = localStaticFilePath;
+                    localStaticFileUrls[i][sizeType] = localStaticFilePath;
                 }
             }
         }
 
         if (this.#saveInCloud) {
             for (let i = 0; i < filesToUpload.length; i++) {
-                for (let [sizeClassification, { fileArrayBuffer, objectIdentifier }] of Object.entries(
-                    filesToUpload[i].sizeClassifications
-                )) {
+                for (let [sizeType, { fileArrayBuffer, objectIdentifier }] of Object.entries(filesToUpload[i].sizesSaved)) {
                     if (cloudIsPubliclyAvailable) {
                         objectIdentifier = `public/${objectIdentifier}`;
                     }
@@ -106,53 +104,70 @@ export class UploadController {
         const filesDataToReturn = [];
         let fileUploadToCreateArray = [];
         for (let i = 0; i < files.length; i++) {
-            for (let [sizeClassification, { fileArrayBuffer, objectIdentifier }] of Object.entries(filesToUpload[i].sizeClassifications)) {
-                const data = {
-                    category,
-                    sizeClassification,
-                    linkedEntity,
-                    linkedEntityId,
-                    objectIdentifier,
-                    displayName: files[i].name,
-                    mimeType: files[i].type,
-                    sizeInBytes: files[i].size,
-                    uploadedFileExtension: getFileExtension(files[i].name),
-                    staticFileUrl: localStaticFileUrls?.[i]?.[sizeClassification]
-                };
+            const data = {
+                mimeType: files[i].type,
+                originalSizeInBytes: files[i].size,
+                uploadedFileExtension: getFileExtension(files[i].name),
 
-                if (this.#saveInCloud) {
-                    data.cloudIsPubliclyAvailable = cloudIsPubliclyAvailable;
+                category,
+                linkedEntity,
+                linkedEntityId,
+                objectIdentifier: filesToUpload[i].objectIdentifier,
 
-                    data.cloudContainerIdentifier = this.#cloudController.getContainerIdentifier();
+                displayName: files[i].name,
+                sizesSaved: [],
+                baseFileUrl: LOCAL_STORAGE_FOLDER_PATH
+            };
 
-                    data.staticFileUrl = this.#cloudController.getStaticUrl({
-                        containerIdentifier: data.cloudContainerIdentifier,
-                        objectIdentifier: data.objectIdentifier
-                    });
-                }
+            if (this.#saveInCloud) {
+                data.cloudIsPubliclyAvailable = cloudIsPubliclyAvailable;
 
-                fileUploadToCreateArray.push(data);
+                data.cloudContainerIdentifier = this.#cloudController.getContainerIdentifier();
 
-                const url = await this.getUrlForDownload({
-                    containerIdentifier: data.cloudContainerIdentifier,
-                    objectIdentifier: data.objectIdentifier
-                });
-                const file = {
-                    url,
-                    objectIdentifier: data.objectIdentifier,
-                    sizeClassification: data.sizeClassification,
-                    linkedEntity: data.linkedEntity,
-                    linkedEntityId: data.linkedEntityId?.toString(),
-                    mimeType: data.mimeType,
-                    sizeInBytes: data.sizeInBytes,
-                    uploadedFileExtension: getFileExtension(data.displayName),
-                    displayName: data.displayName
-                };
-                filesDataToReturn.push({
-                    uniqueFileRef: `${linkedEntity}_${linkedEntityId}_${objectIdentifier}`,
-                    ...filesToUpload[i].sizeClassifications
+                data.baseFileUrl = this.#cloudController.getStaticBaseUrl({
+                    containerIdentifier: data.cloudContainerIdentifier
                 });
             }
+
+            for (let [sizeType, { fileArrayBuffer, objectIdentifier }] of Object.entries(filesToUpload[i].sizesSaved)) {
+                data.sizesSaved.push(sizeType);
+            }
+
+            fileUploadToCreateArray.push(data);
+
+            const urls = {};
+            urls.original = await this.getUrlForDownload({
+                containerIdentifier: data.cloudContainerIdentifier,
+                objectIdentifier: `original_${data.objectIdentifier}`
+            });
+
+            if ((filesToUpload[i].isImage = true)) {
+                urls.thumbnail = await this.getUrlForDownload({
+                    containerIdentifier: data.cloudContainerIdentifier,
+                    objectIdentifier: `thumbnail_${data.objectIdentifier}`
+                });
+
+                urls.web = await this.getUrlForDownload({
+                    containerIdentifier: data.cloudContainerIdentifier,
+                    objectIdentifier: `web_${data.objectIdentifier}`
+                });
+            }
+
+            const file = {
+                urls,
+                webUrl: null,
+                thumbnailUrl: null,
+                objectIdentifier: data.objectIdentifier,
+                sizesSaved: data.sizesSaved,
+                linkedEntity: data.linkedEntity,
+                linkedEntityId: data.linkedEntityId?.toString(),
+                mimeType: data.mimeType,
+                originalSizeInBytes: data.originalSizeInBytes,
+                uploadedFileExtension: getFileExtension(data.displayName),
+                displayName: data.displayName
+            };
+
+            filesDataToReturn.push(file);
         }
 
         await prisma.fileUpload.createMany({ data: fileUploadToCreateArray });

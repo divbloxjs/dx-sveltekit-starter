@@ -87,6 +87,8 @@ export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
         where: { id: id }
     });
 
+    if (!userAccount) return null;
+
     userAccount.id = getIntId(userAccount.id);
     Object.keys(getRelatedEntities("userAccount")).forEach((relationshipName) => {
         userAccount[relationshipName] = getIntId(userAccount[relationshipName]);

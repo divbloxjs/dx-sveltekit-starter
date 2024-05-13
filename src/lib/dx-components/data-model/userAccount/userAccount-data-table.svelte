@@ -27,6 +27,8 @@
     export let allowDelete = true;
     export let allowCreate = true;
 
+    export let basePath = "/admin/user-account";
+
     export let data;
 
     let attributeMap = {};
@@ -53,7 +55,7 @@
                 on:change={() => {
                     let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                     newSearchParams.set("search", search);
-                    goto(`/userAccount/overview?${newSearchParams.toString()}`, {
+                    goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                         keepFocus: true
                     });
                 }}>
@@ -65,14 +67,15 @@
 
                     let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                     newSearchParams.delete("search");
-                    goto(`/userAccount/overview?${newSearchParams.toString()}`, {
+                    goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                         keepFocus: true
                     });
                 }}>Clear</Button>
         </div>
     </div>
     {#if allowCreate}
-        <a href="/userAccount/new" class={buttonVariants({ variant: "default", size: "sm" })}>New</a>
+        {`${basePath}/new`}
+        <a href={`${basePath}/new`} class={buttonVariants({ variant: "default", size: "sm" })}>New</a>
     {/if}
 </div>
 
@@ -105,7 +108,7 @@
 
                             const newParams = stringify(originalParams, { encodeValuesOnly: true });
 
-                            goto(`/userAccount/overview?${newParams}`, {
+                            goto(`${basePath}/overview?${newParams}`, {
                                 keepFocus: true
                             });
                         }} />
@@ -117,7 +120,7 @@
 
                             delete originalParams.filter?.[attributeName];
                             const newParams = stringify(originalParams, { encodeValuesOnly: true });
-                            goto(`/userAccount/overview?${newParams}`, {
+                            goto(`${basePath}/overview?${newParams}`, {
                                 invalidateAll: true
                             });
                         }}>Reset</Button>
@@ -126,17 +129,17 @@
         {/each}
     </tr>
     {#each flatRows as flatRow, index}
-        <tr class="child:p-2 odd:bg-gray-100 hover:bg-gray-200">
+        <tr class="odd:bg-gray-100 hover:bg-gray-200 child:p-2">
             {#each Object.values(flatRow) as { value, type }}
                 <td class="border-r">{value}</td>
             {/each}
             {#if allowEdit || allowDelete}
                 <td class="flex items-center justify-center text-center">
                     <a
-                        href="/userAccount/{data?.userAccountArray[index]?.id}"
+                        href={`${basePath}/${data?.userAccountArray[index]?.id}`}
                         class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
                         <Pencil class="h-4 w-4" /></a>
-                    <form action="/userAccount/{data?.userAccountArray[index]?.id}?/delete" method="POST">
+                    <form action={`${basePath}/${data?.userAccountArray[index]?.id}?/delete`} method="POST">
                         <Button type="submit" class="border-none" variant="destructive-outline" size="inline-icon">
                             <X class="h-4 w-4" /></Button>
                     </form>
@@ -155,7 +158,7 @@
             on:change={() => {
                 let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                 newSearchParams.set("limit", limit.toString());
-                goto(`/userAccount/overview?${newSearchParams.toString()}`, {
+                goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                     invalidateAll: true
                 });
             }} />
@@ -165,7 +168,7 @@
                 limit = 10;
                 let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                 newSearchParams.set("limit", limit.toString());
-                goto(`/userAccount/overview?${newSearchParams.toString()}`, {
+                goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                     invalidateAll: true
                 });
             }}>Reset</Button>
@@ -177,7 +180,7 @@
                 let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                 offset = offset - limit <= 0 ? 0 : offset - limit;
                 newSearchParams.set("offset", offset.toString());
-                goto(`/userAccount/overview?${newSearchParams.toString()}`, {
+                goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                     invalidateAll: true
                 });
             }}>
@@ -189,7 +192,7 @@
                 let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                 offset = offset + limit;
                 newSearchParams.set("offset", offset.toString());
-                goto(`/userAccount/overview?${newSearchParams.toString()}`, {
+                goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                     invalidateAll: true
                 });
             }}>

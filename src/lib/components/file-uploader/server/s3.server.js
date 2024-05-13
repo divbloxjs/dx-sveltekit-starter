@@ -36,6 +36,10 @@ export class S3Controller {
         if (containerIdentifier) this.bucketName = containerIdentifier;
         return this.#getUrlFromBucketAndObjectKey({ bucketName: this.bucketName, objectKey: objectIdentifier });
     }
+    getStaticBaseUrl({ containerIdentifier = undefined }) {
+        if (containerIdentifier) this.bucketName = containerIdentifier;
+        return this.#getBaseUrlFromBucket({ bucketName: this.bucketName });
+    }
 
     async uploadFile({ file, objectIdentifier, containerIdentifier = undefined }) {
         if (containerIdentifier) this.bucketName = containerIdentifier;
@@ -127,5 +131,9 @@ export class S3Controller {
 
     #getUrlFromBucketAndObjectKey({ bucketName, objectKey }) {
         return `https://${bucketName}.s3.${this.#region}.amazonaws.com/${objectKey}`;
+    }
+
+    #getBaseUrlFromBucket({ bucketName }) {
+        return `https://${bucketName}.s3.${this.#region}.amazonaws.com/`;
     }
 }

@@ -12,10 +12,12 @@ const SIZE_TYPE = "original";
 
 // TODO COMMENT
 // const UPLOAD_AS_PUBLIC = false;
+const GENERATE_SMALLER_IMAGES = true;
 
 export async function POST({ request, url }) {
     // TODO Auth on who you are and what files you can update
     const linkedEntityId = url.searchParams.get("id");
+    const createThumbnailAndWebImages = url.searchParams.get("createThumbnailAndWebImages") ?? GENERATE_SMALLER_IMAGES;
 
     const formData = Object.fromEntries(await request.formData());
     const filesToUpload = Object.values(formData);
@@ -34,7 +36,7 @@ export async function POST({ request, url }) {
             linkedEntityId,
             linkedEntity: LINKED_ENTITY,
             category: UPLOAD_TYPE,
-            sizeClassification: SIZE_TYPE
+            createThumbnailAndWebImages
         });
 
         if (!files) error(400, "Could not upload files");
@@ -59,42 +61,29 @@ export async function GET({ request, url }) {
         const uploadController = new UploadController();
         const files = [];
         for (let i = 0; i < fileUploads.length; i++) {
-            const url = await uploadController.getUrlForDownload({
-                containerIdentifier: fileUploads[i].cloudContainerIdentifier,
-                objectIdentifier: fileUploads[i].objectIdentifier
-            });
+            const urls = {};
+
+            for (let sizeType of fileUploads[i].sizesSaved) {
+                urls[sizeType] = await uploadController.getUrlForDownload({
+                    containerIdentifier: fileUploads[i].cloudContainerIdentifier,
+                    objectIdentifier: `${sizeType}_${fileUploads[i].objectIdentifier}`
+                });
+            }
 
             files.push({
-                url,
+                urls,
                 objectIdentifier: fileUploads[i].objectIdentifier,
-                sizeClassification: fileUploads[i].sizeClassification,
+                sizesSaved: fileUploads[i].sizesSaved,
                 linkedEntity: fileUploads[i].linkedEntity,
                 linkedEntityId: fileUploads[i].linkedEntityId?.toString(),
                 mimeType: fileUploads[i].mimeType,
-                sizeInBytes: fileUploads[i].sizeInBytes,
+                originalSizeInBytes: fileUploads[i].originalSizeInBytes,
                 uploadedFileExtension: getFileExtension(fileUploads[i].displayName),
                 displayName: fileUploads[i].displayName
             });
         }
 
-        let finalFiles = [];
-        files.forEach((file) => {
-            const uniqueFileRef = `${file.linkedEntity}_${file.linkedEntityId}_${file.objectIdentifier}`;
-            const foundFile = finalFiles.find((finalFile) => finalFile.uniqueFileRef === uniqueFileRef);
-            if (!foundFile) {
-                finalFiles.push({ uniqueFileRef: uniqueFileRef, sizes: { [file.sizeClassification]: file } });
-            } else {
-                finalFiles = finalFiles.map((finalFile) => {
-                    if (finalFile.uniqueFileRef === uniqueFileRef) {
-                        return { ...finalFile, sizes: { ...finalFile.sizes, [file.sizeClassification]: file } };
-                    } else {
-                        return finalFile;
-                    }
-                });
-            }
-        });
-
-        return json({ files: finalFiles });
+        return json({ files });
     } catch (err) {
         console.error(err);
     }

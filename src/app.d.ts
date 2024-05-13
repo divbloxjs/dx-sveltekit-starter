@@ -2,6 +2,7 @@
 // for information about these interfaces
 
 type UserInfo = {
+    id: number;
     emailAddress: string;
     firstName: string;
     lastName: string;

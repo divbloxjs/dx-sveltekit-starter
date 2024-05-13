@@ -33,5 +33,4 @@
     on:paste
     on:input
     on:wheel
-    {...$$restProps}
-/>
+    {...$$restProps} />

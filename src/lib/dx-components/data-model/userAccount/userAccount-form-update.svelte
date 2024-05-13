@@ -1,60 +1,55 @@
 <script>
-    import { enhance } from "$app/forms";
-    import { page } from "$app/stores";
-
     import { buttonVariants } from "$lib/dx-components/form-elements/button.js";
     import Button from "$lib/dx-components/form-elements/button.svelte";
-    import InputSelect from "$lib/dx-components/form-elements/input-select.svelte";
-    import InputText from "$lib/dx-components/form-elements/input-text.svelte";
-    import Label from "$lib/dx-components/form-elements/label.svelte";
-    import Textarea from "$lib/dx-components/form-elements/textarea.svelte";
+    import * as Form from "$lib/components/ui/form";
 
-    // __associatedEntitiesImports__;
+    import { userAccountSchema } from "./userAccount.schema";
+    import { superForm } from "sveltekit-superforms";
+    import { zodClient } from "sveltekit-superforms/adapters";
+    import Input from "$lib/components/ui/input/input.svelte";
 
-    export let readOnly = false;
+    export let data;
+    export let basePath = "/admin/user-account";
 
-    ;
-
-    	const formValues = { 
-		id: $page?.data?.userAccount?.id ?? $page?.form?.id ?? '',
-		lastName:
-            $page?.data?.userAccount?.lastName ??
-            $page?.form?.lastName ??
-            '',
-		password:
-            $page?.data?.userAccount?.password ??
-            $page?.form?.password ??
-            '',
-		firstName:
-            $page?.data?.userAccount?.firstName ??
-            $page?.form?.firstName ??
-            '',
-		emailAddress:
-            $page?.data?.userAccount?.emailAddress ??
-            $page?.form?.emailAddress ??
-            '',
-	};
+    const form = superForm(data.form, {
+        validators: zodClient(userAccountSchema)
+    });
+    const { form: formData, enhance, message, errors } = form;
 </script>
 
-<form method="POST" action="/userAccount/{formValues.id}?/update" use:enhance class="max-w-sm">
-    	<Label for="lastName">lastName</Label>
-	<InputText bind:value={formValues.lastName} attributeName="lastName" name="lastName" />
-	<Label for="password">password</Label>
-	<InputText bind:value={formValues.password} attributeName="password" name="password" />
-	<Label for="firstName">firstName</Label>
-	<InputText bind:value={formValues.firstName} attributeName="firstName" name="firstName" />
-	<Label for="emailAddress">emailAddress</Label>
-	<InputText bind:value={formValues.emailAddress} attributeName="emailAddress" name="emailAddress" />
+<form method="POST" action={`${basePath}/${$formData.id}?/update`} class="flex max-w-full flex-grow flex-col">
+    <Form.Field {form} name="firstName">
+        <Form.Control let:attrs>
+            <Form.Label>First Name</Form.Label>
+            <Input {...attrs} bind:value={$formData.firstName} />
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
+    <Form.Field {form} name="lastName">
+        <Form.Control let:attrs>
+            <Form.Label>Last Name</Form.Label>
+            <Input {...attrs} bind:value={$formData.lastName} />
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
+    <Form.Field {form} name="emailAddress">
+        <Form.Control let:attrs>
+            <Form.Label>Email Address</Form.Label>
+            <Input {...attrs} bind:value={$formData.emailAddress} />
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
+    <Form.Field {form} name="username">
+        <Form.Control let:attrs>
+            <Form.Label>Username</Form.Label>
+            <Input {...attrs} bind:value={$formData.username} />
+        </Form.Control>
+        <Form.FieldErrors />
+    </Form.Field>
 
-
-    <div class="mt-2 flex w-full flex-row justify-between">
-        <a href="/userAccount/overview" class={buttonVariants({ variant: "outline", size: "sm" })}>Cancel</a>
-
-        <div>
-            <Button type="submit" variant="destructive" size="sm" formaction="/userAccount/{formValues.id}?/delete">Delete</Button>
-            <Button type="submit" variant="default" size="sm">Update</Button>
-        </div>
+    <div class="mt-2 flex flex-row justify-between">
+        <a href={`${basePath}/overview`} class={buttonVariants({ variant: "outline" })}>Cancel</a>
+        <Button type="submit" variant="destructive" formaction={`${basePath}/${$formData.id}?/delete`}>Delete</Button>
+        <Button type="submit">Update</Button>
     </div>
 </form>
-
-<!-- __associatedEntitiesComponents__ -->

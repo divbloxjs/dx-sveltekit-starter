@@ -28,7 +28,6 @@ export const authenticateUser = async ({ cookies }) => {
         }
     });
 
-    console.log(userSession);
     if (!userSession) return null;
 
     if (isBefore(userSession.expiryDateTime, new Date())) {

@@ -11,8 +11,13 @@
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
     export let FILE_NUMBER_LIMIT: number = 3;
 
+    export let accept = "";
+    export let multiple = false;
+    export let createThumbnailAndWebImages = true;
+
     export let getFilesEndpoint: string | undefined;
     export let postFilesEndpoint: string;
+
     export let deleteFileEndpoint: string;
     export let updateFileNameEndpoint: string;
 
@@ -27,7 +32,6 @@
         const result = await response.json();
 
         preloadedFiles = result?.files ?? [];
-        console.log(preloadedFiles);
     });
 
     const handleChange = (event: Event) => {
@@ -109,7 +113,7 @@
         currentXHR.addEventListener("error", transferFailed);
         currentXHR.addEventListener("abort", transferCanceled);
 
-        currentXHR.open("POST", postFilesEndpoint, true);
+        currentXHR.open("POST", `${postFilesEndpoint}&createThumbnailAndWebImages=${createThumbnailAndWebImages}`, true);
 
         currentXHR.send(formData);
     };
@@ -166,6 +170,8 @@
         let newDataTransfer = e.dataTransfer;
         let droppedFiles = newDataTransfer.files;
 
+        if (droppedFiles.length + files.length > FILE_NUMBER_LIMIT) return;
+
         const existingDataTransfer = new DataTransfer();
 
         for (let i = 0; i < droppedFiles.length; i++) {
@@ -218,9 +224,10 @@
                 name="fileToUpload"
                 type="file"
                 class="hidden"
+                {accept}
                 bind:files
                 on:change={handleChange}
-                multiple={true} />
+                {multiple} />
             {#if isDraggingOver}
                 <span
                     class="absolute flex flex-col items-center justify-center self-center pt-5 text-center text-2xl"

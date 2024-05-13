@@ -98,29 +98,29 @@
 				"allowNull": true,
 				"lengthOrValues": "150"
 			},
+			"sizesSaved": {
+				"type": "JSON",
+				"default": null,
+				"allowNull": false,
+				"lengthOrValues": null
+			},
+			"baseFileUrl": {
+				"type": "VARCHAR",
+				"default": null,
+				"allowNull": false,
+				"lengthOrValues": "1000"
+			},
 			"displayName": {
 				"type": "VARCHAR",
 				"default": null,
 				"allowNull": false,
 				"lengthOrValues": "500"
 			},
-			"sizeInBytes": {
-				"type": "INT",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": null
-			},
 			"linkedEntity": {
 				"type": "VARCHAR",
 				"default": null,
 				"allowNull": true,
 				"lengthOrValues": "150"
-			},
-			"staticFileUrl": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": "1000"
 			},
 			"linkedEntityId": {
 				"type": "BIGINT",
@@ -134,11 +134,11 @@
 				"allowNull": true,
 				"lengthOrValues": "500"
 			},
-			"sizeClassification": {
-				"type": "ENUM",
+			"originalSizeInBytes": {
+				"type": "INT",
 				"default": null,
 				"allowNull": false,
-				"lengthOrValues": "'original','web','thumbnail'"
+				"lengthOrValues": null
 			},
 			"uploadedFileExtension": {
 				"type": "VARCHAR",

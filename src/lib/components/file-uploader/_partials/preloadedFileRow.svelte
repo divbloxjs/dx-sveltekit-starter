@@ -20,9 +20,10 @@
         isNew = false;
     });
 
-    let file = preloadedFile.sizes.original;
-    if (preloadedFile.sizes.thumbnail) {
-        file = preloadedFile.sizes.thumbnail;
+    let file = preloadedFile;
+    file.url = preloadedFile.urls.original;
+    if (preloadedFile.sizesSaved.includes("thumbnail")) {
+        file.url = preloadedFile.urls.thumbnail;
     }
 
     const dispatch = createEventDispatcher();
@@ -44,7 +45,7 @@
     };
 
     let humanReadableSize = "";
-    let sizeInKb = preloadedFile.sizes.original.sizeInBytes / 1024;
+    let sizeInKb = preloadedFile.originalSizeInBytes / 1024;
     let sizeInMb = sizeInKb / 1024;
     let sizeInGb = sizeInMb / 1024;
 

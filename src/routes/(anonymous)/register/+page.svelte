@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
     import { buttonVariants } from "$lib/components/ui/button";
     import * as Form from "$lib/components/ui/form";
     import { Input } from "$lib/components/ui/input";
@@ -13,7 +13,6 @@
         validators: zodClient(registerSchema)
     });
     const { form: formData, enhance, message, errors } = form;
-    $errors: console.log($errors);
 </script>
 
 <div class="flex h-full w-full items-center justify-center">
