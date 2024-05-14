@@ -10,7 +10,6 @@
     import { buttonVariants } from "$lib/dx-components/form-elements/button";
 
     export let data;
-    console.log("data", data);
 
     export let basePath = "/profile";
 

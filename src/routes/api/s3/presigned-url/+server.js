@@ -5,11 +5,9 @@ import { json } from "@sveltejs/kit";
 
 export const POST = async ({ request }) => {
     const data = await request.json();
-    console.log("data", data);
     const s3 = new S3Controller();
 
     const guid = getGuid();
     const presignedUrl = await s3.createPresignedUrlForUpload({ bucketName: AWS_PRIVATE_BUCKET_NAME, objectKey: guid });
-    console.log("presignedUrl", presignedUrl);
     return json({ presignedUrl });
 };
