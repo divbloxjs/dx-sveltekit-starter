@@ -64,7 +64,6 @@
                     </Card.Header>
                     <Card.Content class="space-y-2">
                         <Uploader
-                            accept="image/*"
                             FILE_NUMBER_LIMIT={1}
                             getFilesEndpoint="/api/file-upload/user-account?id=1&category=Profile_Picture"
                             postFilesEndpoint="/api/file-upload/user-account?id=1"

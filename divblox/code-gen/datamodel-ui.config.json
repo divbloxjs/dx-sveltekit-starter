@@ -1,292 +1,188 @@
 {
-	"userAccount": {
-		"lastName": {
-			"type": "text",
-			"displayName": "lastName",
-			"placeholder": "lastName",
-			"default": ""
-		},
-		"firstName": {
-			"type": "text",
-			"displayName": "firstName",
-			"placeholder": "firstName",
-			"default": ""
-		},
-		"emailAddress": {
-			"type": "text",
-			"displayName": "emailAddress",
-			"placeholder": "emailAddress",
-			"default": ""
-		},
-		"hashedPassword": {
-			"type": "text",
-			"displayName": "hashedPassword",
-			"placeholder": "hashedPassword",
-			"default": ""
-		},
-		"userName": {
-			"type": "text",
-			"displayName": "userName",
-			"placeholder": "userName",
-			"default": ""
-		}
-	},
-	"fileUpload": {
-		"type": {
-			"type": "select",
-			"displayName": "type",
-			"placeholder": "type",
-			"default": ""
-		},
-		"mimeType": {
-			"type": "text",
-			"displayName": "mimeType",
-			"placeholder": "mimeType",
-			"default": ""
-		},
-		"sizeType": {
-			"type": "select",
-			"displayName": "sizeType",
-			"placeholder": "sizeType",
-			"default": ""
-		},
-		"objectKey": {
-			"type": "text",
-			"displayName": "objectKey",
-			"placeholder": "objectKey",
-			"default": ""
-		},
-		"bucketName": {
-			"type": "text",
-			"displayName": "bucketName",
-			"placeholder": "bucketName",
-			"default": ""
-		},
-		"displayName": {
-			"type": "text",
-			"displayName": "displayName",
-			"placeholder": "displayName",
-			"default": ""
-		},
-		"sizeInBytes": {
-			"type": "number",
-			"displayName": "sizeInBytes",
-			"placeholder": "sizeInBytes",
-			"default": ""
-		},
-		"finalFileUrl": {
-			"type": "text",
-			"displayName": "finalFileUrl",
-			"placeholder": "finalFileUrl",
-			"default": ""
-		},
-		"linkedEntity": {
-			"type": "text",
-			"displayName": "linkedEntity",
-			"placeholder": "linkedEntity",
-			"default": ""
-		},
-		"linkedEntityId": {
-			"type": "number",
-			"displayName": "linkedEntityId",
-			"placeholder": "linkedEntityId",
-			"default": ""
-		},
-		"uploadedFileExtension": {
-			"type": "text",
-			"displayName": "uploadedFileExtension",
-			"placeholder": "uploadedFileExtension",
-			"default": ""
-		},
-		"category": {
-			"type": "text",
-			"displayName": "category",
-			"placeholder": "category",
-			"default": ""
-		},
-		"staticFileUrl": {
-			"type": "text",
-			"displayName": "staticFileUrl",
-			"placeholder": "staticFileUrl",
-			"default": ""
-		},
-		"objectIdentifier": {
-			"type": "text",
-			"displayName": "objectIdentifier",
-			"placeholder": "objectIdentifier",
-			"default": ""
-		},
-		"sizeClassification": {
-			"type": "select",
-			"displayName": "sizeClassification",
-			"placeholder": "sizeClassification",
-			"default": ""
-		},
-		"cloudContainerIdentifier": {
-			"type": "text",
-			"displayName": "cloudContainerIdentifier",
-			"placeholder": "cloudContainerIdentifier",
-			"default": ""
-		},
-		"cloudIsPubliclyAvailable": {
-			"type": "checkbox",
-			"displayName": "cloudIsPubliclyAvailable",
-			"placeholder": "cloudIsPubliclyAvailable",
-			"default": ""
-		}
-	},
-	"place": {
-		"placeName": {
-			"type": "text",
-			"displayName": "placeName",
-			"placeholder": "placeName",
-			"default": ""
-		}
-	},
-	"customer": {
-		"customerName": {
-			"type": "text",
-			"displayName": "customerName",
-			"placeholder": "customerName",
-			"default": ""
-		},
-		"emailAddress": {
-			"type": "text",
-			"displayName": "emailAddress",
-			"placeholder": "emailAddress",
-			"default": ""
-		},
-		"contactNumber": {
-			"type": "text",
-			"displayName": "contactNumber",
-			"placeholder": "contactNumber",
-			"default": ""
-		}
-	},
-	"parentPlace": {
-		"placeName": {
-			"type": "text",
-			"displayName": "placeName",
-			"placeholder": "placeName",
-			"default": ""
-		}
-	},
-	"organisation": {
-		"effort": {
-			"type": "text",
-			"displayName": "effort",
-			"placeholder": "effort",
-			"default": ""
-		},
-		"isDefault": {
-			"type": "checkbox",
-			"displayName": "isDefault",
-			"placeholder": "isDefault",
-			"default": ""
-		},
-		"description": {
-			"type": "text",
-			"displayName": "description",
-			"placeholder": "description",
-			"default": ""
-		},
-		"organisationName": {
-			"type": "text",
-			"displayName": "organisationName",
-			"placeholder": "organisationName",
-			"default": ""
-		}
-	},
-	"parentOrganisation": {
-		"effort": {
-			"type": "number",
-			"displayName": "effort",
-			"placeholder": "effort",
-			"default": ""
-		},
-		"isDefault": {
-			"type": "checkbox",
-			"displayName": "isDefault",
-			"placeholder": "isDefault",
-			"default": ""
-		},
-		"description": {
-			"type": "textarea",
-			"displayName": "description",
-			"placeholder": "description",
-			"default": ""
-		},
-		"organisationName": {
-			"type": "textarea",
-			"displayName": "organisationName",
-			"placeholder": "organisationName",
-			"default": ""
-		}
-	},
-	"grandParentOrganisation": {
-		"effort": {
-			"type": "textarea",
-			"displayName": "effort",
-			"placeholder": "effort",
-			"default": ""
-		},
-		"isDefault": {
-			"type": "checkbox",
-			"displayName": "isDefault",
-			"placeholder": "isDefault",
-			"default": ""
-		},
-		"description": {
-			"type": "textarea",
-			"displayName": "description",
-			"placeholder": "description",
-			"default": ""
-		},
-		"organisationName": {
-			"type": "textarea",
-			"displayName": "organisationName",
-			"placeholder": "organisationName",
-			"default": ""
-		}
-	},
-	"userRole": {
-		"roleName": {
-			"type": "text",
-			"displayName": "roleName",
-			"placeholder": "roleName",
-			"default": ""
-		}
-	},
-	"userSession": {
-		"sessionId": {
-			"type": "text",
-			"displayName": "sessionId",
-			"placeholder": "sessionId",
-			"default": ""
-		},
-		"userAgent": {
-			"type": "text",
-			"displayName": "userAgent",
-			"placeholder": "userAgent",
-			"default": ""
-		},
-		"sessionData": {
-			"type": "textarea",
-			"displayName": "sessionData",
-			"placeholder": "sessionData",
-			"default": ""
-		},
-		"expiryDateTime": {
-			"type": "datetime",
-			"displayName": "expiryDateTime",
-			"placeholder": "expiryDateTime",
-			"default": ""
-		},
-		"durationInMinutes": {
-			"type": "number",
-			"displayName": "durationInMinutes",
-			"placeholder": "durationInMinutes",
-			"default": ""
-		}
-	}
+    "userAccount": {
+        "lastName": {
+            "type": "text",
+            "displayName": "lastName",
+            "placeholder": "lastName",
+            "default": ""
+        },
+        "firstName": {
+            "type": "text",
+            "displayName": "firstName",
+            "placeholder": "firstName",
+            "default": ""
+        },
+        "emailAddress": {
+            "type": "text",
+            "displayName": "emailAddress",
+            "placeholder": "emailAddress",
+            "default": ""
+        },
+        "hashedPassword": {
+            "type": "text",
+            "displayName": "hashedPassword",
+            "placeholder": "hashedPassword",
+            "default": ""
+        },
+        "userName": {
+            "type": "text",
+            "displayName": "userName",
+            "placeholder": "userName",
+            "default": ""
+        }
+    },
+    "place": {
+        "placeName": {
+            "type": "text",
+            "displayName": "placeName",
+            "placeholder": "placeName",
+            "default": ""
+        }
+    },
+    "customer": {
+        "customerName": {
+            "type": "text",
+            "displayName": "customerName",
+            "placeholder": "customerName",
+            "default": ""
+        },
+        "emailAddress": {
+            "type": "text",
+            "displayName": "emailAddress",
+            "placeholder": "emailAddress",
+            "default": ""
+        },
+        "contactNumber": {
+            "type": "text",
+            "displayName": "contactNumber",
+            "placeholder": "contactNumber",
+            "default": ""
+        }
+    },
+    "parentPlace": {
+        "placeName": {
+            "type": "text",
+            "displayName": "placeName",
+            "placeholder": "placeName",
+            "default": ""
+        }
+    },
+    "organisation": {
+        "effort": {
+            "type": "text",
+            "displayName": "effort",
+            "placeholder": "effort",
+            "default": ""
+        },
+        "isDefault": {
+            "type": "checkbox",
+            "displayName": "isDefault",
+            "placeholder": "isDefault",
+            "default": ""
+        },
+        "description": {
+            "type": "text",
+            "displayName": "description",
+            "placeholder": "description",
+            "default": ""
+        },
+        "organisationName": {
+            "type": "text",
+            "displayName": "organisationName",
+            "placeholder": "organisationName",
+            "default": ""
+        }
+    },
+    "parentOrganisation": {
+        "effort": {
+            "type": "number",
+            "displayName": "effort",
+            "placeholder": "effort",
+            "default": ""
+        },
+        "isDefault": {
+            "type": "checkbox",
+            "displayName": "isDefault",
+            "placeholder": "isDefault",
+            "default": ""
+        },
+        "description": {
+            "type": "textarea",
+            "displayName": "description",
+            "placeholder": "description",
+            "default": ""
+        },
+        "organisationName": {
+            "type": "textarea",
+            "displayName": "organisationName",
+            "placeholder": "organisationName",
+            "default": ""
+        }
+    },
+    "grandParentOrganisation": {
+        "effort": {
+            "type": "textarea",
+            "displayName": "effort",
+            "placeholder": "effort",
+            "default": ""
+        },
+        "isDefault": {
+            "type": "checkbox",
+            "displayName": "isDefault",
+            "placeholder": "isDefault",
+            "default": ""
+        },
+        "description": {
+            "type": "textarea",
+            "displayName": "description",
+            "placeholder": "description",
+            "default": ""
+        },
+        "organisationName": {
+            "type": "textarea",
+            "displayName": "organisationName",
+            "placeholder": "organisationName",
+            "default": ""
+        }
+    },
+    "userRole": {
+        "roleName": {
+            "type": "text",
+            "displayName": "roleName",
+            "placeholder": "roleName",
+            "default": ""
+        }
+    },
+    "userSession": {
+        "sessionId": {
+            "type": "text",
+            "displayName": "sessionId",
+            "placeholder": "sessionId",
+            "default": ""
+        },
+        "userAgent": {
+            "type": "text",
+            "displayName": "userAgent",
+            "placeholder": "userAgent",
+            "default": ""
+        },
+        "sessionData": {
+            "type": "textarea",
+            "displayName": "sessionData",
+            "placeholder": "sessionData",
+            "default": ""
+        },
+        "expiryDateTime": {
+            "type": "datetime",
+            "displayName": "expiryDateTime",
+            "placeholder": "expiryDateTime",
+            "default": ""
+        },
+        "durationInMinutes": {
+            "type": "number",
+            "displayName": "durationInMinutes",
+            "placeholder": "durationInMinutes",
+            "default": ""
+        }
+    }
 }

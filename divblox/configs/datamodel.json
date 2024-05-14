@@ -1,84 +1,5 @@
 {
-	"place": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"placeName": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "15"
-			}
-		},
-		"relationships": {
-			"parentPlace": [
-				"parentPlaceId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 368.8638836651028,
-			"y": 421.3155902643403
-		}
-	},
-	"customer": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"customerName": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "250"
-			},
-			"emailAddress": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "250"
-			},
-			"contactNumber": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "10"
-			}
-		},
-		"relationships": {
-			"organisation": [
-				"organisationId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 989.1139240506332,
-			"y": 692.2278481012656
-		}
-	},
-	"userRole": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"roleName": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "100"
-			}
-		},
-		"relationships": {},
-		"dataModellerCoordinates": {
-			"x": 2489.2766171234107,
-			"y": 141.57392433193624
-		}
-	},
-	"fileUpload": {
+	"file": {
 		"module": "main",
 		"indexes": [],
 		"options": {
@@ -163,6 +84,85 @@
 		"dataModellerCoordinates": {
 			"x": 2501.003113538108,
 			"y": 390.1801745883764
+		}
+	},
+	"place": {
+		"module": "main",
+		"indexes": [],
+		"options": {
+			"isAuditEnabled": true,
+			"enforceLockingConstraints": true
+		},
+		"attributes": {
+			"placeName": {
+				"type": "VARCHAR",
+				"default": null,
+				"allowNull": true,
+				"lengthOrValues": "15"
+			}
+		},
+		"relationships": {
+			"parentPlace": [
+				"parentPlaceId"
+			]
+		},
+		"dataModellerCoordinates": {
+			"x": 368.8638836651028,
+			"y": 421.3155902643403
+		}
+	},
+	"customer": {
+		"module": "main",
+		"indexes": [],
+		"options": {
+			"isAuditEnabled": true,
+			"enforceLockingConstraints": true
+		},
+		"attributes": {
+			"customerName": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "250"
+			},
+			"emailAddress": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "250"
+			},
+			"contactNumber": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "10"
+			}
+		},
+		"relationships": {
+			"organisation": [
+				"organisationId"
+			]
+		},
+		"dataModellerCoordinates": {
+			"x": 989.1139240506332,
+			"y": 692.2278481012656
+		}
+	},
+	"userRole": {
+		"module": "main",
+		"indexes": [],
+		"options": {
+			"isAuditEnabled": true,
+			"enforceLockingConstraints": true
+		},
+		"attributes": {
+			"roleName": {
+				"type": "VARCHAR",
+				"allowNull": false,
+				"lengthOrValues": "100"
+			}
+		},
+		"relationships": {},
+		"dataModellerCoordinates": {
+			"x": 2489.2766171234107,
+			"y": 141.57392433193624
 		}
 	},
 	"parentPlace": {

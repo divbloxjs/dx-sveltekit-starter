@@ -5,7 +5,8 @@
     import InputFile from "../ui/input-file/input-file.svelte";
     import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
     import Button from "../ui/button/button.svelte";
-    import { LoaderCircle } from "lucide-svelte";
+    import { ChevronLeft, ChevronRight, ExternalLink, LoaderCircle } from "lucide-svelte";
+    import Preview from "./preview.svelte";
 
     export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024 * 1024;
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
@@ -170,7 +171,7 @@
         let newDataTransfer = e.dataTransfer;
         let droppedFiles = newDataTransfer.files;
 
-        if (droppedFiles.length + files.length > FILE_NUMBER_LIMIT) return;
+        if (droppedFiles.length + preloadedFiles.length > FILE_NUMBER_LIMIT) return;
 
         const existingDataTransfer = new DataTransfer();
 
@@ -199,6 +200,11 @@
         isDraggingOver = false;
     };
     //#endregion
+
+    let previewHidden = true;
+    let previewFile = preloadedFiles[0];
+
+    let previewFileIndex = -1;
 </script>
 
 <svelte:window
@@ -310,6 +316,11 @@
                     {updateFileNameEndpoint}
                     {preloadedFile}
                     {index}
+                    on:clicked={(event) => {
+                        console.log("event.detail", event.detail);
+                        // previewFile = event.detail?.preloadedFile;
+                        previewFileIndex = index;
+                    }}
                     on:deleted={(event) => {
                         preloadedFiles = JSON.parse(
                             JSON.stringify(preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex))
@@ -333,3 +344,5 @@
         on:dragleave|preventDefault|stopPropagation={handleDragLeave}>
     </div>
 </div>
+
+<Preview {preloadedFiles} bind:index={previewFileIndex}></Preview>

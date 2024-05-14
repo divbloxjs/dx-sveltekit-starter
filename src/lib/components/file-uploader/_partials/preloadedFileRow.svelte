@@ -35,13 +35,14 @@
     };
 
     const processFileChange = async (guid = "") => {
+        dispatch("clicked", { preloadedFile });
         // TODO comment about editing actual file
-        const updateResult = await fetch(updateFileNameEndpoint, {
-            method: "PUT",
-            body: JSON.stringify({ guid, displayName: "New name" })
-        });
+        // const updateResult = await fetch(updateFileNameEndpoint, {
+        //     method: "PUT",
+        //     body: JSON.stringify({ guid, displayName: "New name" })
+        // });
 
-        if (updateResult.ok) dispatch("updated", { updatedIndex: index });
+        // if (updateResult.ok) dispatch("updated", { updatedIndex: index });
     };
 
     let humanReadableSize = "";

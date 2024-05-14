@@ -33,7 +33,8 @@ export class UploadController {
         linkedEntityId,
         category,
         createThumbnailAndWebImages = false,
-        cloudIsPubliclyAvailable = false
+        cloudIsPubliclyAvailable = false,
+        isPublic = false
     }) {
         if (files.length === 0) return [];
 
@@ -102,7 +103,7 @@ export class UploadController {
         }
 
         const filesDataToReturn = [];
-        let fileUploadToCreateArray = [];
+        let fileToCreateArray = [];
         for (let i = 0; i < files.length; i++) {
             const data = {
                 mimeType: files[i].type,
@@ -133,7 +134,7 @@ export class UploadController {
                 data.sizesSaved.push(sizeType);
             }
 
-            fileUploadToCreateArray.push(data);
+            fileToCreateArray.push(data);
 
             const urls = {};
             urls.original = await this.getUrlForDownload({
@@ -170,20 +171,20 @@ export class UploadController {
             filesDataToReturn.push(file);
         }
 
-        await prisma.fileUpload.createMany({ data: fileUploadToCreateArray });
+        await prisma.file.createMany({ data: fileToCreateArray });
 
         return filesDataToReturn;
     }
 
     async deleteFile({ containerIdentifier, objectIdentifier }) {
-        const fileUploads = await prisma.fileUpload.findMany({ where: { objectIdentifier } });
+        const file = await prisma.file.findFirst({ where: { objectIdentifier } });
 
-        for (let fileUpload of fileUploads) {
-            await this.#cloudController.deleteFile({
-                containerIdentifier,
-                objectIdentifier: `${fileUpload.sizeClassification}/${fileUpload.objectIdentifier}`
-            });
-        }
+        if (!file) return;
+
+        await this.#cloudController.deleteFile({
+            containerIdentifier,
+            objectIdentifier: file.objectIdentifier
+        });
     }
 
     async getUrlForDownload({ containerIdentifier, objectIdentifier }) {
