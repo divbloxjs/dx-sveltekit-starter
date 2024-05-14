@@ -12,7 +12,6 @@
 
     $: preloadedFiles,
         (() => {
-            console.log("CHANGED");
             displayUrl = preloadedFiles[0]?.urls?.thumbnail ?? "";
         })();
 </script>

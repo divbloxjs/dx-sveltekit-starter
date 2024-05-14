@@ -1,13 +1,10 @@
 <script>
-    import FormUpdateUserAccount from "$lib/dx-components/data-model/userAccount/userAccount-form-update.svelte";
+    import SingleImageUploader from "$lib/components/file-uploader/singleImageUploader.svelte";
+    import FormPassword from "./tabs/form-password.svelte";
+    import FormUserAccount from "./tabs/form-user-account.svelte";
 
     import * as Tabs from "$lib/components/ui/tabs/index.js";
     import * as Card from "$lib/components/ui/card/index.js";
-
-    import { Button } from "$lib/components/ui/button/index.js";
-    import { Input } from "$lib/components/ui/input/index.js";
-    import { Label } from "$lib/components/ui/label/index.js";
-    import SingleImageUploader from "$lib/components/file-uploader/singleImageUploader.svelte";
 
     export let data;
 </script>
@@ -27,11 +24,8 @@
                         <Card.Description>Make changes to your account here. Click save when you're done.</Card.Description>
                     </Card.Header>
                     <Card.Content class="space-y-2">
-                        <FormUpdateUserAccount {data} />
+                        <FormUserAccount {data} />
                     </Card.Content>
-                    <Card.Footer>
-                        <Button>Save changes</Button>
-                    </Card.Footer>
                 </Card.Root>
             </Tabs.Content>
             <Tabs.Content value="password">
@@ -41,18 +35,8 @@
                         <Card.Description>Change your password here. After saving, you'll be logged out.</Card.Description>
                     </Card.Header>
                     <Card.Content class="space-y-2">
-                        <div class="space-y-1">
-                            <Label for="current">Current password</Label>
-                            <Input id="current" type="password" />
-                        </div>
-                        <div class="space-y-1">
-                            <Label for="new">New password</Label>
-                            <Input id="new" type="password" />
-                        </div>
+                        <FormPassword {data} />
                     </Card.Content>
-                    <Card.Footer>
-                        <Button>Save password</Button>
-                    </Card.Footer>
                 </Card.Root>
             </Tabs.Content>
             <Tabs.Content value="profilePicture">

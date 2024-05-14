@@ -1,23 +1,27 @@
 <script>
-    import { buttonVariants } from "$lib/dx-components/form-elements/button.js";
-    import Button from "$lib/dx-components/form-elements/button.svelte";
     import * as Form from "$lib/components/ui/form";
 
-    import { userAccountSchema } from "./userAccount.schema";
+    import { userAccountSchema } from "../schemas/user-account.schema";
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
-    import Input from "$lib/components/ui/input/input.svelte";
+
+    import { Button } from "$lib/components/ui/button/index.js";
+    import { Input } from "$lib/components/ui/input/index.js";
+    import { buttonVariants } from "$lib/dx-components/form-elements/button";
 
     export let data;
-    export let basePath = "/admin/user-account";
+    console.log("data", data);
 
-    const form = superForm(data.form, {
+    export let basePath = "/profile";
+
+    const form = superForm(data.userForm, {
         validators: zodClient(userAccountSchema)
     });
+
     const { form: formData, enhance, message, errors } = form;
 </script>
 
-<form method="POST" action={`${basePath}/${$formData.id}?/update`} use:enhance class="flex max-w-full flex-grow flex-col">
+<form method="POST" action={`${basePath}?/updateUser`} use:enhance class="flex max-w-full flex-grow flex-col">
     <Form.Field {form} name="firstName">
         <Form.Control let:attrs>
             <Form.Label>First Name</Form.Label>
@@ -47,11 +51,9 @@
         <Form.FieldErrors />
     </Form.Field>
 
-    <slot name="footer">
-        <div class="mt-2 flex flex-row justify-between">
-            <a href={`${basePath}/overview`} class={buttonVariants({ variant: "outline" })}>Cancel</a>
-            <Button type="submit" variant="destructive" formaction={`${basePath}/${$formData.id}?/delete`}>Delete</Button>
-            <Button type="submit">Update</Button>
-        </div>
-    </slot>
+    <div class="mt-2 flex flex-row justify-between">
+        <a href={`${basePath}/overview`} class={buttonVariants({ variant: "outline" })}>Cancel</a>
+        <Button type="submit" variant="destructive" formaction={`${basePath}/${$formData.id}?/delete`}>Delete</Button>
+        <Button type="submit">Update</Button>
+    </div>
 </form>
