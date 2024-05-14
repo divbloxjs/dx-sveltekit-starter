@@ -64,9 +64,17 @@
                     </Card.Header>
                     <Card.Content class="space-y-2">
                         <Uploader
-                            FILE_NUMBER_LIMIT={1}
+                            multiple={true}
                             getFilesEndpoint="/api/file-upload/user-account?id=1&category=Profile_Picture"
                             postFilesEndpoint="/api/file-upload/user-account?id=1"
+                            deleteFileEndpoint="api/file-upload/user-account"
+                            updateFileNameEndpoint="api/file-upload">
+                        </Uploader>
+                        <Uploader
+                            multiple={true}
+                            uploadAsPublic={true}
+                            getFilesEndpoint="/api/file-upload/user-account?id=2&category=Profile_Picture"
+                            postFilesEndpoint="/api/file-upload/user-account?id=2"
                             deleteFileEndpoint="api/file-upload/user-account"
                             updateFileNameEndpoint="api/file-upload">
                         </Uploader>

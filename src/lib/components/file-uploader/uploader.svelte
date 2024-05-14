@@ -5,7 +5,7 @@
     import InputFile from "../ui/input-file/input-file.svelte";
     import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
     import Button from "../ui/button/button.svelte";
-    import { ChevronLeft, ChevronRight, ExternalLink, LoaderCircle } from "lucide-svelte";
+    import { LoaderCircle } from "lucide-svelte";
     import Preview from "./preview.svelte";
 
     export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024 * 1024;
@@ -15,9 +15,11 @@
     export let accept = "";
     export let multiple = false;
     export let createThumbnailAndWebImages = true;
+    export let uploadAsPublic = false;
 
     export let getFilesEndpoint: string | undefined;
     export let postFilesEndpoint: string;
+    const fullUploadEndpoint = `${postFilesEndpoint}&createThumbnailAndWebImages=${createThumbnailAndWebImages}&uploadAsPublic=${uploadAsPublic}`;
 
     export let deleteFileEndpoint: string;
     export let updateFileNameEndpoint: string;
@@ -114,7 +116,7 @@
         currentXHR.addEventListener("error", transferFailed);
         currentXHR.addEventListener("abort", transferCanceled);
 
-        currentXHR.open("POST", `${postFilesEndpoint}&createThumbnailAndWebImages=${createThumbnailAndWebImages}`, true);
+        currentXHR.open("POST", fullUploadEndpoint, true);
 
         currentXHR.send(formData);
     };
@@ -138,8 +140,7 @@
         }
 
         const newFiles = JSON.parse(evt.currentTarget.response).files;
-        preloadedFiles.push(...newFiles);
-        preloadedFiles = preloadedFiles;
+        preloadedFiles = newFiles;
         removeInputFiles();
     };
 
@@ -201,9 +202,6 @@
     };
     //#endregion
 
-    let previewHidden = true;
-    let previewFile = preloadedFiles[0];
-
     let previewFileIndex = -1;
 </script>
 
@@ -215,6 +213,8 @@
             uploadNewFiles(files);
         }
     }} />
+
+<Preview {preloadedFiles} bind:index={previewFileIndex}></Preview>
 
 <div class="relative h-full w-full overflow-hidden rounded-xl bg-neutral-100 p-2">
     <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -318,8 +318,6 @@
                     {index}
                     on:clicked={(event) => {
                         console.log("event.detail", event.detail);
-                        // previewFile = event.detail?.preloadedFile;
-                        previewFileIndex = index;
                     }}
                     on:deleted={(event) => {
                         preloadedFiles = JSON.parse(
@@ -344,5 +342,3 @@
         on:dragleave|preventDefault|stopPropagation={handleDragLeave}>
     </div>
 </div>
-
-<Preview {preloadedFiles} bind:index={previewFileIndex}></Preview>

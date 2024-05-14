@@ -15,7 +15,6 @@
     let fileType = "any";
     $: file,
         (() => {
-            console.log(file);
             if (["mov", "mp4", "ogg", "webm"].includes(file?.uploadedFileExtension.toLowerCase())) {
                 fileType = "video";
             } else if (
@@ -25,11 +24,7 @@
             } else {
                 fileType = "any";
             }
-
-            console.log(fileType);
         })();
-
-    let overlayEl;
 
     const handleNextFile = () => {
         if (index === preloadedFiles.length - 1) {
@@ -63,7 +58,6 @@
 
 {#if index >= 0}
     <div
-        bind:this={overlayEl}
         use:clickOutsideAction
         use:pressEscapeAction
         use:arrowNavigationAction={navigate}

@@ -1,4 +1,4 @@
-import { AWS_BUCKET_NAME, CLOUD_STORAGE_PROVIDER, LOCAL_STORAGE_FOLDER_PATH } from "$env/static/private";
+import { CLOUD_STORAGE_PROVIDER, LOCAL_STORAGE_FOLDER_PATH } from "$env/static/private";
 import { getGuid } from "$lib/server/helpers";
 import { prisma } from "$lib/server/prisma-instance";
 import { S3Controller } from "./s3.server";
@@ -7,7 +7,7 @@ import { writeFileSync } from "fs";
 import sharp from "sharp";
 import imageType, { minimumBytes } from "image-type";
 
-export class UploadController {
+export class FileController {
     #saveLocally;
     #saveInCloud;
     #cloudController;
@@ -33,8 +33,7 @@ export class UploadController {
         linkedEntityId,
         category,
         createThumbnailAndWebImages = false,
-        cloudIsPubliclyAvailable = false,
-        isPublic = false
+        cloudIsPubliclyAvailable = false
     }) {
         if (files.length === 0) return [];
 
@@ -97,7 +96,7 @@ export class UploadController {
                         objectIdentifier = `public/${objectIdentifier}`;
                     }
 
-                    await this.#cloudController.uploadFile({ file: fileArrayBuffer, objectIdentifier });
+                    await this.#cloudController.uploadFile({ file: fileArrayBuffer, objectIdentifier, isPublic: cloudIsPubliclyAvailable });
                 }
             }
         }
@@ -139,7 +138,8 @@ export class UploadController {
             const urls = {};
             urls.original = await this.getUrlForDownload({
                 containerIdentifier: data.cloudContainerIdentifier,
-                objectIdentifier: `original_${data.objectIdentifier}`
+                objectIdentifier: `original_${data.objectIdentifier}`,
+                isPublic: cloudIsPubliclyAvailable
             });
 
             if ((filesToUpload[i].isImage = true)) {
@@ -156,8 +156,6 @@ export class UploadController {
 
             const file = {
                 urls,
-                webUrl: null,
-                thumbnailUrl: null,
                 objectIdentifier: data.objectIdentifier,
                 sizesSaved: data.sizesSaved,
                 linkedEntity: data.linkedEntity,
@@ -171,24 +169,22 @@ export class UploadController {
             filesDataToReturn.push(file);
         }
 
-        await prisma.file.createMany({ data: fileToCreateArray });
-
-        return filesDataToReturn;
+        return fileToCreateArray;
     }
 
     async deleteFile({ containerIdentifier, objectIdentifier }) {
-        const file = await prisma.file.findFirst({ where: { objectIdentifier } });
-
-        if (!file) return;
-
         await this.#cloudController.deleteFile({
             containerIdentifier,
-            objectIdentifier: file.objectIdentifier
+            objectIdentifier
         });
     }
 
-    async getUrlForDownload({ containerIdentifier, objectIdentifier }) {
+    async getUrlForDownload({ containerIdentifier, objectIdentifier, cloudIsPubliclyAvailable = false }) {
         if (this.#saveLocally) return `${LOCAL_STORAGE_FOLDER_PATH}/${objectIdentifier}`;
+
+        if (cloudIsPubliclyAvailable) {
+            return this.#cloudController?.getStaticUrl({ containerIdentifier, objectIdentifier: `public/${objectIdentifier}` });
+        }
 
         return this.#cloudController?.getPresignedUrlForDownload({ containerIdentifier, objectIdentifier });
     }

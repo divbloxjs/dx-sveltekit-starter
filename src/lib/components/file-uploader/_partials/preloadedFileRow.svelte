@@ -21,6 +21,8 @@
     });
 
     let file = preloadedFile;
+    console.log(file);
+
     file.url = preloadedFile.urls.original;
     if (preloadedFile.sizesSaved.includes("thumbnail")) {
         file.url = preloadedFile.urls.thumbnail;
@@ -28,13 +30,15 @@
 
     const dispatch = createEventDispatcher();
 
-    const removeFile = async (guid = "") => {
-        const deleteResult = await fetch(deleteFileEndpoint, { method: "DELETE", body: JSON.stringify({ guid }) });
+    const removeFile = async () => {
+        const deleteResult = await fetch(deleteFileEndpoint, { method: "DELETE", body: JSON.stringify({ id: file.id }) });
 
         if (deleteResult.ok) dispatch("deleted", { toRemoveIndex: index });
     };
 
-    const processFileChange = async (guid = "") => {
+    const processFileChange = async () => {
+        console.log(file);
+
         dispatch("clicked", { preloadedFile });
         // TODO comment about editing actual file
         // const updateResult = await fetch(updateFileNameEndpoint, {
@@ -76,10 +80,10 @@
         <Button
             class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600 hover:text-white"
             size="inline-icon"
-            on:click={() => processFileChange(file.guid)}>
+            on:click={() => processFileChange()}>
             <Pencil class="h-4 w-4" />
         </Button>
-        <Button class="border-none" variant="destructive-outline" size="inline-icon" on:click={() => removeFile(file.objectIdentifier)}>
+        <Button class="border-none" variant="destructive-outline" size="inline-icon" on:click={() => removeFile()}>
             <X class="h-4 w-4" />
         </Button>
     </span>

@@ -1,16 +1,16 @@
-import { AWS_BUCKET_NAME, AWS_KEY, AWS_SECRET } from "$env/static/private";
-import { getGuid } from "$lib/server/helpers";
+import { AWS_PRIVATE_BUCKET_NAME, AWS_PUBLIC_BUCKET_NAME, AWS_KEY, AWS_SECRET } from "$env/static/private";
 import {
     CreateBucketCommand,
     DeleteObjectCommand,
     GetObjectCommand,
     ListBucketsCommand,
     ListObjectsV2Command,
+    PutBucketAclCommand,
     PutObjectCommand,
+    PutPublicAccessBlockCommand,
     S3Client
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { getFileExtension } from "../functions";
 
 export class S3Controller {
     #region;
@@ -20,7 +20,7 @@ export class S3Controller {
         this.#region = "af-south-1";
         this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes;
 
-        this.bucketName = AWS_BUCKET_NAME;
+        this.bucketName = AWS_PRIVATE_BUCKET_NAME;
         if (bucketName) this.bucketName = bucketName;
         this.#s3Client = new S3Client({
             region: this.#region,
@@ -41,19 +41,27 @@ export class S3Controller {
         return this.#getBaseUrlFromBucket({ bucketName: this.bucketName });
     }
 
-    async uploadFile({ file, objectIdentifier, containerIdentifier = undefined }) {
+    async uploadFile({ file, objectIdentifier, containerIdentifier = undefined, isPublic = undefined }) {
         if (containerIdentifier) this.bucketName = containerIdentifier;
+        if (isPublic) this.bucketName = AWS_PUBLIC_BUCKET_NAME;
 
         let fileBuffer = file;
         if (file instanceof File) {
             fileBuffer = await file.arrayBuffer();
         }
 
-        await this.#putObjectInBucket({
-            bucketName: this.bucketName,
-            objectKey: objectIdentifier,
-            file: fileBuffer
-        });
+        try {
+            await this.#putObjectInBucket({
+                bucketName: this.bucketName,
+                objectKey: objectIdentifier,
+                file: fileBuffer
+            });
+        } catch (error) {
+            if (error?.Code === "NoSuchBucket") {
+                await this.#createBucket(this.bucketName, isPublic);
+                await this.uploadFile({ file, objectIdentifier, containerIdentifier, isPublic });
+            }
+        }
     }
 
     async deleteFile({ containerIdentifier, objectIdentifier }) {
@@ -76,12 +84,23 @@ export class S3Controller {
         return await getSignedUrl(this.#s3Client, command, { expiresIn: 3600 });
     }
 
-    async #createBucket(bucketName) {
+    async #createBucket(bucketName, isPublic) {
+        if (!isPublic) {
+            await this.#s3Client.send(new CreateBucketCommand({ Bucket: bucketName }));
+            return;
+        }
+
+        // https://stackoverflow.com/questions/76330998/aws-s3-invalidbucketaclwithobjectownershipbucket-cannot-have-acls-set-with-obje
+        // Create new bucket without enforcing bucket owner writes
+        await this.#s3Client.send(new CreateBucketCommand({ Bucket: bucketName, ObjectOwnership: "ObjectWriter" }));
+
+        // Update public access to not be blocked
         await this.#s3Client.send(
-            new CreateBucketCommand({
-                Bucket: bucketName
-            })
+            new PutPublicAccessBlockCommand({ Bucket: bucketName, PublicAccessBlockConfiguration: { BlockPublicAcls: false } })
         );
+
+        // FInally update ACL to public-read
+        await this.#s3Client.send(new PutBucketAclCommand({ Bucket: bucketName, ACL: "public-read" }));
     }
 
     async #listObjectsInBucket(bucketName) {
@@ -106,21 +125,15 @@ export class S3Controller {
     }
 
     async #listBuckets() {
-        try {
-            const result = await this.#s3Client.send(new ListBucketsCommand({}));
-        } catch (err) {
-            console.error(err);
-        }
+        return await this.#s3Client.send(new ListBucketsCommand({}));
     }
 
     async #putObjectInBucket({ bucketName, objectKey, file }) {
-        try {
-            await this.#s3Client.send(
-                new PutObjectCommand({ Bucket: bucketName, Key: objectKey, Body: file, ContentLength: Buffer.byteLength(file) })
-            );
-        } catch (err) {
-            console.log(err);
-        }
+        if (bucketName) this.bucketName = bucketName;
+
+        const commandOptions = { Bucket: bucketName, Key: objectKey, Body: file, ContentLength: Buffer.byteLength(file) };
+
+        await this.#s3Client.send(new PutObjectCommand(commandOptions));
     }
 
     async #deleteObjectFromBucket(bucketName, objectKey) {
@@ -130,6 +143,8 @@ export class S3Controller {
     }
 
     #getUrlFromBucketAndObjectKey({ bucketName, objectKey }) {
+        if (!bucketName) bucketName = this.bucketName;
+
         return `https://${bucketName}.s3.${this.#region}.amazonaws.com/${objectKey}`;
     }
 

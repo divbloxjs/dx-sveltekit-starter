@@ -2,7 +2,6 @@ import { listen } from "svelte/internal";
 
 export function clickOutsideAction(node, callback) {
     const handleClick = (event) => {
-        console.log("clickOutsideAction()", event);
         if (event.target !== null && !node.contains(event.target)) {
             node.dispatchEvent(new CustomEvent("clickoutside"));
             callback?.();
