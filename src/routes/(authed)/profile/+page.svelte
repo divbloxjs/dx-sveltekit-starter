@@ -7,19 +7,18 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
-
-    import Uploader from "$lib/components/file-uploader/uploader.svelte";
+    import SingleImageUploader from "$lib/components/file-uploader/singleImageUploader.svelte";
 
     export let data;
 </script>
 
 <div class="flex h-full w-full justify-center">
-    <div class="flex w-full md:w-96">
-        <Tabs.Root value="account" class="w-full">
-            <Tabs.List class="grid w-full grid-cols-3">
-                <Tabs.Trigger value="account">Account</Tabs.Trigger>
-                <Tabs.Trigger value="password">Password</Tabs.Trigger>
-                <Tabs.Trigger value="profilePicture">Profile Picture</Tabs.Trigger>
+    <div class="mx-2 mt-2 flex w-full sm:w-[36rem]">
+        <Tabs.Root value="profilePicture" class="w-full">
+            <Tabs.List class="w-full">
+                <Tabs.Trigger value="account" class="w-full">Account</Tabs.Trigger>
+                <Tabs.Trigger value="password" class="w-full">Password</Tabs.Trigger>
+                <Tabs.Trigger value="profilePicture" class="w-full">Profile Picture</Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="account">
                 <Card.Root>
@@ -62,22 +61,12 @@
                         <Card.Title>Profile Picture</Card.Title>
                         <Card.Description>Update your profile picture here</Card.Description>
                     </Card.Header>
-                    <Card.Content class="space-y-2">
-                        <Uploader
-                            multiple={true}
+                    <Card.Content class="flex flex-col justify-center space-y-4">
+                        <SingleImageUploader
                             getFilesEndpoint="/api/file-upload/user-account?id=1&category=Profile_Picture"
                             postFilesEndpoint="/api/file-upload/user-account?id=1"
                             deleteFileEndpoint="api/file-upload/user-account"
-                            updateFileNameEndpoint="api/file-upload">
-                        </Uploader>
-                        <Uploader
-                            multiple={true}
-                            uploadAsPublic={true}
-                            getFilesEndpoint="/api/file-upload/user-account?id=2&category=Profile_Picture"
-                            postFilesEndpoint="/api/file-upload/user-account?id=2"
-                            deleteFileEndpoint="api/file-upload/user-account"
-                            updateFileNameEndpoint="api/file-upload">
-                        </Uploader>
+                            updateFileNameEndpoint="api/file-upload"></SingleImageUploader>
                     </Card.Content>
                 </Card.Root>
             </Tabs.Content>

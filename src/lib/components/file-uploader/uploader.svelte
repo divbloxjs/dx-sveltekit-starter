@@ -6,7 +6,7 @@
     import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
     import Button from "../ui/button/button.svelte";
     import { LoaderCircle } from "lucide-svelte";
-    import Preview from "./preview.svelte";
+    import Preview from "./_partials/preview.svelte";
 
     export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024 * 1024;
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
@@ -27,7 +27,7 @@
 
     let inputFileEl: HTMLInputElement;
     let files: FileList;
-    let preloadedFiles: [] = [];
+    export let preloadedFiles: [] = [];
 
     onMount(async () => {
         if (!getFilesEndpoint) return;

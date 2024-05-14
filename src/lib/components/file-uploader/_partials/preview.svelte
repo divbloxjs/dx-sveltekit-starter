@@ -1,10 +1,10 @@
 <script>
     import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-svelte";
     import { toast } from "svelte-sonner";
-    import { pressEscapeAction } from "./escape.action";
-    import { clickOutsideAction } from "./click-outside.action";
-    import Button from "../ui/button/button.svelte";
-    import { arrowNavigationAction } from "./arrow-navigation.action";
+    import { pressEscapeAction } from "../../../actions/escape.action";
+    import { clickOutsideAction } from "../../../actions/click-outside.action";
+    import Button from "../../ui/button/button.svelte";
+    import { arrowNavigationAction } from "../../../actions/arrow-navigation.action";
 
     export let preloadedFiles;
 

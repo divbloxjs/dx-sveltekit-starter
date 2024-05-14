@@ -1,6 +1,7 @@
+import { FILE_CATEGORY } from "$lib/constants/constants.server";
 import { userAccountSchema } from "$lib/dx-components/data-model/userAccount/userAccount.schema";
 import { loadUserAccount } from "$lib/dx-components/data-model/userAccount/userAccount.server";
-import { parse } from "qs";
+import { prisma } from "$lib/server/prisma-instance";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 
@@ -18,5 +19,8 @@ export const load = async (event) => {
     form.data.emailAddress = userAccount?.emailAddress;
     form.data.password = userAccount?.password;
 
-    return { form };
+    const profilePicture = await prisma.file.findFirst({
+        where: { linkedEntity: "userAccount", linkedEntityId: event?.locals?.user?.id, category: FILE_CATEGORY.PROFILE_PICTURE }
+    });
+    return { form, profilePicture };
 };
