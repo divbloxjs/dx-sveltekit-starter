@@ -36,6 +36,7 @@ export class S3Controller {
         if (containerIdentifier) this.bucketName = containerIdentifier;
         return this.#getUrlFromBucketAndObjectKey({ bucketName: this.bucketName, objectKey: objectIdentifier });
     }
+
     getStaticBaseUrl({ containerIdentifier = undefined }) {
         if (containerIdentifier) this.bucketName = containerIdentifier;
         return this.#getBaseUrlFromBucket({ bucketName: this.bucketName });

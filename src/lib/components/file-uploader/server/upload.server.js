@@ -1,11 +1,9 @@
 import { CLOUD_STORAGE_PROVIDER, LOCAL_STORAGE_FOLDER_PATH } from "$env/static/private";
-import { getGuid } from "$lib/server/helpers";
-import { prisma } from "$lib/server/prisma-instance";
 import { S3Controller } from "./s3.server";
 import { getFileExtension, getFileWithoutExtension, insertBeforeFileExtension } from "../functions";
 import { writeFileSync } from "fs";
 import sharp from "sharp";
-import imageType, { minimumBytes } from "image-type";
+import imageType from "image-type";
 
 export class FileController {
     #saveLocally;
@@ -188,8 +186,6 @@ export class FileController {
 
         return this.#cloudController?.getPresignedUrlForDownload({ containerIdentifier, objectIdentifier });
     }
-
-    async getUrlForUpload() {}
 
     async getAllImageBuffers(imageArrayBuffer) {
         const returnImageBuffers = {};

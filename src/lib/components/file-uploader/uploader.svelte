@@ -19,6 +19,7 @@
 
     export let getFilesEndpoint: string | undefined;
     export let postFilesEndpoint: string;
+
     const fullUploadEndpoint = `${postFilesEndpoint}&createThumbnailAndWebImages=${createThumbnailAndWebImages}&uploadAsPublic=${uploadAsPublic}`;
 
     export let deleteFileEndpoint: string;
