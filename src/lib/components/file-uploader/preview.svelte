@@ -4,6 +4,7 @@
     import { pressEscapeAction } from "./escape.action";
     import { clickOutsideAction } from "./click-outside.action";
     import Button from "../ui/button/button.svelte";
+    import { arrowNavigationAction } from "./arrow-navigation.action";
 
     export let preloadedFiles;
 
@@ -47,6 +48,17 @@
     const close = () => {
         index = -1;
     };
+
+    const navigate = (direction) => {
+        console.log("WHY HERE");
+        if (direction === "left") {
+            handlePrevFile();
+        }
+
+        if (direction === "right") {
+            handleNextFile();
+        }
+    };
 </script>
 
 {#if index >= 0}
@@ -54,6 +66,7 @@
         bind:this={overlayEl}
         use:clickOutsideAction
         use:pressEscapeAction
+        use:arrowNavigationAction={navigate}
         on:clickoutside={close}
         on:escapepress={close}
         class="fixed left-[50%] top-[50%] z-[9999] flex h-[100dvh] w-[100dvw] max-w-full justify-center rounded-lg bg-muted md:h-[80dvh] md:w-[80dvw]"
@@ -99,11 +112,11 @@
                     </video>
                 {:else}
                     <div class="flex h-72 w-60 flex-col items-center justify-center rounded-lg p-4 md:w-96">
-                        <div class=" max-w-[30ch] truncate hover:cursor-pointer">
+                        <div class="max-w-[30ch] truncate hover:cursor-pointer md:max-w-[100ch]">
                             {file?.displayName}
                         </div>
                         <Button
-                            variant="primary"
+                            variant="ghost"
                             size="xl"
                             class="mt-4 gap-2 text-lg md:text-xl"
                             on:click={() => {
