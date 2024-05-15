@@ -14,6 +14,8 @@ export const load = async (event) => {
     const passwordForm = await superValidate(zod(passwordSchema));
     if (!userAccount) return { userForm, passwordForm };
 
+    passwordForm.data.id = userAccount?.id;
+
     userForm.data.id = userAccount?.id;
     userForm.data.firstName = userAccount?.firstName;
     userForm.data.lastName = userAccount?.lastName;
@@ -34,6 +36,7 @@ export const actions = {
         const { request, cookies } = event;
         const form = await superValidate(event, zod(userAccountSchema));
         console.log("form", form);
+        console.log("formData", form.data);
 
         if (!form.valid) {
             return fail(400, {

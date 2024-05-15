@@ -6,8 +6,6 @@
 
     /** @type {import('./$types').PageData} */
     export let data;
-
-    export let form;
 </script>
 
 <div class="flex h-full w-full justify-center pt-10">

@@ -17,10 +17,14 @@
         validators: zodClient(userAccountSchema)
     });
 
-    const { form: formData, enhance, message, errors } = form;
+    const { form: formData, enhance, message, errors, formId } = form;
+    console.log("formId", $formId);
+    console.log("formData", $formData);
 </script>
 
-<form method="POST" action={`${basePath}?/updateUser`} use:enhance class="flex max-w-full flex-grow flex-col">
+<form method="POST" action={`?/updateUser`} class="flex max-w-full flex-grow flex-col">
+    <input type="hidden" name="id" bind:value={$formData.id} />
+
     <Form.Field {form} name="firstName">
         <Form.Control let:attrs>
             <Form.Label>First Name</Form.Label>
@@ -51,7 +55,6 @@
     </Form.Field>
 
     <div class="mt-2 flex flex-row justify-between">
-        <a href={`${basePath}/overview`} class={buttonVariants({ variant: "outline" })}>Cancel</a>
         <Button type="submit" variant="destructive" formaction={`${basePath}/${$formData.id}?/delete`}>Delete</Button>
         <Button type="submit">Update</Button>
     </div>

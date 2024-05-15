@@ -28,6 +28,7 @@ model organisation {
   lastUpdated          DateTime            @default(now()) @db.DateTime(0)
   placeId              BigInt?
   parentOrganisationId BigInt?
+  details              Json
   customer             customer[]
   parentOrganisation   parentOrganisation? @relation(fields: [parentOrganisationId], references: [id], map: "06a959c631dce7b13a219ca3629bc830")
   place                place?              @relation(fields: [placeId], references: [id], map: "7b8f21bf7d92c4c804eff7dca0a1f8b7")

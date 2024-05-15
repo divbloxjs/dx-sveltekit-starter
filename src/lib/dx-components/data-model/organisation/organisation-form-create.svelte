@@ -1,35 +1,37 @@
 <script>
-    import { buttonVariants } from "$lib/components/ui/button";
-    import * as Form from "$lib/components/ui/form";
-    import { Input } from "$lib/components/ui/input";
-
-    import { userAccountSchema } from "./userAccount.schema";
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
+    import * as Form from "$lib/components/ui/form";
+    import { organisationSchema } from "./organisation.schema";
+    import Input from "$lib/components/ui/input/input.svelte";
+    import Textarea from "$lib/dx-components/form-elements/textarea.svelte";
 
     export let data;
     export let basePath = "/admin/user-account";
 
-    console.log(data.form);
-    const form = superForm(data.form, {
-        validators: zodClient(userAccountSchema)
+    console.log(data.organisationForm);
+    const form = superForm(data.organisationForm, {
+        validators: zodClient(organisationSchema)
     });
+
     const { form: formData, enhance, message, errors } = form;
+
+    const placeOptions = $page.data?.placeOptions ?? [];
+    const parentOrganisationOptions = $page.data?.parentOrganisationOptions ?? [];
 </script>
 
 <form method="POST" action={`${basePath}/new?/create`} use:enhance class="flex max-w-lg flex-grow flex-col">
-    <Form.Field {form} name="firstName">
+    <Form.Field {form} name="organisationName">
         <Form.Control let:attrs>
-            <Form.Label>First Name</Form.Label>
+            <Form.Label>Name</Form.Label>
+            <Input {...attrs} bind:value={$formData.organisationName} />
             <Form.FieldErrors />
-
-            <Input {...attrs} bind:value={$formData.firstName} />
         </Form.Control>
     </Form.Field>
-    <Form.Field {form} name="lastName">
+    <Form.Field {form} name="description">
         <Form.Control let:attrs>
-            <Form.Label>Last Name</Form.Label>
-            <Input {...attrs} bind:value={$formData.lastName} />
+            <Form.Label>Description</Form.Label>
+            <Textarea {...attrs}>{$formData.description}</Textarea>
         </Form.Control>
         <Form.FieldErrors />
     </Form.Field>

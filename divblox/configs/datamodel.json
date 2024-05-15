@@ -309,6 +309,12 @@
 				"allowNull": false,
 				"lengthOrValues": "23"
 			},
+			"details": {
+				"type": "JSON",
+				"default": null,
+				"allowNull": false,
+				"lengthOrValues": null
+			},
 			"isDefault": {
 				"type": "TINYINT",
 				"default": 0,
