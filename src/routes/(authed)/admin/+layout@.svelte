@@ -15,6 +15,7 @@
         <div class="flex h-full w-48 flex-col gap-2 border-r p-2">
             <a href="/admin/user-account/overview" class={buttonVariants({ variant: "outline" })}>User Accounts</a>
             <a href="/admin/user-role/overview" class={buttonVariants({ variant: "outline" })}>User Roles</a>
+            <a href="/admin/organisation/overview" class={buttonVariants({ variant: "outline" })}>Organisations</a>
         </div>
 
         <div class="flex flex-grow flex-col p-5">

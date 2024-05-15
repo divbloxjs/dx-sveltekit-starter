@@ -6,20 +6,35 @@ import {
     createOrganisation,
     deleteOrganisation,
     loadOrganisation,
-    updateOrganisation,
+    updateOrganisation
 } from "$lib/dx-components/data-model/organisation/organisation.server";
+import { superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
+import { organisationSchema } from "$lib/dx-components/data-model/organisation/organisation.schema";
 
 let redirectPath = "/organisation/overview";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async ({ params, request }) => {
-    redirectPath = getRefererFromRequest(request, redirectPath);
+    console.log("load()");
+    const form = await superValidate(zod(organisationSchema));
 
     if (params?.id.toLowerCase() === "new") {
-        return {};
+        return { organisationForm: form };
     }
 
-    return await loadOrganisation(params?.id);
+    const { organisation, placeOptions, parentOrganisationOptions } = await loadOrganisation(params?.id);
+
+    form.data.id = organisation.id.toString();
+    form.data.firstName = organisation.firstName;
+    form.data.lastName = organisation.lastName;
+    form.data.emailAddress = organisation.emailAddress;
+    form.data.username = organisation.username;
+    form.data.parentOrganisationOptions = organisation.username;
+    form.data.placeOptions = placeOptions;
+    form.data.parentOrganisationOptions = parentOrganisationOptions;
+
+    return { organisationForm: form };
 };
 
 /** @type {import('./$types').Actions} */
@@ -50,5 +65,5 @@ export const actions = {
         if (!result) return fail(400, requestBody);
 
         redirect(302, redirectPath);
-    },
+    }
 };

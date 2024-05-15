@@ -7,7 +7,7 @@
     /** @type {import('./$types').PageData} */
     export let data;
 
-    export let form;
+    console.log(data);
 </script>
 
 {#if $page.params.id === "new"}
