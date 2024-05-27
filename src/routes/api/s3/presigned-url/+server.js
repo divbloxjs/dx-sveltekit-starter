@@ -3,6 +3,7 @@ import { getGuid } from "$lib/server/helpers";
 import { S3Controller } from "$lib/server/s3.helpers";
 import { json } from "@sveltejs/kit";
 
+/** @type {import('./$types').RequestHandler} */
 export const POST = async ({ request }) => {
     const data = await request.json();
     const s3 = new S3Controller();

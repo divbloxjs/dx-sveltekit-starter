@@ -6,6 +6,6 @@ export default {
     host: "localhost",
     user: "dxuser",
     password: "secret",
-    port: 3307,
+    port: 3308,
     ssl: false
 };

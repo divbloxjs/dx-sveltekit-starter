@@ -347,6 +347,42 @@
 			"y": 626.2624593837743
 		}
 	},
+	"pushSubscription": {
+		"module": "main",
+		"options": {
+			"isAuditEnabled": true,
+			"enforceLockingConstraints": true
+		},
+		"attributes": {
+			"hasUnseenNotification": {
+				"type": "BOOLEAN",
+				"default": 0,
+				"allowNull": false,
+				"lengthOrValues": null
+			},
+			"pushSubscriptionIndex": {
+				"type": "VARCHAR",
+				"default": "",
+				"allowNull": false,
+				"lengthOrValues": 50
+			},
+			"pushSubscriptionObject": {
+				"type": "JSON",
+				"default": null,
+				"allowNull": true,
+				"lengthOrValues": null
+			}
+		},
+		"relationships": {
+			"userAccount": [
+				"userAccountId"
+			]
+		},
+		"dataModellerCoordinates": {
+			"x": 0,
+			"y": 0
+		}
+	},
 	"parentOrganisation": {
 		"module": "main",
 		"indexes": [],
