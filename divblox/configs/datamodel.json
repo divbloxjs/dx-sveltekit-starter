@@ -349,24 +349,38 @@
 	},
 	"pushSubscription": {
 		"module": "main",
+		"indexes": [
+			{
+				"type": "BTREE",
+				"attribute": "uniqueIdentifier",
+				"indexName": "pushSubscriptionUniqueIdentifier",
+				"indexChoice": "unique"
+			}
+		],
 		"options": {
 			"isAuditEnabled": true,
 			"enforceLockingConstraints": true
 		},
 		"attributes": {
+			"isActive": {
+				"type": "BOOLEAN",
+				"default": 1,
+				"allowNull": false,
+				"lengthOrValues": null
+			},
+			"uniqueIdentifier": {
+				"type": "VARCHAR",
+				"default": null,
+				"allowNull": true,
+				"lengthOrValues": 50
+			},
 			"hasUnseenNotification": {
 				"type": "BOOLEAN",
 				"default": 0,
 				"allowNull": false,
 				"lengthOrValues": null
 			},
-			"pushSubscriptionIndex": {
-				"type": "VARCHAR",
-				"default": "",
-				"allowNull": false,
-				"lengthOrValues": 50
-			},
-			"pushSubscriptionObject": {
+			"pushSubscriptionDetails": {
 				"type": "JSON",
 				"default": null,
 				"allowNull": true,

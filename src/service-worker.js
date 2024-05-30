@@ -65,9 +65,9 @@ self.addEventListener("fetch", (event) => {
             }
 
             if (response.status === 200) {
-                if (event.request.url.match("^(http|https)://")) {
-                    cache.put(event.request, response.clone());
-                }
+                // if (event.request.url.match("^(http|https)://")) {
+                cache.put(event.request, response.clone());
+                // }
             }
 
             return response;
@@ -85,4 +85,55 @@ self.addEventListener("fetch", (event) => {
     }
 
     event.respondWith(respond());
+});
+
+self.addEventListener("message", async (event) => {
+    console.log(`The client sent me a message`, event.data);
+    if (event.data.action === "skipWaiting") {
+        self.skipWaiting();
+    }
+
+    if (event.data.action === "storePushSubscription") {
+        if (fcmConfig.isFcmEnabled && self.registration.pushManager) {
+            // Web Push supported.
+            try {
+                const options = { applicationServerKey, userVisibleOnly: true };
+                const subscription = await self.registration.pushManager.subscribe(options);
+
+                //Save this to backend with the provided endpoint
+                const saveResult = await fetch(pushSubscriptionEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ pushSubscriptionObject: subscription })
+                });
+            } catch (err) {
+                console.log("Error", err);
+            }
+        } else {
+            // Web Push not supported.
+            console.log("Web push not supported");
+        }
+        self.skipWaiting();
+    }
+});
+
+self.addEventListener("push", (event) => {
+    if (!event.data) {
+        console.log("Push event received, but no data");
+        return;
+    }
+
+    const pushData = event.data.json();
+    const title = pushData?.notification?.title ?? "Divblox Notification";
+
+    const showNotification = async () => {
+        try {
+            await self.registration.showNotification(title, pushData.notification);
+        } catch (error) {
+            console.log("Could not send service worker notification:", error);
+        }
+    };
+
+    event.waitUntil(showNotification());
 });

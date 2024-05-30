@@ -134,13 +134,14 @@ model file {
 }
 
 model pushSubscription {
-  id                     BigInt       @id @default(autoincrement())
-  hasUnseenNotification  Boolean      @default(false)
-  pushSubscriptionIndex  String       @db.VarChar(50)
-  pushSubscriptionObject Json?
-  lastUpdated            DateTime     @default(now()) @db.DateTime(0)
-  userAccountId          BigInt?
-  userAccount            userAccount? @relation(fields: [userAccountId], references: [id], map: "0ebd273d52363358e309bee0726c3bc3")
+  id                      BigInt       @id @default(autoincrement())
+  hasUnseenNotification   Boolean      @default(false)
+  lastUpdated             DateTime     @default(now()) @db.DateTime(0)
+  userAccountId           BigInt?
+  pushSubscriptionDetails Json?
+  uniqueIdentifier        String?      @unique(map: "pushSubscriptionUniqueIdentifier") @db.VarChar(50)
+  isActive                Boolean      @default(true)
+  userAccount             userAccount? @relation(fields: [userAccountId], references: [id], map: "0ebd273d52363358e309bee0726c3bc3")
 
   @@index([userAccountId], map: "0ebd273d52363358e309bee0726c3bc3")
 }
