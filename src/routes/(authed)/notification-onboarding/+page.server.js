@@ -3,7 +3,7 @@ import { isJsonString, sleep } from "dx-utilities";
 
 import { prisma } from "$lib/server/prisma-instance";
 import { createHash } from "node:crypto";
-import { deliverPushNotificationToAllSubscriptionsForUserAccount, deliverPushNotificationToUniqueSubscription } from "$lib/server/web-push";
+import { deliverPushNotificationToAllSubscriptionsForUserAccount } from "$lib/server/web-push";
 
 /** @type {import('./$types').PageServerLoad} */
 export function load({ params }) {

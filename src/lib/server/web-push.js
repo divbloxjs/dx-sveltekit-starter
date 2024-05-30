@@ -18,41 +18,40 @@ export const deliverPushNotificationToUniqueSubscription = async ({
 }) => {
     const pushSubscription = await prisma.pushSubscription.findFirst({ where: { uniqueIdentifier } });
 
-    console.log("pushSubscription", pushSubscription);
     if (!pushSubscription) return false;
 
     if (mustSetAsUnseen) {
         await prisma.pushSubscription.update({ where: { uniqueIdentifier }, data: { hasUnseenNotification: true } });
     }
 
-    console.log("pushSubscription.pushSubscriptionDetails", pushSubscription.pushSubscriptionDetails);
-    console.log("pushSubscription.notificationContent", notificationContent);
-
     try {
-        console.log({ notification: notificationContent });
         await webPush.sendNotification(pushSubscription.pushSubscriptionDetails, JSON.stringify({ notification: notificationContent }));
     } catch (error) {
+        console.error("error", error);
         if (error?.statusCode === 410) {
-            // await prisma.pushSubscription.delete({ where: { uniqueIdentifier } });
+            await prisma.pushSubscription.delete({ where: { uniqueIdentifier } });
             // return true;
         }
 
-        console.log("error", error);
         return false;
     }
 
     return true;
 };
 
+/**
+ *
+ * @param {{userAccountId: number, notificationContent: {title:string, body: string, data:Object}, mustSetAsUnseen:boolean}} param0
+ * @returns
+ */
 export const deliverPushNotificationToAllSubscriptionsForUserAccount = async ({
-    userAccountId = null,
+    userAccountId,
     notificationContent = { title: "Push Notification", body: "More info...", data: {} },
     mustSetAsUnseen = false
 }) => {
-    const pushSubscriptions = await prisma.pushSubscription.findMany({ where: { userAccountId } });
-    if (!pushSubscriptions) return { pushSubscriptions: [], errors: [{ message: "Could not query push subscriptions" }] };
-
+    const pushSubscriptions = await prisma.pushSubscription.findMany({ where: { userAccountIda: 1 } });
     console.log("pushSubscriptions", pushSubscriptions);
+
     if (mustSetAsUnseen) {
         await prisma.pushSubscription.updateMany({ where: { userAccountId }, data: { hasUnseenNotification: true } });
     }
@@ -62,12 +61,12 @@ export const deliverPushNotificationToAllSubscriptionsForUserAccount = async ({
         try {
             await webPush.sendNotification(pushSubscription.pushSubscriptionDetails, JSON.stringify({ notification: notificationContent }));
         } catch (error) {
-            console.log("error", error);
+            console.error("error", error);
             if (error?.statusCode === 410) {
                 await prisma.pushSubscription.delete({ where: { id: pushSubscription.id } });
             }
 
-            errors.push({ statusCode: error?.statusCode, message: error?.body ?? error?.message ?? "NO message provided" });
+            errors.push({ statusCode: error?.statusCode, message: error?.body ?? error?.message ?? "No message provided" });
         }
     }
 
