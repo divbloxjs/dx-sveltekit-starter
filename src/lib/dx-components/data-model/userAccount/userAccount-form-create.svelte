@@ -15,6 +15,7 @@
         validators: zodClient(userAccountSchema)
     });
     const { form: formData, enhance, message, errors } = form;
+    console.log("message", message);
 </script>
 
 <form method="POST" action={`${basePath}/new?/create`} use:enhance class="flex max-w-lg flex-grow flex-col">
@@ -54,6 +55,10 @@
         </Form.Control>
         <Form.FieldErrors />
     </Form.Field>
+
+    {#if $message}
+        <span class="text-sm font-medium italic text-destructive">{$message}</span>
+    {/if}
 
     <div class="mt-2 flex flex-row justify-between">
         <a href={`${basePath}/overview`} class={buttonVariants({ variant: "outline" })}>Cancel</a>

@@ -8,21 +8,27 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
     import { buttonVariants } from "$lib/dx-components/form-elements/button";
+    import { handleFormActionToast, superFormOnResult, superFormOnSubmit, superFormOnUpdated } from "$lib";
+    import { toast } from "svelte-sonner";
 
     export let data;
 
     export let basePath = "/profile";
 
     const form = superForm(data.userForm, {
-        validators: zodClient(userAccountSchema)
+        validators: zodClient(userAccountSchema),
+        invalidateAll: "force",
+        resetForm: true,
+        onResult: superFormOnResult,
+        onUpdated: superFormOnUpdated
     });
 
-    const { form: formData, enhance, message, errors, formId } = form;
-    console.log("formId", $formId);
-    console.log("formData", $formData);
+    const { form: formData, enhance, message, errors, formId, submitting, capture } = form;
+
+    console.log("submitting", submitting);
 </script>
 
-<form method="POST" action={`?/updateUser`} class="flex max-w-full flex-grow flex-col">
+<form method="POST" action={`?/updateUser`} use:enhance class="flex max-w-full flex-grow flex-col">
     <input type="hidden" name="id" bind:value={$formData.id} />
 
     <Form.Field {form} name="firstName">
@@ -56,6 +62,6 @@
 
     <div class="mt-2 flex flex-row justify-between">
         <Button type="submit" variant="destructive" formaction={`${basePath}/${$formData.id}?/delete`}>Delete</Button>
-        <Button type="submit">Update</Button>
+        <Button type="submit" disabled={$submitting} loading={$submitting}>Update</Button>
     </div>
 </form>

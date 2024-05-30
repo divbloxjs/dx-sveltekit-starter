@@ -1,4 +1,4 @@
-import { getIntId, getRefererFromRequest, getRequestBody } from "__componentsPathAlias__/data-model/_helpers/helpers";
+import { getIntId, getRefererFromRequest } from "__componentsPathAlias__/data-model/_helpers/helpers";
 import { getRequestBody } from "__componentsPathAlias__/data-model/_helpers/helpers.server";
 import { fail, redirect } from "@sveltejs/kit";
 
@@ -6,7 +6,7 @@ import {
     create__entityNamePascalCase__,
     delete__entityNamePascalCase__,
     load__entityNamePascalCase__,
-    update__entityNamePascalCase__,
+    update__entityNamePascalCase__
 } from "__componentsPathAlias__/data-model/__entityName__/__entityName__.server";
 
 let redirectPath = "/__entityName__/overview";
@@ -50,5 +50,5 @@ export const actions = {
         if (!result) return fail(400, requestBody);
 
         redirect(302, redirectPath);
-    },
+    }
 };

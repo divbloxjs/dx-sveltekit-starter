@@ -65,9 +65,9 @@ self.addEventListener("fetch", (event) => {
             }
 
             if (response.status === 200) {
-                // if (event.request.url.match("^(http|https)://")) {
-                cache.put(event.request, response.clone());
-                // }
+                if (event.request.url.startsWith("http")) {
+                    cache.put(event.request, response.clone());
+                }
             }
 
             return response;

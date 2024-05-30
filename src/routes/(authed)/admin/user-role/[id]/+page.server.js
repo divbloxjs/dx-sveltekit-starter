@@ -1,13 +1,8 @@
-import { getIntId, getRefererFromRequest, getRequestBody } from "$lib/dx-components/data-model/_helpers/helpers";
+import { getIntId, getRefererFromRequest } from "$lib/dx-components/data-model/_helpers/helpers";
 import { getRequestBody } from "$lib/dx-components/data-model/_helpers/helpers.server";
 import { fail, redirect } from "@sveltejs/kit";
 
-import {
-    createUserRole,
-    deleteUserRole,
-    loadUserRole,
-    updateUserRole,
-} from "$lib/dx-components/data-model/userRole/userRole.server";
+import { createUserRole, deleteUserRole, loadUserRole, updateUserRole } from "$lib/dx-components/data-model/userRole/userRole.server";
 
 let redirectPath = "/userRole/overview";
 
@@ -50,5 +45,5 @@ export const actions = {
         if (!result) return fail(400, requestBody);
 
         redirect(302, redirectPath);
-    },
+    }
 };

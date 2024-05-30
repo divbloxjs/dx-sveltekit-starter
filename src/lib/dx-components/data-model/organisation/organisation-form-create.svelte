@@ -8,6 +8,7 @@
     import Textarea from "$lib/components/ui/textarea/textarea.svelte";
     import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
     import { Select } from "$lib/components/ui/select";
+    import { ChevronsUpDown } from "lucide-svelte";
 
     export let data;
     export let basePath = "/admin/user-account";
@@ -51,47 +52,6 @@
             <Form.Label>Detail</Form.Label>
             <Textarea {...attrs} bind:value={$formData.password} />
         </Form.Control>
-        <Form.FieldErrors />
-    </Form.Field>
-
-    <Form.Field {form} name="language" class="flex flex-col">
-        <Popover.Root bind:open let:ids>
-            <Form.Control let:attrs>
-                <Form.Label>Language</Form.Label>
-                <Popover.Trigger
-                    class={cn(
-                        buttonVariants({ variant: "outline" }),
-                        "w-[200px] justify-between",
-                        !$formData.language && "text-muted-foreground"
-                    )}
-                    role="combobox"
-                    {...attrs}>
-                    {languages.find((f) => f.value === $formData.language)?.label ?? "Select language"}
-                    <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Popover.Trigger>
-                <input hidden value={$formData.language} name={attrs.name} />
-            </Form.Control>
-            <Popover.Content class="w-[200px] p-0">
-                <Command.Root>
-                    <Command.Input autofocus placeholder="Search language..." class="h-9" />
-                    <Command.Empty>No language found.</Command.Empty>
-                    <Command.Group>
-                        {#each languages as language}
-                            <Command.Item
-                                value={language.label}
-                                onSelect={() => {
-                                    $formData.language = language.value;
-                                    closeAndFocusTrigger(ids.trigger);
-                                }}>
-                                {language.label}
-                                <Check class={cn("ml-auto h-4 w-4", language.value !== $formData.language && "text-transparent")} />
-                            </Command.Item>
-                        {/each}
-                    </Command.Group>
-                </Command.Root>
-            </Popover.Content>
-        </Popover.Root>
-        <Form.Description>This is the language that will be used in the dashboard.</Form.Description>
         <Form.FieldErrors />
     </Form.Field>
 

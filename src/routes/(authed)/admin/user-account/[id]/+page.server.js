@@ -9,7 +9,7 @@ import {
     updateUserAccount
 } from "$lib/dx-components/data-model/userAccount/userAccount.server";
 import { userAccountSchema } from "$lib/dx-components/data-model/userAccount/userAccount.schema";
-import { message, superValidate } from "sveltekit-superforms";
+import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import argon2d from "argon2";
 import { prisma } from "$lib/server/prisma-instance";
@@ -59,10 +59,12 @@ export const actions = {
         try {
             await prisma.userAccount.create({ data: userAccount });
         } catch (error) {
-            console.error(error);
-            return fail(400, {
-                form
-            });
+            console.error(error?.code === "P2002");
+            if (error?.code === "P2002") {
+                return setError(form, "emailAddress", "E-mail already exists.");
+            }
+
+            return message(form, "Something went wrong. Please try again");
         }
     },
     update: async (event) => {
@@ -89,6 +91,7 @@ export const actions = {
         console.log(result);
         if (!result) return message(form, "Bad!");
 
+        console.log("form", form);
         return { form, message: "Updated successfully!" };
     },
     delete: async (data) => {

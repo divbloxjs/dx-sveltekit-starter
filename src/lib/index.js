@@ -82,3 +82,35 @@ export const handleFormActionToast = (result) => {
 
     return true;
 };
+
+/**
+ * @param {{form: import("sveltekit-superforms").SuperValidated<any, any, any>}} event
+ */
+export const superFormOnUpdated = ({ form }) => {
+    if (form.valid) {
+        toast.success(form.message ?? "Completed action");
+    } else {
+        toast.error(form.message ?? "Something went wrong");
+    }
+};
+
+/**
+ * @param {{result: import("@sveltejs/kit").ActionResult, formEl: HTMLFormElement, formElement: HTMLFormElement, cancel(): void}} event
+ */
+export const superFormOnResult = ({ result, formElement, cancel }) => {
+    console.log("result", result);
+    console.log("formElement", formElement);
+    console.log("cancel", cancel);
+};
+
+/**
+ * @param {{action: URL, formData: FormData,formElement: HTMLFormElement, controller: AbortController, submitter: HTMLElement| null, cancel(): void}} event
+ */
+export const superFormOnSubmit = ({ action, formData, formElement, controller, submitter, cancel, jsonData }) => {
+    console.log("action", action);
+    console.log("result", formData);
+    console.log("formElement", formElement);
+    console.log("controller", controller);
+    console.log("submitter", submitter);
+    console.log("cancel", cancel);
+};

@@ -3,8 +3,9 @@ import { userAccountSchema } from "./schemas/user-account.schema";
 import { passwordSchema } from "./schemas/password.schema";
 import { loadUserAccount, updateUserAccount } from "$lib/dx-components/data-model/userAccount/userAccount.server";
 import { prisma } from "$lib/server/prisma-instance";
-import { fail, message, superValidate } from "sveltekit-superforms";
+import { fail, message, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
+import { sleep } from "dx-utilities";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
@@ -16,7 +17,7 @@ export const load = async (event) => {
 
     passwordForm.data.id = userAccount?.id;
 
-    userForm.data.id = userAccount?.id;
+    userForm.data.id = userAccount?.id?.toString();
     userForm.data.firstName = userAccount?.firstName;
     userForm.data.lastName = userAccount?.lastName;
     userForm.data.username = userAccount?.username;
@@ -33,22 +34,16 @@ export const load = async (event) => {
 export const actions = {
     updateUser: async (event) => {
         console.log("UPDATING");
+        await sleep(1000);
         const { request, cookies } = event;
         const form = await superValidate(event, zod(userAccountSchema));
-        console.log("form", form);
-        console.log("formData", form.data);
 
         if (!form.valid) {
-            return fail(400, {
-                form
-            });
+            return fail(400, { form });
         }
 
-        console.log("ABOUT TO START");
         const result = await updateUserAccount(form.data);
-
-        console.log(result);
-        if (!result) return message(form, "Bad!");
+        if (!result) return message(form, "Could not update your details. Please Try again", { status: 400 });
 
         return { form, message: "Updated successfully!" };
     },

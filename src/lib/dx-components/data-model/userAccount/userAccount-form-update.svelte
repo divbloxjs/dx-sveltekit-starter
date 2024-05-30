@@ -11,10 +11,15 @@
     export let data;
     export let basePath = "/admin/user-account";
 
+    console.log(data.form);
     const form = superForm(data.form, {
         validators: zodClient(userAccountSchema)
     });
+    
     const { form: formData, enhance, message, errors } = form;
+    console.log("message", $message);
+    console.log("$formData", $formData);
+    $: $formData, console.log($formData);
 </script>
 
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:enhance class="flex max-w-lg flex-grow flex-col">
@@ -59,6 +64,10 @@
 
     {#if $errors._errors}
         {$errors._errors}
+    {/if}
+
+    {#if $message}
+        {$message}
     {/if}
 
     <slot name="footer">
