@@ -3,8 +3,11 @@
     import FormPassword from "./tabs/form-password.svelte";
     import FormUserAccount from "./tabs/form-user-account.svelte";
 
+    import * as Form from "$lib/components/ui/form";
     import * as Tabs from "$lib/components/ui/tabs/index.js";
     import * as Card from "$lib/components/ui/card/index.js";
+    import FormWrapper from "$lib/components/forms/form-wrapper.svelte";
+    import Input from "$lib/components/ui/input/input.svelte";
 
     export let data;
 </script>
@@ -24,6 +27,46 @@
                         <Card.Description>Make changes to your account here. Click save when you're done.</Card.Description>
                     </Card.Header>
                     <Card.Content class="space-y-2">
+                        <FormWrapper action="?/register" data={data.userForm} invalidateAll={false} let:message let:superform let:form>
+                            {#if message}
+                                <div
+                                    class="status"
+                                    class:error={message.status >= 400}
+                                    class:success={!message.status || message.status < 300}>
+                                    {message.text}
+                                </div>
+                            {/if}
+
+                            <Form.Field form={data.userForm} name="firstName">
+                                <Form.Control let:attrs>
+                                    <Form.Label>First Name</Form.Label>
+                                    <Input {...attrs} bind:value={form.firstName} />
+                                </Form.Control>
+                                <Form.FieldErrors />
+                            </Form.Field>
+                            <Form.Field form={data.userForm} name="lastName">
+                                <Form.Control let:attrs>
+                                    <Form.Label>Last Name</Form.Label>
+                                    <Input {...attrs} bind:value={form.lastName} />
+                                </Form.Control>
+                                <Form.FieldErrors />
+                            </Form.Field>
+                            <Form.Field form={data.userForm} name="emailAddress">
+                                <Form.Control let:attrs>
+                                    <Form.Label>Email Address</Form.Label>
+                                    <Input {...attrs} bind:value={form.emailAddress} />
+                                </Form.Control>
+                                <Form.FieldErrors />
+                            </Form.Field>
+                            <Form.Field form={data.userForm} name="username">
+                                <Form.Control let:attrs>
+                                    <Form.Label>Username</Form.Label>
+                                    <Input {...attrs} bind:value={form.username} />
+                                </Form.Control>
+                                <Form.FieldErrors />
+                            </Form.Field>
+                            <p><button>Submit</button></p>
+                        </FormWrapper>
                         <FormUserAccount {data} />
                     </Card.Content>
                 </Card.Root>

@@ -2,14 +2,14 @@
     import * as Form from "$lib/components/ui/form";
 
     import { userAccountSchema } from "../schemas/user-account.schema";
-    import { superForm } from "sveltekit-superforms";
+    import SuperDebug, { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
     import { Button } from "$lib/components/ui/button/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
-    import { buttonVariants } from "$lib/dx-components/form-elements/button";
     import { handleFormActionToast, superFormOnResult, superFormOnSubmit, superFormOnUpdated } from "$lib";
     import { toast } from "svelte-sonner";
+    import { enhance } from "$app/forms";
 
     export let data;
 
@@ -23,12 +23,11 @@
         onUpdated: superFormOnUpdated
     });
 
-    const { form: formData, enhance, message, errors, formId, submitting, capture } = form;
-
-    console.log("submitting", submitting);
+    const { form: formData, enhance: submitEnhance, message, errors, formId, submitting, capture } = form;
 </script>
 
-<form method="POST" action={`?/updateUser`} use:enhance class="flex max-w-full flex-grow flex-col">
+<SuperDebug data={$formData} />
+<form method="POST" action={`?/updateUser`} use:submitEnhance class="flex max-w-full flex-grow flex-col">
     <input type="hidden" name="id" bind:value={$formData.id} />
 
     <Form.Field {form} name="firstName">
@@ -61,7 +60,10 @@
     </Form.Field>
 
     <div class="mt-2 flex flex-row justify-between">
-        <Button type="submit" variant="destructive" formaction={`${basePath}/${$formData.id}?/delete`}>Delete</Button>
+        <form action={`?/deleteUser`} method="POST" use:enhance>
+            <input type="hidden" name="id" bind:value={$formData.id} />
+            <Button type="submit" name="delete" variant="destructive-outline">Delete</Button>
+        </form>
         <Button type="submit" disabled={$submitting} loading={$submitting}>Update</Button>
     </div>
 </form>

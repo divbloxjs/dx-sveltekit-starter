@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const userAccountSchema = z
     .object({
-        id: z.string().trim().max(150).nullable(),
+        id: z.coerce.string().trim().max(150).nullable(),
         firstName: z.string().trim().min(1, { message: "Required" }).max(150),
         lastName: z.string().trim().min(1, { message: "Required" }).max(150),
         emailAddress: z.string().trim().email().max(150),
@@ -13,3 +13,11 @@ export const userAccountSchema = z
         message: "Passwords don't match",
         path: ["confirmPassword"] // Path of error
     });
+
+export const userAccountCreateSchema = userAccountSchema.omit({
+    id: true,
+    password: true,
+    confirmPassword: true
+});
+
+console.log("userAccountCreateSchema", userAccountCreateSchema);

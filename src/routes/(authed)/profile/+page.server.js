@@ -1,7 +1,7 @@
 import { FILE_CATEGORY } from "$lib/constants/constants.server";
 import { userAccountSchema } from "./schemas/user-account.schema";
 import { passwordSchema } from "./schemas/password.schema";
-import { loadUserAccount, updateUserAccount } from "$lib/dx-components/data-model/userAccount/userAccount.server";
+import { deleteUserAccount, loadUserAccount, updateUserAccount } from "$lib/dx-components/data-model/userAccount/userAccount.server";
 import { prisma } from "$lib/server/prisma-instance";
 import { fail, message, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
@@ -9,7 +9,8 @@ import { sleep } from "dx-utilities";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
-    const { userAccount } = await loadUserAccount(event?.locals?.user?.id);
+    const userAccountData = await loadUserAccount(event?.locals?.user?.id);
+    const userAccount = userAccountData.userAccount;
 
     const userForm = await superValidate(zod(userAccountSchema));
     const passwordForm = await superValidate(zod(passwordSchema));
@@ -17,7 +18,7 @@ export const load = async (event) => {
 
     passwordForm.data.id = userAccount?.id;
 
-    userForm.data.id = userAccount?.id?.toString();
+    userForm.data.id = userAccount?.id;
     userForm.data.firstName = userAccount?.firstName;
     userForm.data.lastName = userAccount?.lastName;
     userForm.data.username = userAccount?.username;
@@ -35,7 +36,6 @@ export const actions = {
     updateUser: async (event) => {
         console.log("UPDATING");
         await sleep(1000);
-        const { request, cookies } = event;
         const form = await superValidate(event, zod(userAccountSchema));
 
         if (!form.valid) {
@@ -46,6 +46,21 @@ export const actions = {
         if (!result) return message(form, "Could not update your details. Please Try again", { status: 400 });
 
         return { form, message: "Updated successfully!" };
+    },
+    deleteUser: async (event) => {
+        console.log("deletingUser");
+        await sleep(1000);
+        const form = await superValidate(event, zod(userAccountSchema));
+
+        console.log("form", form);
+        if (!form.data?.id) {
+            return fail(400, { form });
+        }
+
+        const result = await deleteUserAccount(form.data.id);
+        if (!result) return message(form, "Could not delete your account. Please Try again", { status: 400 });
+
+        return { form, message: "Deleted successfully!" };
     },
     updatePassword: async (event) => {
         console.log("UPDATING");
