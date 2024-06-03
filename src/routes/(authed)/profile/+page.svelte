@@ -37,7 +37,7 @@
                                 </div>
                             {/if}
 
-                            <Form.Field form={data.userForm} name="firstName">
+                            <!-- <Form.Field form={data.userForm} name="firstName">
                                 <Form.Control let:attrs>
                                     <Form.Label>First Name</Form.Label>
                                     <Input {...attrs} bind:value={form.firstName} />
@@ -64,7 +64,7 @@
                                     <Input {...attrs} bind:value={form.username} />
                                 </Form.Control>
                                 <Form.FieldErrors />
-                            </Form.Field>
+                            </Form.Field> -->
                             <p><button>Submit</button></p>
                         </FormWrapper>
                         <FormUserAccount {data} />

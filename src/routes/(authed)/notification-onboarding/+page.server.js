@@ -36,7 +36,16 @@ export const actions = {
             where: { uniqueIdentifier }
         });
 
-        if (existingPushSubscription) return { message: "Using existing subscription", pushSubscription: existingPushSubscription };
+        if (existingPushSubscription) {
+            if (!existingPushSubscription.isActive) {
+                await prisma.pushSubscription.update({
+                    where: { uniqueIdentifier },
+                    data: { isActive: true }
+                });
+            }
+
+            return { message: "Using existing subscription", pushSubscription: existingPushSubscription };
+        }
 
         const newPushSubscription = await prisma.pushSubscription.create({
             data: { uniqueIdentifier, pushSubscriptionDetails, userAccountId: locals?.user?.id }

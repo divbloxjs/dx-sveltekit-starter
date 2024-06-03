@@ -19,5 +19,3 @@ export const userAccountCreateSchema = userAccountSchema.omit({
     password: true,
     confirmPassword: true
 });
-
-console.log("userAccountCreateSchema", userAccountCreateSchema);
