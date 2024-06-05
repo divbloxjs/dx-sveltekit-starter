@@ -30,6 +30,12 @@
                 <Form.Label>Password</Form.Label>
                 <Input type="password" {...attrs} bind:value={$formData.password} />
             </Form.Control>
+            <a
+                href="/request-password-reset"
+                class={`${buttonVariants({ variant: "link", size: "xs" })} absolute -top-1 right-0 text-foreground/80`}>
+                Forgot Password?
+            </a>
+
             <Form.FieldErrors />
         </Form.Field>
 
@@ -38,7 +44,9 @@
         {/if}
 
         <div class="flex justify-between">
-            <a href="/register" class={buttonVariants({ variant: "outline" })}>No Account?</a>
+            <div class="flex flex-col">
+                <a href="/register" class={buttonVariants({ variant: "outline" })}>No Account?</a>
+            </div>
             <Form.Button>Login</Form.Button>
         </div>
     </form>

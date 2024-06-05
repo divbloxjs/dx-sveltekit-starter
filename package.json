@@ -53,6 +53,7 @@
         "image-type": "^5.2.0",
         "lucide-svelte": "^0.367.0",
         "mode-watcher": "^0.3.0",
+        "nodemailer": "^6.9.13",
         "qs": "^6.12.0",
         "read-chunk": "^4.0.3",
         "sharp": "^0.33.3",
