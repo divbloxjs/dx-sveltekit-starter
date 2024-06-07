@@ -15,6 +15,12 @@
     import { toast } from "svelte-sonner";
     import { checkFormActionResultStatus, handleFormActionToast } from "$lib";
     import { CircleHelp } from "lucide-svelte";
+    import * as Form from "$lib/components/ui/form";
+    import { Input } from "$lib/components/ui/input";
+    import AppLogo from "$lib/components/app-images/app-logo.svelte";
+
+    import * as Card from "$lib/components/ui/card";
+    import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
 
     export let data;
 
@@ -110,32 +116,43 @@
 </script>
 
 <div class="flex h-full w-full items-center justify-center">
-    <div class="relative m-2 flex max-w-96 flex-col items-center justify-center gap-8 rounded-lg bg-slate-300 p-8">
-        <p class="text-xl font-bold">Allow notifications?</p>
-        <p>By allowing notifications - you allow Divblox to notify you of time sensitive events occurring on your projects.</p>
-        <div class="mt-8 flex w-full flex-row justify-center gap-2">
-            <form action="?/ignore" method="POST" use:enhance={submitIgnore}>
-                <Button type="submit" variant="destructive-outline" disabled={submittingIgnore} loading={submittingIgnore}>Ignore</Button>
-            </form>
+    <Card.Root class="w-80 bg-card p-4 shadow-2xl">
+        <Card.Header class="mb-2 p-0 text-center">
+            <AppLogo class="w-56 self-center py-4" />
+            <Card.Title>Notification Permission</Card.Title>
+            <Card.Description>
+                <!-- DX-NOTE: Change this message to suite your app's needs -->
+                Allow {PUBLIC_APP_DISPLAY_NAME} to notify you of time sensitive events?
+            </Card.Description>
+        </Card.Header>
+        <Card.Content class="flex flex-col">
+            <div class="mt-8 flex w-full flex-row justify-between gap-2">
+                <form action="?/ignore" method="POST" use:enhance={submitIgnore}>
+                    <Button type="submit" variant="destructive-outline" disabled={submittingIgnore} loading={submittingIgnore}>
+                        Ignore
+                    </Button>
+                </form>
 
-            <form action="?/accept" method="POST" use:enhance={submitAccept}>
-                <Button type="submit" disabled={submittingAccept} loading={submittingAccept}>Accept</Button>
-            </form>
-        </div>
+                <form action="?/accept" method="POST" use:enhance={submitAccept}>
+                    <Button type="submit" disabled={submittingAccept} loading={submittingAccept}>Accept</Button>
+                </form>
+            </div>
 
-        <form action="?/test" method="POST" use:enhance={submitTest} class="absolute right-2 top-2">
-            <Tooltip.Root>
-                <Tooltip.Trigger>
-                    <Tooltip.Root>
-                        <Tooltip.Trigger>
-                            <Button type="submit" size="sm" disabled={submittingTest} loading={submittingTest}>Test</Button>
-                        </Tooltip.Trigger>
-                    </Tooltip.Root>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                    <p>Send a test notification to all your <br /> registered push subscriptions</p>
-                </Tooltip.Content>
-            </Tooltip.Root>
-        </form>
-    </div>
+            <!-- TODO Remove when user account tests done -->
+            <!-- <form action="?/test" method="POST" use:enhance={submitTest} class="absolute right-2 top-2">
+                <Tooltip.Root>
+                    <Tooltip.Trigger>
+                        <Tooltip.Root>
+                            <Tooltip.Trigger>
+                                <Button type="submit" size="sm" disabled={submittingTest} loading={submittingTest}>Test</Button>
+                            </Tooltip.Trigger>
+                        </Tooltip.Root>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                        <p>Send a test notification to all your <br /> registered push subscriptions</p>
+                    </Tooltip.Content>
+                </Tooltip.Root>
+            </form> -->
+        </Card.Content>
+    </Card.Root>
 </div>

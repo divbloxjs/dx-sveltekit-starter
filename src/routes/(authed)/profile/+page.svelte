@@ -23,7 +23,7 @@
             <Tabs.Content value="account">
                 <Card.Root>
                     <Card.Content class="space-y-2">
-                        <div class="flex flex-col self-center">
+                        <div class="mt-4 flex flex-col self-center">
                             <SingleImageUploader
                                 getFilesEndpoint="/api/file-upload/user-account?id=1&category=Profile_Picture"
                                 postFilesEndpoint="/api/file-upload/user-account?id=1"

@@ -17,7 +17,6 @@
 
     /** @type {import('./$types').PageData} */
     export let data;
-    console.log("data", data);
 
     const form = superForm(data.form, {
         validators: zodClient(confirmPasswordResetSchema),

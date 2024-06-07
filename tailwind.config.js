@@ -59,7 +59,7 @@ const config = {
                 sm: "calc(var(--radius) - 4px)"
             },
             fontFamily: {
-                sans: [...fontFamily.sans]
+                montserrat: ["Montserrat"]
             },
             animation: {
                 shake: "shake 0.82s cubic-bezier(.36,.07,.19,.97) both"

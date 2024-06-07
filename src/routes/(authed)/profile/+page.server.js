@@ -6,7 +6,7 @@ import { prisma } from "$lib/server/prisma-instance";
 import { fail, message, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { sleep } from "dx-utilities";
-
+import argon2 from "argon2";
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
     const userAccountData = await loadUserAccount(event?.locals?.user?.id);
@@ -63,21 +63,13 @@ export const actions = {
         return { form, message: "Deleted successfully!" };
     },
     updatePassword: async (event) => {
-        console.log("UPDATING");
-        const { request, cookies } = event;
         const form = await superValidate(event, zod(passwordSchema));
-        console.log(form);
 
-        if (!form.valid) {
-            return fail(400, {
-                form
-            });
-        }
+        if (!form.valid) return fail(400, { form });
 
-        console.log("ABOUT TO START");
-        const result = await updateUserAccount(form.data);
+        const hashedPassword = await argon2.hash(form.data.password);
+        const result = await updateUserAccount({ id: form.data.id, hashedPassword });
 
-        console.log(result);
         if (!result) return message(form, "Bad!");
 
         return { form, message: "Updated successfully!" };

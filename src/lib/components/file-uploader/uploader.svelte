@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { fade } from "svelte/transition";
 
     import InputFile from "../ui/input-file/input-file.svelte";
@@ -7,6 +7,8 @@
     import Button from "../ui/button/button.svelte";
     import { LoaderCircle } from "lucide-svelte";
     import Preview from "./_partials/preview.svelte";
+
+    const dispatch = createEventDispatcher();
 
     export let SINGLE_MAX_UPLOAD_SIZE = 10 * 1024 * 1024 * 1024;
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
@@ -143,6 +145,7 @@
         const newFiles = JSON.parse(evt.currentTarget.response).files;
         preloadedFiles = newFiles;
         removeInputFiles();
+        dispatch("transferComplete");
     };
 
     let hasTransferFailed = false;
@@ -150,12 +153,14 @@
         console.error("An error occurred while transferring the file");
         hasTransferFailed = true;
         uploadingFiles = false;
+        dispatch("transferFailed");
     };
 
     const transferCanceled = (evt) => {
         console.log("The transfer has been canceled by the user");
         uploadingFiles = false;
         hasTransferFailed = true;
+        dispatch("transferCanceled");
     };
     //#endregion
 
