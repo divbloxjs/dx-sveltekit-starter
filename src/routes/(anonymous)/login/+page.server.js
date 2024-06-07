@@ -33,14 +33,9 @@ export const actions = {
     login: async (event) => {
         const { request, cookies } = event;
         const form = await superValidate(event, zod(loginSchema));
-        if (!form.valid) {
-            return fail(400, {
-                form
-            });
-        }
+        if (!form.valid) return fail(400, { form });
 
         const existingUser = await prisma.userAccount.findFirst({ where: { userName: form.data.userName } });
-
         if (!existingUser) return message(form, "Invalid credentials. Please try again");
 
         let isVerified = false;

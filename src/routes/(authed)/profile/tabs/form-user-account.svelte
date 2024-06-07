@@ -26,7 +26,6 @@
     const { form: formData, enhance: submitEnhance, message, errors, formId, submitting, capture } = form;
 </script>
 
-<SuperDebug data={$formData} />
 <form method="POST" action={`?/updateUser`} use:submitEnhance class="flex max-w-full flex-grow flex-col">
     <input type="hidden" name="id" bind:value={$formData.id} />
 

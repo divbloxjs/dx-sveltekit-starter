@@ -1,6 +1,6 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
-import { AuthenticationManager } from "$lib/server/auth";
+import { AuthorisationManager } from "$lib/server/auth";
 
 export type UserInfo = {
     id: number;
@@ -18,7 +18,7 @@ declare global {
         // interface Error {}
         interface Locals {
             user: UserInfo | null; // Your type here
-            auth: AuthenticationManager;
+            auth: AuthorisationManager;
         }
         // interface PageData {}
         // interface PageState {}

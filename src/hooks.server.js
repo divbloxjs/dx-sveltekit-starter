@@ -1,5 +1,5 @@
-import { LANDING_PAGE } from "$lib/constants/constants.server";
-import { AuthenticationManager, authenticateUser } from "$lib/server/auth";
+import { DEFAULT_ROUTE } from "$env/static/private";
+import { AuthorisationManager, authenticateUser } from "$lib/server/auth";
 import { redirect } from "@sveltejs/kit";
 
 /** @type {import('@sveltejs/kit').Handle} */
@@ -16,10 +16,12 @@ export const handle = async ({ event, resolve }) => {
     if (event.route.id?.includes("/(anonymous)") && event.cookies.get("sessionId")) {
         event.locals.user = await authenticateUser(event);
         if (event.locals.user) {
-            throw redirect(303, LANDING_PAGE);
+            throw redirect(303, DEFAULT_ROUTE);
         }
     }
-    event.locals.auth = new AuthenticationManager(event);
+
+    // DX-NOTE: event.locals.auth is the
+    event.locals.auth = new AuthorisationManager(event);
     return await resolve(event);
 };
 

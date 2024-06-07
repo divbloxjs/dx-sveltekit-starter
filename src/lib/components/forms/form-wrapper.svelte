@@ -25,5 +25,3 @@
 <form method="POST" use:enhance {...$$restProps}>
     <slot {superform} form={$form} message={$message} errors={$errors} allErrors={$allErrors} delayed={$delayed} />
 </form>
-
-<SuperDebug data={$form}></SuperDebug>

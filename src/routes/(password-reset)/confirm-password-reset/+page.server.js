@@ -39,19 +39,16 @@ export const load = async (event) => {
         AND oneTimeToken.expiresAt >= NOW()
     LIMIT 1;`;
 
-    // console.log(oneTimeTokens);
-    if (!oneTimeTokens) return { form, error: true, message: "Something went wrong. Please try again" };
+    if (!oneTimeTokens) return { form, error: true };
 
     if (oneTimeTokens.length === 0) {
         return {
             form,
-            error: true,
-            message:
-                "Invalid token provided. Your token may have expired. Please request to reset your password again and follow the new link"
+            error: true
         };
     }
 
-    return { form, message: "Confirm your new password below" };
+    return { form };
 };
 
 /** @type {import('./$types').Actions} */

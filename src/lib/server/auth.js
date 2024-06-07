@@ -82,11 +82,13 @@ export const deleteAllExpiredUserSessions = async () => {
     await prisma.userSession.deleteMany({ where: { expiryDateTime: { lte: new Date() } } });
 };
 
-export class AuthenticationManager {
+export class AuthorisationManager {
     #event;
     /** @param {import("@sveltejs/kit").RequestEvent} event */
     constructor(event) {
         this.#event = event;
+        console.log(this.#event.route.id);
+
         this.user = event.locals.user;
     }
 
@@ -97,6 +99,7 @@ export class AuthenticationManager {
     }
 
     isAdmin() {
+        console.log("this.user?.userRole?.roleName", this.user?.userRole?.roleName);
         if (this.user?.userRole?.roleName !== userRoles.admin) error(403, "Unauthorized");
 
         return this;
@@ -142,7 +145,27 @@ export class AuthenticationManager {
     }
 }
 
+// DX-NOTE: TODO granular permissions e.g. updateProject, createTickets
+export const permissions = {};
+
+export const routes = {
+    __all: "/", // DX-NOTE: __notation to indicate unique meaning i.e. ALL routes accessible
+    _authed: "/(authed)", // DX-NOTE: _notation to indicate route groups, not a specific route
+    _anonymous: "/(anonymous)",
+    "_password-reset": "/(password-reset)",
+    login: "/login",
+    register: "/register"
+};
+
 export const userRoles = {
-    admin: "Admin",
-    user: "User"
+    admin: { name: "Admin", routes: [routes.__all], permissions: [] },
+    user: { name: "User", routes: [routes._authed], permissions: [] },
+    anon: { name: "Anonymous", routes: [routes._anonymous, routes["_password-reset"]] }
+};
+
+/**
+ * Define a hierarchy to remove need for duplicating array entries
+ */
+export const userRoleHierarchy = {
+    user: ["anon"]
 };

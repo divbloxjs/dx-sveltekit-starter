@@ -32,24 +32,3 @@ export const sendPasswordResetEmail = async (userAccount, oneTimeTokenValue) => 
         }
     });
 };
-
-export class EmailManager {
-    sendPasswordResetEmail(userAccount) {
-        let formatted = `Hi Megan!\n\n I am your email helper bug. \n I'll try my best to notify you when clients contact you on your website. \nI am new on the job, so please have patience :) \n Below is a summary of a contact form that was just filled in \n\n`;
-
-        const mailOptions = {
-            from: "firefly@violetlightmedia.co.za",
-            to: "meganleigh2345@gmail.com",
-            subject: `Contact Form Created`,
-            text: formatted
-        };
-
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log("Email sent: " + info.response);
-            }
-        });
-    }
-}

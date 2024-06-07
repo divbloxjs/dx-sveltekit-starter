@@ -56,7 +56,6 @@ export const checkFormActionResultStatus = (result) => {
  * @returns {boolean}
  */
 export const handleFormActionToast = (result) => {
-    console.log("result", result);
     const message = result?.data?.message;
     if (!checkFormActionResultStatus(result)) {
         toast.error(result?.data?.message ?? "Something went wrong. Please try again");
