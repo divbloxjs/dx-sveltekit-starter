@@ -56,12 +56,15 @@
         "nodemailer": "^6.9.13",
         "qs": "^6.12.0",
         "read-chunk": "^4.0.3",
-        "sharp": "^0.33.3",
+        "sharp": "^0.33.4",
         "svelte-sonner": "^0.3.24",
         "sveltekit-superforms": "^2.13.1",
         "tailwind-merge": "^2.3.0",
         "tailwind-variants": "^0.2.1",
         "web-push": "^3.6.7",
         "zod": "^3.23.8"
+    },
+    "optionalDependencies": {
+        "@img/sharp-win32-x64": "^0.33.4"
     }
 }
