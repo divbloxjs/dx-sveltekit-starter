@@ -1,6 +1,7 @@
 <script>
     import { page } from "$app/stores";
     import { Button, buttonVariants } from "$lib/components/ui/button";
+    import TopNavUser from "$lib/components/navigation/top-nav-user.svelte";
 
     import Sun from "lucide-svelte/icons/sun";
     import Moon from "lucide-svelte/icons/moon";
@@ -9,8 +10,9 @@
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 </script>
 
-<div class="flex h-full w-full flex-col">
-    <div class="flex bg-slate-200 p-2">
+<TopNavUser />
+<div class="flex h-full w-full flex-col pt-14">
+    <!--<div class="flex bg-slate-200 p-2">
         <a
             href="/dashboard"
             class="{$page.url.pathname.includes('dashboard') ? 'bg-blue-100 hover:bg-blue-200' : ''} {buttonVariants({
@@ -44,7 +46,7 @@
                 <Button type="submit" variant="outline">Log out</Button>
             </form>
         </div>
-    </div>
+    </div>-->
 
     <div class="flex flex-grow flex-col">
         <slot />
