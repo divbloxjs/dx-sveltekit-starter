@@ -6,7 +6,18 @@
     import Power from "lucide-svelte/icons/power";
     import { goto } from "$app/navigation";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+
+    /**
+     * @type {HTMLFormElement}
+     */
+    let logoutForm;
+
+    const doLogout = () => {
+        logoutForm.submit();
+    };
 </script>
+
+<form bind:this={logoutForm} action="/api/logout" method="POST"></form>
 
 <div class="fixed top-0 flex h-14 w-full items-center justify-between bg-slate-200 px-2 shadow-sm">
     <div class="flex items-center justify-start">
@@ -19,25 +30,26 @@
             on:click={() => {
                 goto("/profile");
             }}><UserRound /></Button>
-        <form action="/api/logout" method="POST">
-            <Button type="submit" variant="link"><Power /></Button>
-        </form>
+        <Button
+            type="button"
+            variant="link"
+            on:click={() => {
+                doLogout();
+            }}><Power /></Button>
     </div>
-    <div class="flex items-center justify-end sm:hidden">
+    <div class="flex items-center justify-start sm:hidden">
         <DropdownMenu.Root>
             <DropdownMenu.Trigger>
                 <Button variant="link" size="icon">
                     <AlignJustify />
                 </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="end">
-                <DropdownMenu.Item on:click={() => goto("/profile")}
-                    ><span class="flex h-10 w-full items-center justify-center hover:cursor-pointer"><UserRound /></span
-                    ></DropdownMenu.Item>
-                <DropdownMenu.Item>
-                    <form action="/api/logout" method="POST" class="flex h-10 w-full items-center justify-center hover:cursor-pointer">
-                        <Button type="submit" variant="link"><Power /></Button>
-                    </form>
+            <DropdownMenu.Content align="start">
+                <DropdownMenu.Item on:click={() => goto("/profile")}>
+                    <span class="flex h-10 w-full items-center justify-start hover:cursor-pointer"><UserRound />Profile</span>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item on:click={() => doLogout()}>
+                    <span class="flex h-10 w-full items-center justify-start hover:cursor-pointer"><Power />Log out</span>
                 </DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>
