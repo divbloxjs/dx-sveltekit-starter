@@ -1,10 +1,14 @@
 <script>
+    import { goto } from "$app/navigation";
+
+    import { toast } from "svelte-sonner";
+
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
     import { buttonVariants, Button } from "__componentsPathAlias__/ui/button";
 
-    import { __entityName__Schema } from "./__entityNameKebabCase__.schema.js";
+    import { __entityName__CreateSchema } from "./__entityNameKebabCase__.schema.js";
 
     import FormInput from "__componentsPathAlias__/ui/form/_form-input.svelte";
     import FormTextarea from "__componentsPathAlias__/ui/form/_form-textarea.svelte";
@@ -15,7 +19,13 @@
     export let basePath = "/__entityNameKebabCase__";
 
     const form = superForm(data.form, {
-        validators: zodClient(__entityName__Schema)
+        validators: zodClient(__entityName__CreateSchema),
+        onResult: async (event) => {
+            if (event.result.type === "success") {
+                toast.success("Created __entityName__");
+                await goto(`${basePath}/overview`);
+            }
+        }
     });
 
     const { form: formData, enhance, message, errors } = form;

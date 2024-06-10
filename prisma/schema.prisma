@@ -23,7 +23,7 @@ model organisation {
   id                   BigInt              @id @default(autoincrement())
   effort               String              @db.VarChar(23)
   description          String?             @db.VarChar(25)
-  details              Json
+  details              Json?
   isDefault            Boolean?            @default(false)
   organisationName     String?             @db.VarChar(25)
   lastUpdated          DateTime            @default(now()) @db.DateTime(0)

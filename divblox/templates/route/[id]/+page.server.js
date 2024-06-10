@@ -2,7 +2,10 @@ import { fail } from "@sveltejs/kit";
 import { prisma } from "$lib/server/prisma-instance";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { __entityName__Schema } from "__componentsPathAlias__/data-model/__entityNameKebabCase__/__entityNameKebabCase__.schema";
+import {
+    __entityName__CreateSchema,
+    __entityName__UpdateSchema,
+} from "__componentsPathAlias__/data-model/__entityNameKebabCase__/__entityNameKebabCase__.schema";
 
 import {
     load__entityNamePascalCase__,
@@ -13,11 +16,14 @@ import {
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
     const { params } = event;
-    const form = await superValidate(event, zod(__entityName__Schema));
 
+    let form;
     if (params?.id.toLowerCase() === "new") {
+        form = await superValidate(event, zod(__entityName__CreateSchema));
         const relationshipData = await get__entityNamePascalCase__RelationshipData();
         return { form, ...relationshipData };
+    } else {
+        form = await superValidate(event, zod(__entityName__UpdateSchema));
     }
 
     const __entityName__Data = await load__entityNamePascalCase__(params?.id);

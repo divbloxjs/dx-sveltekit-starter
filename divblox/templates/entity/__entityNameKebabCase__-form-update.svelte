@@ -7,7 +7,7 @@
     import { toast } from "svelte-sonner";
     import { Button, buttonVariants } from "__componentsPathAlias__/ui/button";
 
-    import { __entityName__Schema } from "./__entityNameKebabCase__.schema.js";
+    import { __entityName__UpdateSchema } from "./__entityNameKebabCase__.schema.js";
 
     import FormSelect from "__componentsPathAlias__/ui/form/_form-select.svelte";
     import FormInput from "__componentsPathAlias__/ui/form/_form-input.svelte";
@@ -23,10 +23,12 @@
     let deleteFormEl;
 
     const form = superForm(data.form, {
-        validators: zodClient(__entityName__Schema),
-        onResult: async () => {
-            toast.success("Updated __entityName__");
-            await goto(`${basePath}/overview`);
+        validators: zodClient(__entityName__UpdateSchema),
+        onResult: async (event) => {
+            if (event.result.type === "success") {
+                toast.success("Updated __entityName__");
+                await goto(`${basePath}/overview`);
+            }
         }
     });
 
@@ -35,7 +37,7 @@
 
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="@container w-full p-1">
     <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
-    <input {form} name="id"  type="hidden" bind:value={$formData.id} />
+    <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
 
 __formValueComponents__
     </div>
