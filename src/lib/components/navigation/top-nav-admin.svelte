@@ -4,6 +4,7 @@
     import UserRound from "lucide-svelte/icons/user-round";
     import AlignJustify from "lucide-svelte/icons/align-justify";
     import Power from "lucide-svelte/icons/power";
+    import UserCog from "lucide-svelte/icons/user-cog";
     import { goto } from "$app/navigation";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
@@ -24,6 +25,12 @@
         <a href="/"><AppIcon class="max-h-10" /></a>
     </div>
     <div class="hidden items-center justify-end sm:visible sm:flex">
+        <Button
+            type="button"
+            variant="link"
+            on:click={() => {
+                goto("/admin");
+            }}><UserCog /></Button>
         <Button
             type="button"
             variant="link"
