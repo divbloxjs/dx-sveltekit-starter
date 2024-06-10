@@ -4,14 +4,11 @@
 
     import { parse, stringify } from "qs";
 
-    import dataTableConfig from "./data-series/__entityName__-data-table.config.json";
+    import dataTableConfig from "./data-series/user-account-data-table.config.json";
 
-    import { buildAttributeMap, flattenRowObject } from "$lib/dx-components/data-model/_helpers/helpers";
-    import Button from "$lib/dx-components/form-elements/button.svelte";
-    import InputText from "$lib/dx-components/form-elements/input-text.svelte";
-    import Label from "$lib/dx-components/form-elements/label.svelte";
-    import InputNumber from "$lib/dx-components/form-elements/input-number.svelte";
-    import { buttonVariants } from "$lib/dx-components/form-elements/button";
+    import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
+    import { Button, buttonVariants } from "$lib/components/ui/button";
+    import { Input } from "$lib/components/ui/input";
     import { Pencil, X } from "lucide-svelte";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
@@ -27,6 +24,8 @@
     export let allowDelete = true;
     export let allowCreate = true;
 
+    export let basePath = "/user-account";
+
     export let data;
 
     let attributeMap = {};
@@ -35,7 +34,7 @@
     let flatRows = [];
     $: (() => {
         flatRows = [];
-        for (const nestedRow of data.__entityName__Array) {
+        for (const nestedRow of data.userAccountArray) {
             flatRows.push(flattenRowObject(nestedRow, attributeMap));
         }
     })();
@@ -46,18 +45,19 @@
 <div class="flex flex-row justify-between p-2">
     <div class="flex flex-col">
         <div class="flex flex-row gap-2">
-            <InputText
+            <Input
+                type="text"
                 bind:value={search}
                 name="search"
                 placeholder="Search..."
                 on:change={() => {
                     let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                     newSearchParams.set("search", search);
-                    goto(`/__entityName__/overview?${newSearchParams.toString()}`, {
+                    goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                         keepFocus: true
                     });
                 }}>
-            </InputText>
+            </Input>
             <Button
                 size="sm"
                 on:click={() => {
@@ -65,14 +65,15 @@
 
                     let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                     newSearchParams.delete("search");
-                    goto(`/__entityName__/overview?${newSearchParams.toString()}`, {
+                    goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                         keepFocus: true
                     });
                 }}>Clear</Button>
         </div>
     </div>
     {#if allowCreate}
-        <a href="/__entityName__/new" class={buttonVariants({ variant: "default", size: "sm" })}>New</a>
+        {`${basePath}/new`}
+        <a href={`${basePath}/new`} class={buttonVariants({ variant: "default", size: "sm" })}>New</a>
     {/if}
 </div>
 
@@ -90,7 +91,8 @@
         {#each Object.values(attributeMap) as { displayName, stack, attributeName }}
             <th class="border-b p-2 text-left">
                 <div class="flex">
-                    <InputText
+                    <Input 
+                        type="text"
                         name={displayName}
                         placeholder="Filter..."
                         bind:value={filters[displayName]}
@@ -105,7 +107,7 @@
 
                             const newParams = stringify(originalParams, { encodeValuesOnly: true });
 
-                            goto(`/__entityName__/overview?${newParams}`, {
+                            goto(`${basePath}/overview?${newParams}`, {
                                 keepFocus: true
                             });
                         }} />
@@ -117,7 +119,7 @@
 
                             delete originalParams.filter?.[attributeName];
                             const newParams = stringify(originalParams, { encodeValuesOnly: true });
-                            goto(`/__entityName__/overview?${newParams}`, {
+                            goto(`${basePath}/overview?${newParams}`, {
                                 invalidateAll: true
                             });
                         }}>Reset</Button>
@@ -126,17 +128,17 @@
         {/each}
     </tr>
     {#each flatRows as flatRow, index}
-        <tr class="child:p-2 odd:bg-gray-100 hover:bg-gray-200">
+        <tr class="odd:bg-gray-100 hover:bg-gray-200 child:p-2">
             {#each Object.values(flatRow) as { value, type }}
                 <td class="border-r">{value}</td>
             {/each}
             {#if allowEdit || allowDelete}
                 <td class="flex items-center justify-center text-center">
                     <a
-                        href="/__entityName__/{data?.__entityName__Array[index]?.id}"
+                        href={`${basePath}/${data?.userAccountArray[index]?.id}`}
                         class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
                         <Pencil class="h-4 w-4" /></a>
-                    <form action="/__entityName__/{data?.__entityName__Array[index]?.id}?/delete" method="POST">
+                    <form action={`${basePath}/${data?.userAccountArray[index]?.id}?/delete`} method="POST">
                         <Button type="submit" class="border-none" variant="destructive-outline" size="inline-icon">
                             <X class="h-4 w-4" /></Button>
                     </form>
@@ -148,14 +150,15 @@
 
 <div class="flex w-full flex-row justify-between p-2">
     <div class="flex flex-row gap-2">
-        <InputNumber
+        <Input
+            type="number"
             name="limit"
             placeholder="Items per Page"
             bind:value={limit}
             on:change={() => {
                 let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                 newSearchParams.set("limit", limit.toString());
-                goto(`/__entityName__/overview?${newSearchParams.toString()}`, {
+                goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                     invalidateAll: true
                 });
             }} />
@@ -165,7 +168,7 @@
                 limit = 10;
                 let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                 newSearchParams.set("limit", limit.toString());
-                goto(`/__entityName__/overview?${newSearchParams.toString()}`, {
+                goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                     invalidateAll: true
                 });
             }}>Reset</Button>
@@ -177,7 +180,7 @@
                 let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                 offset = offset - limit <= 0 ? 0 : offset - limit;
                 newSearchParams.set("offset", offset.toString());
-                goto(`/__entityName__/overview?${newSearchParams.toString()}`, {
+                goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                     invalidateAll: true
                 });
             }}>
@@ -189,7 +192,7 @@
                 let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
                 offset = offset + limit;
                 newSearchParams.set("offset", offset.toString());
-                goto(`/__entityName__/overview?${newSearchParams.toString()}`, {
+                goto(`${basePath}/overview?${newSearchParams.toString()}`, {
                     invalidateAll: true
                 });
             }}>

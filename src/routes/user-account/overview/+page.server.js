@@ -1,6 +1,6 @@
 // export const ssr = false;
 
-import { load__entityNamePascalCase__Array } from "__componentsPathAlias__/data-model/__entityNameKebabCase__/__entityNameKebabCase__.server";
+import { loadUserAccountArray } from "$lib/components/data-model/user-account/user-account.server";
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
 
@@ -30,5 +30,5 @@ export const load = async ({ url, params }) => {
         constraints.filter = urlSearchParams.filter;
     }
 
-    return await load__entityNamePascalCase__Array(constraints);
+    return await loadUserAccountArray(constraints);
 };

@@ -7,7 +7,7 @@ import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/p
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
 const searchConfig = {
-    attributes: ["__allAttributesString__"]
+    attributes: ["__allAttributesString__"],
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
@@ -17,10 +17,10 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
     const selectClause = getPrismaSelectAllFromEntity("__entityName__");
     const prismaConditions = getPrismaConditions("__entityName__", searchConfig, constraints);
 
-    const __entityName__Array = await prisma.__entityName__.findMany({
+    const __entityName__Array = await prisma.__entityNameSqlCase__.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
-        ...prismaConditions
+        ...prismaConditions,
     });
 
     try {
@@ -34,7 +34,7 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
 
 export const create__entityNamePascalCase__ = async (data) => {
     try {
-        await prisma.__entityName__.create({ data });
+        await prisma.__entityNameSqlCase__.create({ data });
         return true;
     } catch (err) {
         console.error(err);
@@ -49,7 +49,9 @@ export const update__entityNamePascalCase__ = async (data) => {
         if (data.hasOwnProperty(relationshipName)) {
             if (!isNumeric(data[relationshipName])) {
                 delete data[relationshipName];
-                console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
+                console.error(
+                    `Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`,
+                );
             }
 
             if (typeof data[relationshipName] === "string") {
@@ -61,9 +63,9 @@ export const update__entityNamePascalCase__ = async (data) => {
     });
 
     try {
-        const result = await prisma.__entityName__.update({
+        const result = await prisma.__entityNameSqlCase__.update({
             data,
-            where: { id: data.id }
+            where: { id: data.id },
         });
         return true;
     } catch (err) {
@@ -74,7 +76,7 @@ export const update__entityNamePascalCase__ = async (data) => {
 
 export const delete__entityNamePascalCase__ = async (id = -1) => {
     try {
-        await prisma.__entityName__.delete({ where: { id } });
+        await prisma.__entityNameSqlCase__.delete({ where: { id } });
         return true;
     } catch (err) {
         console.error(err);
@@ -83,26 +85,49 @@ export const delete__entityNamePascalCase__ = async (id = -1) => {
 };
 
 export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions = true) => {
-    const __entityName__ = await prisma.__entityName__.findUnique({
-        where: { id: id }
+    const __entityName__ = await prisma.__entityNameSqlCase__.findUnique({
+        where: { id: id },
     });
 
-    __entityName__.id = getIntId(__entityName__.id);
+    __entityName__.id = __entityName__.id.toString();
     Object.keys(getRelatedEntities("__entityName__")).forEach((relationshipName) => {
-        __entityName__[relationshipName] = getIntId(__entityName__[relationshipName]);
+        __entityName__[`${relationshipName}Id`] = __entityName__[`${relationshipName}Id`]?.toString();
     });
 
-    const returnObject = { __entityName__ };
+    let returnObject = { __entityName__ };
     if (!relationshipOptions) return returnObject;
 
-    __relatedEntityOptionAssignment__;
+    const relationshipData = await get__entityNamePascalCase__RelationshipData();
+    returnObject = {
+        ...returnObject,
+        ...relationshipData,
+    };
 
     if (getEntitiesRelatedTo("__entityName__").length === 0) return returnObject;
 
-    returnObject.associatedEntities = {};
-    __associatedEntityAssignment__;
+    const associatedData = await get__entityNamePascalCase__AssociatedData(__entityName__?.id);
+    returnObject = {
+        ...returnObject,
+        ...associatedData,
+    };
 
     return returnObject;
+};
+
+export const get__entityNamePascalCase__RelationshipData = async () => {
+    const relationshipData = {};
+
+    __relationshipsOptionsAssignment__;
+
+    return relationshipData;
+};
+
+export const get__entityNamePascalCase__AssociatedData = async (__entityName__Id) => {
+    const associatedData = {};
+
+    __associatedEntitiesAssignment__;
+
+    return associatedData;
 };
 
 //#region RelatedEntity / AssociatedEntity Helpers

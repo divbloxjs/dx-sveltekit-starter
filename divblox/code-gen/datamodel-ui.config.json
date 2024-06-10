@@ -97,6 +97,12 @@
 			"displayName": "organisationName",
 			"placeholder": "organisationName",
 			"default": ""
+		},
+		"details": {
+			"type": "textarea",
+			"displayName": "details",
+			"placeholder": "details",
+			"default": ""
 		}
 	},
 	"parentOrganisation": {
@@ -262,6 +268,70 @@
 			"type": "checkbox",
 			"displayName": "cloudIsPubliclyAvailable",
 			"placeholder": "cloudIsPubliclyAvailable",
+			"default": ""
+		}
+	},
+	"oneTimeToken": {
+		"expiresAt": {
+			"type": "datetime",
+			"displayName": "expiresAt",
+			"placeholder": "expiresAt",
+			"default": ""
+		},
+		"tokenType": {
+			"type": "text",
+			"displayName": "tokenType",
+			"placeholder": "tokenType",
+			"default": ""
+		},
+		"tokenValue": {
+			"type": "text",
+			"displayName": "tokenValue",
+			"placeholder": "tokenValue",
+			"default": ""
+		},
+		"linkedEntityId": {
+			"type": "number",
+			"displayName": "linkedEntityId",
+			"placeholder": "linkedEntityId",
+			"default": ""
+		},
+		"linkedEntityName": {
+			"type": "text",
+			"displayName": "linkedEntityName",
+			"placeholder": "linkedEntityName",
+			"default": ""
+		},
+		"timeToLiveInMinutes": {
+			"type": "number",
+			"displayName": "timeToLiveInMinutes",
+			"placeholder": "timeToLiveInMinutes",
+			"default": ""
+		}
+	},
+	"pushSubscription": {
+		"isActive": {
+			"type": "checkbox",
+			"displayName": "isActive",
+			"placeholder": "isActive",
+			"default": ""
+		},
+		"uniqueIdentifier": {
+			"type": "text",
+			"displayName": "uniqueIdentifier",
+			"placeholder": "uniqueIdentifier",
+			"default": ""
+		},
+		"hasUnseenNotification": {
+			"type": "checkbox",
+			"displayName": "hasUnseenNotification",
+			"placeholder": "hasUnseenNotification",
+			"default": ""
+		},
+		"pushSubscriptionDetails": {
+			"type": "textarea",
+			"displayName": "pushSubscriptionDetails",
+			"placeholder": "pushSubscriptionDetails",
 			"default": ""
 		}
 	}

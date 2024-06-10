@@ -13,9 +13,3 @@ export const userAccountSchema = z
         message: "Passwords don't match",
         path: ["confirmPassword"] // Path of error
     });
-
-export const userAccountCreateSchema = userAccountSchema.omit({
-    id: true,
-    password: true,
-    confirmPassword: true
-});
