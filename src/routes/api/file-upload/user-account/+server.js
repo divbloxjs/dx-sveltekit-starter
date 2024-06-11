@@ -6,15 +6,16 @@ import { FileController } from "$lib/components/file-uploader/server/upload.serv
 import { AWS_PRIVATE_BUCKET_NAME, AWS_PUBLIC_BUCKET_NAME } from "$env/static/private";
 
 const LINKED_ENTITY = "userAccount";
-const UPLOAD_TYPE = "Profile_Picture";
+const UPLOAD_TYPE = "profilePicture";
 
 // TODO COMMENT
 const UPLOAD_AS_PUBLIC = false;
 const GENERATE_SMALLER_IMAGES = true;
 
-export async function POST({ request, url }) {
+/** @type {import('./$types').RequestHandler} */
+export async function POST({ request, url, locals }) {
     // TODO Auth on who you are and what files you can update
-    const linkedEntityId = url.searchParams.get("id");
+    const linkedEntityId = url.searchParams.get("id") ?? locals.user.id;
 
     let createThumbnailAndWebImages = GENERATE_SMALLER_IMAGES;
     if (url.searchParams.get("createThumbnailAndWebImages")) {
@@ -89,10 +90,14 @@ export async function POST({ request, url }) {
     }
 }
 
-export async function GET({ request, url }) {
+/** @type {import('./$types').RequestHandler} */
+export async function GET({ request, url, locals }) {
+    console.log(" locals.user", locals);
     // TODO Auth on who you are and what files you can update
     try {
-        const linkedEntityId = url.searchParams.get("id");
+        const linkedEntityId = url.searchParams.get("id") ?? locals.user.id;
+
+        console.log("linkedEntityId", linkedEntityId);
         const category = url.searchParams.get("category") ?? "";
         const files = await prisma.file.findMany({ where: { linkedEntity: LINKED_ENTITY, linkedEntityId, category } });
 
@@ -126,9 +131,11 @@ export async function GET({ request, url }) {
         return json({ files: filesToReturn });
     } catch (err) {
         console.error(err);
+        return json({ message: err?.message ?? "Error occurred. Please try again" }, { status: 400 });
     }
 }
 
+/** @type {import('./$types').RequestHandler} */
 export async function DELETE({ request }) {
     // TODO Auth on who you are and what files you can update
 

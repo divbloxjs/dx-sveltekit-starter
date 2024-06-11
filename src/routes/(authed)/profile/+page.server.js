@@ -71,5 +71,23 @@ export const actions = {
         if (!result) return message(form, "Bad!");
 
         return { form, message: "Updated successfully!" };
+    },
+    updateProfilePictureDisplayName: async (event) => {
+        event.locals.auth.isAuthenticated();
+
+        const data = await event.request.formData();
+        const displayName = data.get("displayName");
+        const fileId = data.get("id");
+
+        console.log("displayName", displayName);
+        console.log("fileId", fileId);
+        console.log("userAccountId", event.locals.user?.id);
+
+        await prisma.file.update({
+            where: { id: fileId, linkedEntity: "userAccount", linkedEntityId: event.locals.user?.id, category: "profilePicture" },
+            data: { displayName }
+        });
+
+        return { message: "Updated successfully!" };
     }
 };

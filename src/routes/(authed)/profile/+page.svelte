@@ -23,10 +23,10 @@
                     <Card.Content class="space-y-2">
                         <div class="mt-4 flex flex-col self-center">
                             <SingleImageUploader
-                                getFilesEndpoint="/api/file-upload/user-account?id=1&category=Profile_Picture"
-                                postFilesEndpoint="/api/file-upload/user-account?id=1"
+                                getFilesEndpoint="/api/file-upload/user-account?category=profilePicture"
+                                postFilesEndpoint="/api/file-upload/user-account"
                                 deleteFileEndpoint="api/file-upload/user-account"
-                                updateFileNameEndpoint="api/file-upload"></SingleImageUploader>
+                                updateFileNameEndpoint="?/updateProfilePictureDisplayName" />
                         </div>
 
                         <div class="flex w-full justify-center">
