@@ -6,7 +6,6 @@
     import { createEventDispatcher, onMount } from "svelte";
     import { quintOut } from "svelte/easing";
     import { sleep } from "dx-utilities";
-    import FormInput from "$lib/components/shadcn/ui/form/_form-input.svelte";
     import { Input } from "$lib/components/shadcn/ui/input";
     import { enhance } from "$app/forms";
     import { handleFormActionToast } from "$lib";
@@ -16,6 +15,8 @@
     export let index: number;
     export let deleteFileEndpoint: string;
     export let updateFileNameEndpoint: string;
+
+    const dispatch = createEventDispatcher();
 
     let isNew = true;
 
@@ -31,8 +32,6 @@
     if (preloadedFile.sizesSaved.includes("thumbnail")) {
         file.url = preloadedFile.urls.thumbnail;
     }
-
-    const dispatch = createEventDispatcher();
 
     const removeFile = async () => {
         const deleteResult = await fetch(deleteFileEndpoint, { method: "DELETE", body: JSON.stringify({ id: file.id }) });
@@ -51,6 +50,12 @@
             submittingUpdate = false;
             update();
 
+            if (result.type === "success") {
+                file.displayName = formData.get("displayName");
+            }
+
+            // dispatch("updated", { updatedIndex: formData.get("id") });
+            isEditingDisplayName = false;
             handleFormActionToast(result);
         };
     };
@@ -66,6 +71,8 @@
             : sizeInMb > 1
               ? `${Math.floor((sizeInMb / 10) * 10)} mb`
               : `${Math.floor((sizeInKb / 10) * 10)} kb`;
+
+    let updateDisplayNameFormEl;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -78,9 +85,13 @@
             <MimeType {file}></MimeType>
         </div>
         <span class="items-left flex min-w-0 grow flex-col justify-center px-2 transition-colors duration-1000" class:bg-green-200={isNew}>
-            <form action={`${updateFileNameEndpoint}`} method="POST" use:enhance={submitDisplayNameUpdate}>
+            <form
+                bind:this={updateDisplayNameFormEl}
+                action={`${updateFileNameEndpoint}`}
+                method="POST"
+                use:enhance={submitDisplayNameUpdate}>
                 <Input type="hidden" name="id" value={file.id}></Input>
-                <Input name="displayName"></Input>
+                <Input name="displayName" value={file.displayName}></Input>
             </form>
         </span>
 
@@ -88,7 +99,9 @@
             <Button
                 class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600 hover:text-white"
                 size="inline-icon"
-                on:click={() => (isEditingDisplayName = !isEditingDisplayName)}>
+                on:click={() => {
+                    updateDisplayNameFormEl?.requestSubmit();
+                }}>
                 <Check class="h-4 w-4" />
             </Button>
             <Button

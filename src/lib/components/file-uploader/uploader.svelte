@@ -32,13 +32,19 @@
     export let preloadedFiles: [] = [];
 
     onMount(async () => {
+        await refreshFiles();
+    });
+
+    const refreshFiles = async () => {
         if (!getFilesEndpoint) return;
 
         const response = await fetch(getFilesEndpoint);
         const result = await response.json();
 
+        console.log(result);
+
         preloadedFiles = result?.files ?? [];
-    });
+    };
 
     const handleChange = (event: Event) => {
         const target = event.target;
@@ -325,6 +331,7 @@
                     on:clicked={(event) => {
                         console.log("event.detail", event.detail);
                     }}
+                    on:updated={refreshFiles}
                     on:deleted={(event) => {
                         preloadedFiles = JSON.parse(
                             JSON.stringify(preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex))
