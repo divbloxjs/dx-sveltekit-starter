@@ -1,7 +1,7 @@
 import { FILE_CATEGORY } from "$lib/constants/constants.server";
 import { userAccountSchema } from "./schemas/user-account.schema";
 import { passwordSchema } from "./schemas/password.schema";
-import { deleteUserAccount, loadUserAccount, updateUserAccount } from "$lib/dx-components/data-model/userAccount/userAccount.server";
+import { deleteUserAccount, loadUserAccount, updateUserAccount } from "$lib/components/data-model/user-account/user-account.server";
 import { prisma } from "$lib/server/prisma-instance";
 import { fail, message, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
@@ -48,11 +48,9 @@ export const actions = {
         return { form, message: "Updated successfully!" };
     },
     deleteUser: async (event) => {
-        console.log("deletingUser");
         await sleep(1000);
         const form = await superValidate(event, zod(userAccountSchema));
 
-        console.log("form", form);
         if (!form.data?.id) {
             return fail(400, { form });
         }
@@ -60,7 +58,7 @@ export const actions = {
         const result = await deleteUserAccount(form.data.id);
         if (!result) return message(form, "Could not delete your account. Please Try again", { status: 400 });
 
-        return { form, message: "Deleted successfully!" };
+        return { form };
     },
     updatePassword: async (event) => {
         const form = await superValidate(event, zod(passwordSchema));

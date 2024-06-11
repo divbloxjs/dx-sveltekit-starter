@@ -2,13 +2,12 @@
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
 
+    import DataListRowUserAccount from "$lib/components/data-model/user-account/data-series/user-account-data-list-row.svelte";
     import { Input } from "$lib/components/ui/input";
     import Button from "$lib/components/ui/button/button.svelte";
     import Label from "$lib/components/ui/label/label.svelte";
 
-    import DataListRow__entityNamePascalCase__ from "$lib/components/data-model/__entityNameKebabCase__/data-series/__entityNameKebabCase__-data-list-row.svelte";
-
-    export let basePath = "/__entityNameKebabCase__";
+    export let basePath = "/user-account";
     export let data;
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "2");
@@ -60,12 +59,6 @@
             invalidateAll: true
         });
     };
-
-
-
-	const handleResetAll = async () => {
-		await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
-	}
 </script>
 
 <div class="flex w-full flex-col">
@@ -85,11 +78,11 @@
         </div>
     </Label>
 
-    <Button variant="link" class="self-center"on:click={handleResetAll}>Reset All</Button>
+    <Button variant="link" class="self-center" on:click={goto(`${basePath}/overview`)}>Reset All</Button>
 
     <div class="w-full divide-y overflow-hidden rounded-lg border">
-        {#each data.__entityName__Array as __entityName__Data}
-            <DataListRow__entityNamePascalCase__ {__entityName__Data} />
+        {#each data.userAccountArray as userAccountData}
+            <DataListRowUserAccount {userAccountData} />
         {/each}
     </div>
 

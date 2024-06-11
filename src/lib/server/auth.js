@@ -100,7 +100,9 @@ export class AuthorisationManager {
 
     isAdmin() {
         console.log("this.user?.userRole?.roleName", this.user?.userRole?.roleName);
-        if (this.user?.userRole?.roleName !== userRoles.admin) error(403, "Unauthorized");
+        if (this.user?.userRole?.roleName !== userRoles.admin.name) {
+            error(403, "Unauthorized");
+        }
 
         return this;
     }

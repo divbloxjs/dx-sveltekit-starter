@@ -36,7 +36,7 @@ export const load = async (event) => {
 /** @type {import('./$types').Actions} */
 export const actions = {
     create: async (event) => {
-        const form = await superValidate(event, zod(__entityName__Schema));
+        const form = await superValidate(event, zod(__entityName__CreateSchema));
 
         if (!form.valid) return fail(400, { form });
 
@@ -48,7 +48,7 @@ export const actions = {
         }
     },
     update: async (event) => {
-        const form = await superValidate(event, zod(__entityName__Schema));
+        const form = await superValidate(event, zod(__entityName__UpdateSchema));
 
         if (!form.valid) return fail(400, { form });
 

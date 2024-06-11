@@ -15,11 +15,13 @@
     let selected;
 
     onMount(() => {
-        selected = options.find(({ value, label }) => value === selectedValue);
+        selected = options.find(({ value, label }) => value === selectedValue) ?? { label: "-Please Select-", value: "" };
+        console.log("options", options);
+        console.log("selectedValue", selectedValue);
     });
 </script>
 
-<Form.Field {form} {name}>
+<Form.Field {form} {name} class="my-0 p-1">
     <Form.Control let:attrs>
         <Form.Label>{label}</Form.Label>
 
@@ -36,7 +38,7 @@
             </Select.Trigger>
             <Select.Content>
                 {#if options.length === 0}
-                    <Select.Item disabled value="undefined" label="No options" />
+                    <Select.Item disabled value="" label="No options" />
                 {/if}
 
                 {#each options as option}

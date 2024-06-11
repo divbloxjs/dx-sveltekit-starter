@@ -11,7 +11,7 @@
     export let value;
 </script>
 
-<Form.Field {form} {name} class={`${type === "hidden" ? "m-0 p-0" : ""}`}>
+<Form.Field {form} {name} class={`my-0 ${type === "hidden" ? "" : "p-1"}`}>
     <Form.Control let:attrs>
         {#if type !== "hidden"}
             <Form.Label>{label}</Form.Label>

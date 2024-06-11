@@ -223,7 +223,7 @@
 			},
 			"hashedPassword": {
 				"type": "VARCHAR",
-				"allowNull": false,
+				"allowNull": true,
 				"lengthOrValues": "100"
 			}
 		},

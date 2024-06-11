@@ -10,7 +10,7 @@
     import { handleFormActionToast, superFormOnResult, superFormOnSubmit, superFormOnUpdated } from "$lib";
     import { toast } from "svelte-sonner";
     import { enhance } from "$app/forms";
-    import { buttonVariants } from "$lib/dx-components/form-elements/button";
+    import { buttonVariants } from "$lib/components/ui/button";
 
     export let data;
 

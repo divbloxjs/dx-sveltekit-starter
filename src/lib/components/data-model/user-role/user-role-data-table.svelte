@@ -1,15 +1,14 @@
 <script>
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
-    import { enhance } from "$app/forms";
-    
+
     import { parse, stringify } from "qs";
 
-    import dataTableConfig from "./data-series/__entityNameKebabCase__-data-table.config.json";
+    import dataTableConfig from "./data-series/user-role-data-table.config.json";
 
-    import { buildAttributeMap, flattenRowObject } from "__componentsPathAlias__/data-model/_helpers/helpers";
-    import { Button, buttonVariants } from "__componentsPathAlias__/ui/button";
-    import { Input } from "__componentsPathAlias__/ui/input";
+    import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
+    import { Button, buttonVariants } from "$lib/components/ui/button";
+    import { Input } from "$lib/components/ui/input";
     import { Pencil, X } from "lucide-svelte";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
@@ -25,7 +24,7 @@
     export let allowDelete = true;
     export let allowCreate = true;
 
-    export let basePath = "/__entityNameKebabCase__";
+    export let basePath = "/user-role";
 
     export let data;
 
@@ -35,7 +34,7 @@
     let flatRows = [];
     $: (() => {
         flatRows = [];
-        for (const nestedRow of data.__entityName__Array) {
+        for (const nestedRow of data.userRoleArray) {
             flatRows.push(flattenRowObject(nestedRow, attributeMap));
         }
     })();
@@ -135,12 +134,10 @@
             {#if allowEdit || allowDelete}
                 <td class="flex items-center justify-center text-center">
                     <a
-                        href={`${basePath}/${data?.__entityName__Array[index]?.id}`}
+                        href={`${basePath}/${data?.userRoleArray[index]?.id}`}
                         class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
                         <Pencil class="h-4 w-4" /></a>
-
-                    <form action={`${basePath}/${data?.__entityName__Array[index]?.id}?/delete`} use:enhance method="POST">
-                        <input type="hidden" bind:value={data.__entityName__Array[index].id} />
+                    <form action={`${basePath}/${data?.userRoleArray[index]?.id}?/delete`} method="POST">
                         <Button type="submit" class="border-none" variant="destructive-outline" size="inline-icon">
                             <X class="h-4 w-4" /></Button>
                     </form>

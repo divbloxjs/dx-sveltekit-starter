@@ -8,7 +8,7 @@
     import { initFirebase, firebaseMessaging, serviceWorkerRegistration } from "$lib/firebase.js";
     import { getToken, onMessage } from "firebase/messaging";
 
-    import Button from "$lib/dx-components/form-elements/button.svelte";
+    import { Button } from "$lib/components/ui/button";
 
     import { pushNotificationUniqueIdentifier } from "./stores";
     import * as Tooltip from "$lib/components/ui/tooltip";

@@ -8,7 +8,7 @@
     export let data;
 </script>
 
-<div class="flex w-full">
+<div class="flex w-full max-w-4xl self-center">
     {#if $page.params.id === "new"}
         <FormCreate__entityNamePascalCase__ {data} />
     {:else if parseInt($page.params.id) > 0}
