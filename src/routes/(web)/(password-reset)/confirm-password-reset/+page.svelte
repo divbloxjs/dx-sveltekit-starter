@@ -36,7 +36,7 @@
     const { form: formData, enhance, message, errors, submitting } = form;
 </script>
 
-<div class="flex h-full w-full items-center justify-center">
+<div class="flex h-full w-full flex-col items-center justify-center">
     <Card.Root class="w-80 bg-card shadow-2xl">
         <Card.Header class="mb-2 p-0 text-center">
             <AppLogo class="w-56 self-center py-8" />
