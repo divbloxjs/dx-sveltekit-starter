@@ -7,7 +7,7 @@ import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/p
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
 const searchConfig = {
-    attributes: ["lastName", "username", "firstName", "emailAddress", "hashedPassword"]
+    attributes: ["last_name", "username", "first_name", "email_address", "hashed_password"]
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
@@ -19,7 +19,7 @@ export const loadUserAccountArray = async (constraints = {}) => {
 
     console.log("selectClause", selectClause);
     console.log("prismaConditions", prismaConditions);
-    const userAccountArray = await prisma.userAccount.findMany({
+    const userAccountArray = await prisma.user_account.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
         ...prismaConditions
@@ -36,7 +36,7 @@ export const loadUserAccountArray = async (constraints = {}) => {
 
 export const createUserAccount = async (data) => {
     try {
-        await prisma.userAccount.create({ data });
+        await prisma.user_account.create({ data });
         return true;
     } catch (err) {
         console.error(err);
@@ -63,7 +63,7 @@ export const updateUserAccount = async (data) => {
     });
 
     try {
-        const result = await prisma.userAccount.update({
+        const result = await prisma.user_account.update({
             data,
             where: { id: data.id }
         });
@@ -76,7 +76,7 @@ export const updateUserAccount = async (data) => {
 
 export const deleteUserAccount = async (id = -1) => {
     try {
-        await prisma.userAccount.delete({ where: { id } });
+        await prisma.user_account.delete({ where: { id } });
         return true;
     } catch (err) {
         console.error(err);
@@ -85,7 +85,7 @@ export const deleteUserAccount = async (id = -1) => {
 };
 
 export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
-    const userAccount = await prisma.userAccount.findUnique({
+    const userAccount = await prisma.user_account.findUnique({
         where: { id: id }
     });
 

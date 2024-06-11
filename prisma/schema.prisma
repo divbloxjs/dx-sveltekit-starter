@@ -14,9 +14,9 @@ model customer {
   contactNumber  String        @db.VarChar(10)
   lastUpdated    DateTime      @default(now()) @db.DateTime(0)
   organisationId BigInt?
-  organisation   organisation? @relation(fields: [organisationId], references: [id], map: "6f2ac032222594066028acd11b61ce3c")
+  organisation   organisation? @relation(fields: [organisationId], references: [id], map: "387d5f0d82519ce99663a4f3cdc017cf")
 
-  @@index([organisationId], map: "93b177270e9798d3042f2fc1bf6e91e2")
+  @@index([organisationId], map: "387d5f0d82519ce99663a4f3cdc017cf")
 }
 
 model organisation {
@@ -24,18 +24,18 @@ model organisation {
   effort               String              @db.VarChar(23)
   description          String?             @db.VarChar(25)
   details              Json?
-  isDefault            Boolean?            @default(false)
+  isDefault            Int?                @default(0) @db.TinyInt
   organisationName     String?             @db.VarChar(25)
   lastUpdated          DateTime            @default(now()) @db.DateTime(0)
   placeId              BigInt?
   parentOrganisationId BigInt?
   customer             customer[]
-  place                place?              @relation(fields: [placeId], references: [id], map: "7b8f21bf7d92c4c804eff7dca0a1f8b7")
-  parentOrganisation   parentOrganisation? @relation(fields: [parentOrganisationId], references: [id], map: "06a959c631dce7b13a219ca3629bc830")
+  place                place?              @relation(fields: [placeId], references: [id], map: "00d3b28d45db82877d7c161e03dd7dae")
+  parentOrganisation   parentOrganisation? @relation(fields: [parentOrganisationId], references: [id], map: "aac26a4b9caf6fc2a4df48201caf1fd8")
 
   @@index([organisationName], map: "exampleEntityTwo_exampleTwoBigInt")
-  @@index([placeId], map: "c89af5b9001731f6f30fe5ed6d1948b8")
-  @@index([parentOrganisationId], map: "d24085bce7b0d6d45e58beb865bdd709")
+  @@index([placeId], map: "00d3b28d45db82877d7c161e03dd7dae")
+  @@index([parentOrganisationId], map: "aac26a4b9caf6fc2a4df48201caf1fd8")
 }
 
 model place {
@@ -44,77 +44,9 @@ model place {
   lastUpdated   DateTime       @default(now()) @db.DateTime(0)
   parentPlaceId BigInt?
   organisation  organisation[]
-  parentPlace   parentPlace?   @relation(fields: [parentPlaceId], references: [id], map: "1cedcfcb2a4149f671010ad8c53f3e4a")
+  parentPlace   parentPlace?   @relation(fields: [parentPlaceId], references: [id], map: "597c3b881c1e71e764622a8153137b06")
 
-  @@index([parentPlaceId], map: "a59760d0f9e67908d3f478d6f12d9286")
-}
-
-model grandParentOrganisation {
-  id                 BigInt               @id @default(autoincrement())
-  effort             String               @db.Text
-  isDefault          Int?                 @default(0) @db.TinyInt
-  description        String?              @db.MediumText
-  organisationName   String?              @db.LongText
-  lastUpdated        DateTime             @default(now()) @db.DateTime(0)
-  parentOrganisation parentOrganisation[]
-}
-
-model parentOrganisation {
-  id                        BigInt                   @id @default(autoincrement())
-  effort                    Float
-  isDefault                 Int?                     @default(0) @db.TinyInt
-  description               String?                  @db.LongText
-  organisationName          String?                  @db.Text
-  lastUpdated               DateTime                 @default(now()) @db.DateTime(0)
-  grandParentOrganisationId BigInt?
-  organisation              organisation[]
-  grandParentOrganisation   grandParentOrganisation? @relation(fields: [grandParentOrganisationId], references: [id], map: "2dfd2df8efa5e9e16388ba299ce8f556")
-
-  @@index([grandParentOrganisationId], map: "e959157489981bc6dc857c06e2b739cf")
-}
-
-model parentPlace {
-  id          BigInt   @id @default(autoincrement())
-  placeName   String?  @db.VarChar(250)
-  lastUpdated DateTime @default(now()) @db.DateTime(0)
-  place       place[]
-}
-
-model userAccount {
-  id               BigInt             @id @default(autoincrement())
-  lastName         String?            @db.VarChar(150)
-  username         String             @unique(map: "userAccountUsername") @db.VarChar(250)
-  firstName        String?            @db.VarChar(100)
-  emailAddress     String             @db.VarChar(250)
-  hashedPassword   String?            @db.VarChar(100)
-  lastUpdated      DateTime           @default(now()) @db.DateTime(0)
-  userRoleId       BigInt?
-  pushSubscription pushSubscription[]
-  userRole         userRole?          @relation(fields: [userRoleId], references: [id], map: "43d85944f6e9ff959d4cbeb181dc2595")
-  userSession      userSession[]
-
-  @@index([userRoleId], map: "5062160de9083e53ebb7871c0f8fd024")
-}
-
-model userRole {
-  id          BigInt        @id @default(autoincrement())
-  roleName    String        @db.VarChar(100)
-  lastUpdated DateTime      @default(now()) @db.DateTime(0)
-  userAccount userAccount[]
-}
-
-model userSession {
-  id                BigInt       @id @default(autoincrement())
-  sessionId         String       @unique(map: "userSessionSessionid") @db.VarChar(50)
-  userAgent         String?      @db.VarChar(200)
-  sessionData       Json
-  expiryDateTime    DateTime     @db.DateTime(0)
-  durationInMinutes Int
-  lastUpdated       DateTime     @default(now()) @db.DateTime(0)
-  userAccountId     BigInt?
-  userAccount       userAccount? @relation(fields: [userAccountId], references: [id], map: "3bfab05d2a59594f76772b050c763b45")
-
-  @@index([userAccountId], map: "9efc780d478bebd32019897a5b7717d8")
+  @@index([parentPlaceId], map: "597c3b881c1e71e764622a8153137b06")
 }
 
 model file {
@@ -133,6 +65,48 @@ model file {
   cloudIsPubliclyAvailable Boolean @default(false)
 }
 
+model grandParentOrganisation {
+  id                 BigInt               @id @default(autoincrement())
+  effort             String               @db.Text
+  isDefault          Int?                 @default(0) @db.TinyInt
+  description        String?              @db.MediumText
+  organisationName   String?              @db.LongText
+  lastUpdated        DateTime             @default(now()) @db.DateTime(0)
+  parentOrganisation parentOrganisation[]
+}
+
+model oneTimeToken {
+  id                  BigInt   @id @default(autoincrement())
+  expiresAt           DateTime @db.DateTime(0)
+  tokenType           String   @db.VarChar(100)
+  tokenValue          String   @unique(map: "oneTimeTokenTokenValue") @db.VarChar(32)
+  linkedEntityId      BigInt
+  linkedEntityName    String   @db.VarChar(100)
+  timeToLiveInMinutes Int
+  lastUpdated         DateTime @default(now()) @db.DateTime(0)
+}
+
+model parentOrganisation {
+  id                        BigInt                   @id @default(autoincrement())
+  effort                    Float
+  isDefault                 Int?                     @default(0) @db.TinyInt
+  description               String?                  @db.LongText
+  organisationName          String?                  @db.Text
+  lastUpdated               DateTime                 @default(now()) @db.DateTime(0)
+  grandParentOrganisationId BigInt?
+  organisation              organisation[]
+  grandParentOrganisation   grandParentOrganisation? @relation(fields: [grandParentOrganisationId], references: [id], map: "3a8ec8f4d3264a2031ddda2e4da6a0f4")
+
+  @@index([grandParentOrganisationId], map: "3a8ec8f4d3264a2031ddda2e4da6a0f4")
+}
+
+model parentPlace {
+  id          BigInt   @id @default(autoincrement())
+  placeName   String?  @db.VarChar(250)
+  lastUpdated DateTime @default(now()) @db.DateTime(0)
+  place       place[]
+}
+
 model pushSubscription {
   id                      BigInt       @id @default(autoincrement())
   isActive                Boolean      @default(true)
@@ -141,18 +115,44 @@ model pushSubscription {
   pushSubscriptionDetails Json?
   lastUpdated             DateTime     @default(now()) @db.DateTime(0)
   userAccountId           BigInt?
-  userAccount             userAccount? @relation(fields: [userAccountId], references: [id], map: "0ebd273d52363358e309bee0726c3bc3")
+  userAccount             userAccount? @relation(fields: [userAccountId], references: [id], map: "034de7f3db5a523926f24ae76ff86cca")
 
-  @@index([userAccountId], map: "9430e4db9fb855c9920271edd6d04efc")
+  @@index([userAccountId], map: "034de7f3db5a523926f24ae76ff86cca")
 }
 
-model oneTimeToken {
-  id                  BigInt   @id @default(autoincrement())
-  expiresAt           DateTime @db.DateTime(0)
-  tokenValue          String   @unique(map: "oneTimeTokenTokenValue") @db.VarChar(32)
-  lastUpdated         DateTime @default(now()) @db.DateTime(0)
-  tokenType           String   @db.VarChar(100)
-  linkedEntityId      BigInt
-  linkedEntityName    String   @db.VarChar(100)
-  timeToLiveInMinutes Int
+model userAccount {
+  id               BigInt             @id @default(autoincrement())
+  lastName         String?            @db.VarChar(150)
+  username         String             @unique(map: "userAccountUsername") @db.VarChar(250)
+  firstName        String?            @db.VarChar(100)
+  emailAddress     String             @db.VarChar(250)
+  hashedPassword   String?            @db.VarChar(100)
+  lastUpdated      DateTime           @default(now()) @db.DateTime(0)
+  userRoleId       BigInt?
+  pushSubscription pushSubscription[]
+  userRole         userRole?          @relation(fields: [userRoleId], references: [id], map: "e82542d39119f745c5e68a6fa2182fd2")
+  userSession      userSession[]
+
+  @@index([userRoleId], map: "e82542d39119f745c5e68a6fa2182fd2")
+}
+
+model userRole {
+  id          BigInt        @id @default(autoincrement())
+  roleName    String        @db.VarChar(100)
+  lastUpdated DateTime      @default(now()) @db.DateTime(0)
+  userAccount userAccount[]
+}
+
+model userSession {
+  id                BigInt       @id @default(autoincrement())
+  sessionId         String       @unique(map: "userSessionSessionid") @db.VarChar(50)
+  userAgent         String?      @db.VarChar(200)
+  sessionData       Json
+  expiryDateTime    DateTime     @db.DateTime(0)
+  durationInMinutes Int
+  lastUpdated       DateTime     @default(now()) @db.DateTime(0)
+  userAccountId     BigInt?
+  userAccount       userAccount? @relation(fields: [userAccountId], references: [id], map: "4eb5828316c9b4571e298c5bf8ef7caa")
+
+  @@index([userAccountId], map: "4eb5828316c9b4571e298c5bf8ef7caa")
 }
