@@ -1,4 +1,4 @@
-import { fail } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import { prisma } from "$lib/server/prisma-instance";
 import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
@@ -9,6 +9,7 @@ import {
     getUserAccountRelationshipData,
     updateUserAccount
 } from "$lib/components/data-model/user-account/user-account.server";
+import { deliverPushNotificationToAllSubscriptionsForUserAccount } from "$lib/server/web-push";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
@@ -73,5 +74,26 @@ export const actions = {
         event.locals.auth.isAdmin();
 
         await prisma.userAccount.delete({ where: { id: event.params?.id } });
+    },
+    testNotification: async ({ request, locals, params }) => {
+        locals.auth.isAdmin();
+
+        const data = await request.formData();
+        const userAccountId = data.get("id");
+
+        if (!userAccountId) return fail(400, { message: "No ID provided" });
+
+        const { pushSubscriptions, errors } = await deliverPushNotificationToAllSubscriptionsForUserAccount({ userAccountId });
+
+        if (errors.length !== 0) {
+            return fail(400, { message: "Could not deliver push notification", errors });
+        }
+
+        if (pushSubscriptions.length === 0) return { type: "info", message: "No active push subscriptions found" };
+
+        return {
+            type: "success",
+            message: `Test notification sent to ${pushSubscriptions.length} subscription ${pushSubscriptions.length > 1 ? "s" : ""}`
+        };
     }
 };

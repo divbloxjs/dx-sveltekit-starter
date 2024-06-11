@@ -3,14 +3,16 @@
     import { goto } from "$app/navigation";
 
     import { parse, stringify } from "qs";
+    import * as Tooltip from "$lib/components/ui/tooltip";
 
     import dataTableConfig from "./data-series/user-account-data-table.config.json";
 
     import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
     import { Button, buttonVariants } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
-    import { Pencil, X } from "lucide-svelte";
+    import { Bell, Pencil, X } from "lucide-svelte";
     import { enhance } from "$app/forms";
+    import { handleFormActionToast } from "$lib";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
     if (!limit) limit = 20;
@@ -41,6 +43,20 @@
     })();
 
     let filters = {};
+
+    let submittingTest = false;
+    /**
+     *  @type {import('./$types').SubmitFunction}
+     */
+    const submitTest = async ({ formData, cancel }) => {
+        submittingTest = true;
+        return async ({ result, update }) => {
+            submittingTest = false;
+            update();
+
+            handleFormActionToast(result);
+        };
+    };
 </script>
 
 <div class="flex flex-row justify-between p-2">
@@ -134,6 +150,25 @@
             {/each}
             {#if allowEdit || allowDelete}
                 <td class="flex items-center justify-center text-center">
+                    <form
+                        action={`${basePath}/${data?.userAccountArray[index]?.id}?/testNotification`}
+                        use:enhance={submitTest}
+                        method="POST">
+                        <input name="id" type="hidden" bind:value={data.userAccountArray[index].id} />
+                        <Tooltip.Root>
+                            <Tooltip.Trigger>
+                                <Tooltip.Root>
+                                    <Tooltip.Trigger>
+                                        <Button type="submit" class="border-none" variant="primary" size="inline-icon">
+                                            <Bell class="h-4 w-4" /></Button>
+                                    </Tooltip.Trigger>
+                                </Tooltip.Root>
+                            </Tooltip.Trigger>
+                            <Tooltip.Content>
+                                <p>Send a test notification to all <br /> registered push subscriptions</p>
+                            </Tooltip.Content>
+                        </Tooltip.Root>
+                    </form>
                     <a
                         href={`${basePath}/${data?.userAccountArray[index]?.id}`}
                         class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
