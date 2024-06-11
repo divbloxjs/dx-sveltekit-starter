@@ -3,10 +3,10 @@
     import FormPassword from "./tabs/form-password.svelte";
     import FormUserAccount from "./tabs/form-user-account.svelte";
 
-    import * as Tabs from "$lib/shadcn/ui/tabs/index.js";
-    import * as Card from "$lib/shadcn/ui/card/index.js";
+    import * as Tabs from "$lib/components/shadcn/ui/tabs/index.js";
+    import * as Card from "$lib/components/shadcn/ui/card/index.js";
 
-    import { buttonVariants } from "$lib/shadcn/ui/button";
+    import { buttonVariants } from "$lib/components/shadcn/ui/button";
 
     export let data;
 </script>

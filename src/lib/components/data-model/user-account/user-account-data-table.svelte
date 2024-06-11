@@ -3,13 +3,13 @@
     import { goto } from "$app/navigation";
 
     import { parse, stringify } from "qs";
-    import * as Tooltip from "$lib/shadcn/ui/tooltip";
+    import * as Tooltip from "$lib/components/shadcn/ui/tooltip";
 
     import dataTableConfig from "./data-series/user-account-data-table.config.json";
 
     import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
-    import { Button, buttonVariants } from "$lib/shadcn/ui/button";
-    import { Input } from "$lib/shadcn/ui/input";
+    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
+    import { Input } from "$lib/components/shadcn/ui/input";
     import { Bell, Pencil, X } from "lucide-svelte";
     import { enhance } from "$app/forms";
     import { handleFormActionToast } from "$lib";

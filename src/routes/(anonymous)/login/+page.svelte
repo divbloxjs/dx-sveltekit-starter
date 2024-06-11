@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { buttonVariants } from "$lib/shadcn/ui/button";
-    import * as Form from "$lib/shadcn/ui/form";
-    import { Input } from "$lib/shadcn/ui/input";
+    import { buttonVariants } from "$lib/components/shadcn/ui/button";
+    import * as Form from "$lib/components/shadcn/ui/form";
+    import { Input } from "$lib/components/shadcn/ui/input";
     import { toast } from "svelte-sonner";
 
     import { loginSchema } from "./login.schema";
@@ -9,7 +9,7 @@
     import { zodClient } from "sveltekit-superforms/adapters";
     import AppLogo from "$lib/components/app-images/app-logo.svelte";
 
-    import * as Card from "$lib/shadcn/ui/card";
+    import * as Card from "$lib/components/shadcn/ui/card";
     import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
 
     export let data;

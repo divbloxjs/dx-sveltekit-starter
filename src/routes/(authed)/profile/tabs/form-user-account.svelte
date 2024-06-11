@@ -1,16 +1,16 @@
 <script>
-    import * as Form from "$lib/shadcn/ui/form";
+    import * as Form from "$lib/components/shadcn/ui/form";
 
     import { userAccountSchema } from "../schemas/user-account.schema";
     import SuperDebug, { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
-    import { Button } from "$lib/shadcn/ui/button/index.js";
-    import { Input } from "$lib/shadcn/ui/input/index.js";
+    import { Button } from "$lib/components/shadcn/ui/button/index.js";
+    import { Input } from "$lib/components/shadcn/ui/input/index.js";
     import { handleFormActionToast, superFormOnResult, superFormOnSubmit, superFormOnUpdated } from "$lib";
     import { toast } from "svelte-sonner";
     import { enhance } from "$app/forms";
-    import { buttonVariants } from "$lib/shadcn/ui/button";
+    import { buttonVariants } from "$lib/components/shadcn/ui/button";
 
     export let data;
 

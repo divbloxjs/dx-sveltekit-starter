@@ -1,5 +1,5 @@
 <script>
-    import { Button } from "$lib/shadcn/ui/button";
+    import { Button } from "$lib/components/shadcn/ui/button";
     import Uploader from "./uploader.svelte";
     import PlaceholderImage from "$lib/assets/images/profile-placeholder.svg";
 

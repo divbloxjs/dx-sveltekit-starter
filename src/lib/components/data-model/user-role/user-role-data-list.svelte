@@ -2,9 +2,9 @@
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
 
-    import { Input } from "$lib/shadcn/ui/input";
-    import Button from "$lib/shadcn/ui/button/button.svelte";
-    import Label from "$lib/shadcn/ui/label/label.svelte";
+    import { Input } from "$lib/components/shadcn/ui/input";
+    import Button from "$lib/components/shadcn/ui/button/button.svelte";
+    import Label from "$lib/components/shadcn/ui/label/label.svelte";
 
     import DataListRowUserRole from "$lib/components/data-model/user-role/data-series/user-role-data-list-row.svelte";
 

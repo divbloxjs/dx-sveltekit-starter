@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Button } from "$lib/shadcn/ui/button/index.js";
+    import { Button } from "$lib/components/shadcn/ui/button/index.js";
     import { Pencil, X } from "lucide-svelte";
     import MimeType from "./mimeType.svelte";
     import { slide } from "svelte/transition";

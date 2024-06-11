@@ -3,7 +3,7 @@
     import { toast } from "svelte-sonner";
     import { pressEscapeAction } from "../../../actions/escape.action";
     import { clickOutsideAction } from "../../../actions/click-outside.action";
-    import { Button } from "$lib/shadcn/ui/button";
+    import { Button } from "$lib/components/shadcn/ui/button";
     import { arrowNavigationAction } from "../../../actions/arrow-navigation.action";
 
     export let preloadedFiles;

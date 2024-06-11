@@ -5,16 +5,16 @@
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
     import { toast } from "svelte-sonner";
-    import { Button, buttonVariants } from "$lib/shadcn/ui/button";
+    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button/index.js";
 
     import { userRoleUpdateSchema } from "./user-role.schema.js";
 
-    import FormSelect from "$lib/shadcn/ui/form/_form-select.svelte";
-    import FormInput from "$lib/shadcn/ui/form/_form-input.svelte";
-    import FormTextarea from "$lib/shadcn/ui/form/_form-textarea.svelte";
-    import FormCheckbox from "$lib/shadcn/ui/form/_form-checkbox.svelte";
+    import FormSelect from "$lib/components/shadcn/ui/form/_form-select.svelte";
+    import FormInput from "$lib/components/shadcn/ui/form/_form-input.svelte";
+    import FormTextarea from "$lib/components/shadcn/ui/form/_form-textarea.svelte";
+    import FormCheckbox from "$lib/components/shadcn/ui/form/_form-checkbox.svelte";
 
-    import AlertDialog from "$lib/shadcn/ui/alert-dialog/_alert-dialog.svelte";
+    import AlertDialog from "$lib/components/shadcn/ui/alert-dialog/_alert-dialog.svelte";
 
     export let data;
     export let basePath = "/user-role";

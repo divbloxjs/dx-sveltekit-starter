@@ -2,9 +2,9 @@
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
 
-    import { Input } from "$lib/shadcn/ui/input";
-    import Button from "$lib/shadcn/ui/button/button.svelte";
-    import Label from "$lib/shadcn/ui/label/label.svelte";
+    import { Input } from "__componentsPathAlias__/ui/input";
+    import { Button } from "__componentsPathAlias__/ui/button";
+    import Label from "__componentsPathAlias__/ui/label";
 
     import DataListRow__entityNamePascalCase__ from "$lib/components/data-model/__entityNameKebabCase__/data-series/__entityNameKebabCase__-data-list-row.svelte";
 
@@ -61,9 +61,11 @@
         });
     };
 
-    const handleResetAll = async () => {
-        await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
-    };
+
+
+	const handleResetAll = async () => {
+		await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
+	}
 </script>
 
 <div class="flex w-full flex-col">
@@ -83,7 +85,7 @@
         </div>
     </Label>
 
-    <Button variant="link" class="self-center" on:click={handleResetAll}>Reset All</Button>
+    <Button variant="link" class="self-center"on:click={handleResetAll}>Reset All</Button>
 
     <div class="w-full divide-y overflow-hidden rounded-lg border">
         {#each data.__entityName__Array as __entityName__Data}

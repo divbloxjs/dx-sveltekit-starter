@@ -2,10 +2,11 @@
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
 
+    import { Input } from "$lib/components/shadcn/ui/input";
+    import { Button } from "$lib/components/shadcn/ui/button";
+    import { Label } from "$lib/components/shadcn/ui/label";
+
     import DataListRowUserAccount from "$lib/components/data-model/user-account/data-series/user-account-data-list-row.svelte";
-    import { Input } from "$lib/shadcn/ui/input";
-    import Button from "$lib/shadcn/ui/button/button.svelte";
-    import Label from "$lib/shadcn/ui/label/label.svelte";
 
     export let basePath = "/user-account";
     export let data;
@@ -59,6 +60,10 @@
             invalidateAll: true
         });
     };
+
+    const handleResetAll = async () => {
+        await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
+    };
 </script>
 
 <div class="flex w-full flex-col">
@@ -78,7 +83,7 @@
         </div>
     </Label>
 
-    <Button variant="link" class="self-center" on:click={goto(`${basePath}/overview`)}>Reset All</Button>
+    <Button variant="link" class="self-center" on:click={handleResetAll}>Reset All</Button>
 
     <div class="w-full divide-y overflow-hidden rounded-lg border">
         {#each data.userAccountArray as userAccountData}

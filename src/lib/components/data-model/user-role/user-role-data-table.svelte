@@ -7,8 +7,8 @@
     import dataTableConfig from "./data-series/user-role-data-table.config.json";
 
     import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
-    import { Button, buttonVariants } from "$lib/shadcn/ui/button";
-    import { Input } from "$lib/shadcn/ui/input";
+    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
+    import { Input } from "$lib/components/shadcn/ui/input";
     import { Pencil, X } from "lucide-svelte";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
