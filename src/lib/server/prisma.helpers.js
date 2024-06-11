@@ -1,18 +1,23 @@
 import dataModel from "datamodel";
 import { isEmptyObject } from "dx-utilities";
+import { getCaseNormalizedString } from "divblox/sync/sqlCaseHelpers";
+import dxConfig from "../../../dx.config";
 
 export const getPrismaSelectAllFromEntity = (entityName, select = {}) => {
     if (isEmptyObject(select)) select.id = true;
 
     // Add all attributes
     Object.keys(dataModel[entityName].attributes).forEach((attributeName) => {
-        select[attributeName] = true;
+        select[getCaseNormalizedString(attributeName, dxConfig.databaseCaseImplementation)] = true;
     });
 
     // Nested add all relationships
     Object.keys(dataModel[entityName].relationships).forEach((relationshipName) => {
-        select[relationshipName] = { select: {} };
-        getPrismaSelectAllFromEntity(relationshipName, select[relationshipName].select);
+        select[getCaseNormalizedString(relationshipName, dxConfig.databaseCaseImplementation)] = { select: {} };
+        getPrismaSelectAllFromEntity(
+            relationshipName,
+            select[getCaseNormalizedString(relationshipName, dxConfig.databaseCaseImplementation)].select
+        );
     });
 
     return select;

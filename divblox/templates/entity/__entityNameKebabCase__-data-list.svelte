@@ -4,9 +4,9 @@
 
     import { Input } from "__componentsPathAlias__/ui/input";
     import { Button } from "__componentsPathAlias__/ui/button";
-    import Label from "__componentsPathAlias__/ui/label";
+    import { Label } from "__componentsPathAlias__/ui/label";
 
-    import DataListRow__entityNamePascalCase__ from "$lib/components/data-model/__entityNameKebabCase__/data-series/__entityNameKebabCase__-data-list-row.svelte";
+    import DataListRow__entityNamePascalCase__ from "__componentsPathAlias__/data-model/__entityNameKebabCase__/data-series/__entityNameKebabCase__-data-list-row.svelte";
 
     export let basePath = "/__entityNameKebabCase__";
     export let data;
