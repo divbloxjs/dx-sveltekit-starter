@@ -5,9 +5,4 @@ export const loginSchema = z.object({
     password: z.string().min(8)
 });
 
-export const initialData = {
-    emailAddress: "",
-    password: ""
-};
-
 export type LoginSchema = typeof loginSchema;
