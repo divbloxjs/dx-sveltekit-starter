@@ -1,6 +1,6 @@
 <script>
-    import DataListUserAccount from "$lib/components/data-model/user-account/user-account-data-list.svelte";
-    import DataTableUserAccount from "$lib/components/data-model/user-account/user-account-data-table.svelte";
+    import DataListUserAccount from "$lib/components/shadcn/data-model/user-account/user-account-data-list.svelte";
+    import DataTableUserAccount from "$lib/components/shadcn/data-model/user-account/user-account-data-table.svelte";
 
     export let data;
     export let form;

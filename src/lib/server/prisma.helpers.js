@@ -1,6 +1,5 @@
 import dataModel from "datamodel";
-import { isEmptyObject } from "dx-utilities";
-import { getCaseNormalizedString } from "divblox/sync/sqlCaseHelpers";
+import { isEmptyObject, getCaseNormalizedString } from "dx-utilities";
 import dxConfig from "../../../dx.config";
 
 export const getPrismaSelectAllFromEntity = (entityName, select = {}) => {

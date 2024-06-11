@@ -1,6 +1,6 @@
 <script>
-    import FormCreateUserAccount from "$lib/components/data-model/user-account/user-account-form-create.svelte";
-    import FormUpdateUserAccount from "$lib/components/data-model/user-account/user-account-form-update.svelte";
+    import FormCreateUserAccount from "$lib/components/shadcn/data-model/user-account/user-account-form-create.svelte";
+    import FormUpdateUserAccount from "$lib/components/shadcn/data-model/user-account/user-account-form-update.svelte";
 
     import { page } from "$app/stores";
 

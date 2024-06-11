@@ -6,7 +6,7 @@
     import { Button } from "$lib/components/shadcn/ui/button";
     import { Label } from "$lib/components/shadcn/ui/label";
 
-    import DataListRowUserRole from "$lib/components/data-model/user-role/data-series/user-role-data-list-row.svelte";
+    import DataListRowUserRole from "$lib/components/shadcn/data-model/user-role/data-series/user-role-data-list-row.svelte";
 
     export let basePath = "/user-role";
     export let data;
@@ -61,9 +61,11 @@
         });
     };
 
-    const handleResetAll = async () => {
-        await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
-    };
+
+
+	const handleResetAll = async () => {
+		await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
+	}
 </script>
 
 <div class="flex w-full flex-col">
@@ -83,7 +85,7 @@
         </div>
     </Label>
 
-    <Button variant="link" class="self-center" on:click={handleResetAll}>Reset All</Button>
+    <Button variant="link" class="self-center"on:click={handleResetAll}>Reset All</Button>
 
     <div class="w-full divide-y overflow-hidden rounded-lg border">
         {#each data.userRoleArray as userRoleData}

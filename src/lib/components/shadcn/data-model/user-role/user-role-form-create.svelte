@@ -6,7 +6,7 @@
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
-    import { buttonVariants, Button } from "$lib/components/shadcn/ui/button/index.js";
+    import { buttonVariants, Button } from "$lib/components/shadcn/ui/button";
 
     import { userRoleCreateSchema } from "./user-role.schema.js";
 
@@ -32,8 +32,10 @@
 </script>
 
 <form method="POST" action={`${basePath}/new?/create`} use:enhance class="@container w-full p-1">
-    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 columns-1 child:break-inside-avoid-column">
-        <FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
+    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
+	<FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
+
+
     </div>
 
     {#if $message}

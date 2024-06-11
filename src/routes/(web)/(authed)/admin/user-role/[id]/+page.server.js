@@ -2,16 +2,9 @@ import { fail } from "@sveltejs/kit";
 import { prisma } from "$lib/server/prisma-instance";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import {
-    userRoleCreateSchema,
-    userRoleUpdateSchema,
-} from "$lib/components/data-model/user-role/user-role.schema";
+import { userRoleCreateSchema, userRoleUpdateSchema } from "$lib/components/shadcn/data-model/user-role/user-role.schema";
 
-import {
-    loadUserRole,
-    getUserRoleRelationshipData,
-    updateUserRole,
-} from "$lib/components/data-model/user-role/user-role.server";
+import { loadUserRole, getUserRoleRelationshipData, updateUserRole } from "$lib/components/shadcn/data-model/user-role/user-role.server";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
@@ -59,5 +52,5 @@ export const actions = {
     },
     delete: async (event) => {
         await prisma.userRole.delete({ where: { id: event.params?.id } });
-    },
+    }
 };

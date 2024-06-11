@@ -6,7 +6,7 @@
     import { Button } from "$lib/components/shadcn/ui/button";
     import { Label } from "$lib/components/shadcn/ui/label";
 
-    import DataListRowUserAccount from "$lib/components/data-model/user-account/data-series/user-account-data-list-row.svelte";
+    import DataListRowUserAccount from "$lib/components/shadcn/data-model/user-account/data-series/user-account-data-list-row.svelte";
 
     export let basePath = "/user-account";
     export let data;

@@ -1,6 +1,6 @@
 // export const ssr = false;
 
-import { loadUserAccountArray } from "$lib/components/data-model/user-account/user-account.server";
+import { loadUserAccountArray } from "$lib/components/shadcn/data-model/user-account/user-account.server";
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
 

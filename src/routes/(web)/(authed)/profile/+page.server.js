@@ -1,9 +1,9 @@
 import { FILE_CATEGORY } from "$lib/constants/constants.server";
 import { userAccountSchema } from "./schemas/user-account.schema";
 import { passwordSchema } from "./schemas/password.schema";
-import { deleteUserAccount, loadUserAccount, updateUserAccount } from "$lib/components/data-model/user-account/user-account.server";
+import { deleteUserAccount, loadUserAccount, updateUserAccount } from "$lib/components/shadcn/data-model/user-account/user-account.server";
 import { prisma } from "$lib/server/prisma-instance";
-import { fail, message, setError, superValidate } from "sveltekit-superforms";
+import { fail, message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { sleep } from "dx-utilities";
 import argon2 from "argon2";

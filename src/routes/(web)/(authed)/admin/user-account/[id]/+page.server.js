@@ -2,13 +2,13 @@ import { error, fail } from "@sveltejs/kit";
 import { prisma } from "$lib/server/prisma-instance";
 import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { userAccountCreateSchema, userAccountUpdateSchema } from "$lib/components/data-model/user-account/user-account.schema";
+import { userAccountCreateSchema, userAccountUpdateSchema } from "$lib/components/shadcn/data-model/user-account/user-account.schema";
 
 import {
     loadUserAccount,
     getUserAccountRelationshipData,
     updateUserAccount
-} from "$lib/components/data-model/user-account/user-account.server";
+} from "$lib/components/shadcn/data-model/user-account/user-account.server";
 import { deliverPushNotificationToAllSubscriptionsForUserAccount } from "$lib/server/web-push";
 
 /** @type {import('./$types').PageServerLoad} */

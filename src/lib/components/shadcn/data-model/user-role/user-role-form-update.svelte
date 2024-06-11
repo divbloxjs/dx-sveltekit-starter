@@ -5,9 +5,9 @@
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
     import { toast } from "svelte-sonner";
-    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button/index.js";
+    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
 
-    import { userAccountUpdateSchema } from "./user-account.schema.js";
+    import { userRoleUpdateSchema } from "./user-role.schema.js";
 
     import FormSelect from "$lib/components/shadcn/ui/form/_form-select.svelte";
     import FormInput from "$lib/components/shadcn/ui/form/_form-input.svelte";
@@ -17,16 +17,16 @@
     import AlertDialog from "$lib/components/shadcn/ui/alert-dialog/_alert-dialog.svelte";
 
     export let data;
-    export let basePath = "/user-account";
+    export let basePath = "/user-role";
 
     let deleteAlertOpen = false;
     let deleteFormEl;
 
     const form = superForm(data.form, {
-        validators: zodClient(userAccountUpdateSchema),
+        validators: zodClient(userRoleUpdateSchema),
         onResult: async (event) => {
             if (event.result.type === "success") {
-                toast.success("Updated userAccount");
+                toast.success("Updated userRole");
                 await goto(`${basePath}/overview`);
             }
         }
@@ -36,24 +36,12 @@
 </script>
 
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="@container w-full p-1">
-    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 columns-1 child:break-inside-avoid-column">
-        <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
+    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
+    <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
 
-        <FormInput {form} name="firstName" label="First name" type="text" bind:value={$formData.firstName} />
-        <FormInput {form} name="lastName" label="Last name" type="text" bind:value={$formData.lastName} />
-        <FormInput {form} name="emailAddress" label="Email address" type="text" bind:value={$formData.emailAddress} />
+	<FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
 
-        <FormSelect
-            {form}
-            name="userRoleId"
-            label="User role"
-            bind:selectedValue={$formData.userRoleId}
-            options={data?.userRoleOptions?.map((option) => {
-                return {
-                    label: option.id,
-                    value: option.id
-                };
-            })} />
+
     </div>
 
     {#if $message}
@@ -71,7 +59,7 @@
                 use:enhance={() => {
                     return async ({ result, update }) => {
                         if (result.type !== "success") {
-                            toast.error("Could not delete userAccount");
+                            toast.error("Could not delete userRole");
                             return;
                         }
 

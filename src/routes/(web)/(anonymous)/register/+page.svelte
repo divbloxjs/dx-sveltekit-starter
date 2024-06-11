@@ -46,7 +46,7 @@
                         <Form.Label>Confirm Password</Form.Label>
                         <Input type="password" {...attrs} bind:value={$formData.confirmPassword} />
                     </Form.Control>
-                    <Form.FieldErrors />
+                    <Form.FieldErrors class="relative" />
                 </Form.Field>
                 {#if $message}
                     <span class="text-sm font-medium text-destructive">{$message}</span>
