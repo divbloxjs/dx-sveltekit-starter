@@ -5,7 +5,9 @@ import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
 
 /** @type {import('./$types').PageServerLoad} */
-export const load = async ({ url, params }) => {
+export const load = async ({ url, params, locals }) => {
+    locals.auth.isAdmin();
+
     const urlSearchParams = parse(url.search, { ignoreQueryPrefix: true });
 
     const constraints = {};

@@ -6,8 +6,6 @@
     import * as Tabs from "$lib/components/shadcn/ui/tabs/index.js";
     import * as Card from "$lib/components/shadcn/ui/card/index.js";
 
-    import { buttonVariants } from "$lib/components/shadcn/ui/button";
-
     export let data;
 </script>
 
@@ -27,10 +25,6 @@
                                 postFilesEndpoint="/api/file-upload/user-account"
                                 deleteFileEndpoint="api/file-upload/user-account"
                                 updateFileNameEndpoint="?/updateProfilePictureDisplayName" />
-                        </div>
-
-                        <div class="flex w-full justify-center">
-                            <a href="/admin/user-account/overview" class={`${buttonVariants({ variant: "link" })}`}>Admin Dashboard</a>
                         </div>
 
                         <FormUserAccount {data} />

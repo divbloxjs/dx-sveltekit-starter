@@ -8,6 +8,8 @@ import { loadUserRole, getUserRoleRelationshipData, updateUserRole } from "$lib/
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
+    event.locals.auth.isAdmin();
+
     const { params } = event;
 
     let form;
@@ -29,6 +31,8 @@ export const load = async (event) => {
 /** @type {import('./$types').Actions} */
 export const actions = {
     create: async (event) => {
+        event.locals.auth.isAdmin();
+
         const form = await superValidate(event, zod(userRoleCreateSchema));
 
         if (!form.valid) return fail(400, { form });
@@ -41,6 +45,8 @@ export const actions = {
         }
     },
     update: async (event) => {
+        event.locals.auth.isAdmin();
+
         const form = await superValidate(event, zod(userRoleUpdateSchema));
 
         if (!form.valid) return fail(400, { form });
@@ -51,6 +57,8 @@ export const actions = {
         return { form, message: "Updated successfully!" };
     },
     delete: async (event) => {
+        event.locals.auth.isAdmin();
+
         await prisma.userRole.delete({ where: { id: event.params?.id } });
     }
 };
