@@ -12,7 +12,7 @@
     import * as DropdownMenu from "$lib/components/shadcn/ui/dropdown-menu/index.js";
 </script>
 
-<TopNavUser />
+<!--<TopNavUser />-->
 <!-- Dani help! How do I check for admin here?-->
 <!-- Todo: figure out page height here for bottom nav scroll-->
 <TopNavAdmin />
