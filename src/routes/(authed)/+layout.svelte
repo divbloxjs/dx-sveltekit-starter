@@ -1,6 +1,6 @@
 <script>
     import { page } from "$app/stores";
-    import { Button, buttonVariants } from "$lib/components/ui/button";
+    import { Button, buttonVariants } from "$lib/shadcn/ui/button";
     import TopNavUser from "$lib/components/navigation/top-nav-user.svelte";
     import TopNavAdmin from "$lib/components/navigation/top-nav-admin.svelte";
     import BottomNavUser from "$lib/components/navigation/bottom-nav-user.svelte";
@@ -9,7 +9,7 @@
     import Moon from "lucide-svelte/icons/moon";
 
     import { resetMode, setMode } from "mode-watcher";
-    import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+    import * as DropdownMenu from "$lib/shadcn/ui/dropdown-menu/index.js";
 </script>
 
 <TopNavUser />

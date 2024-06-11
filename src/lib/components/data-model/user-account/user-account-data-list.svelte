@@ -3,9 +3,9 @@
     import { goto } from "$app/navigation";
 
     import DataListRowUserAccount from "$lib/components/data-model/user-account/data-series/user-account-data-list-row.svelte";
-    import { Input } from "$lib/components/ui/input";
-    import Button from "$lib/components/ui/button/button.svelte";
-    import Label from "$lib/components/ui/label/label.svelte";
+    import { Input } from "$lib/shadcn/ui/input";
+    import Button from "$lib/shadcn/ui/button/button.svelte";
+    import Label from "$lib/shadcn/ui/label/label.svelte";
 
     export let basePath = "/user-account";
     export let data;

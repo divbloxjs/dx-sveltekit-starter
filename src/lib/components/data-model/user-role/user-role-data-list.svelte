@@ -2,9 +2,9 @@
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
 
-    import { Input } from "$lib/components/ui/input";
-    import Button from "$lib/components/ui/button/button.svelte";
-    import Label from "$lib/components/ui/label/label.svelte";
+    import { Input } from "$lib/shadcn/ui/input";
+    import Button from "$lib/shadcn/ui/button/button.svelte";
+    import Label from "$lib/shadcn/ui/label/label.svelte";
 
     import DataListRowUserRole from "$lib/components/data-model/user-role/data-series/user-role-data-list-row.svelte";
 
@@ -61,11 +61,9 @@
         });
     };
 
-
-
-	const handleResetAll = async () => {
-		await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
-	}
+    const handleResetAll = async () => {
+        await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
+    };
 </script>
 
 <div class="flex w-full flex-col">
@@ -85,7 +83,7 @@
         </div>
     </Label>
 
-    <Button variant="link" class="self-center"on:click={handleResetAll}>Reset All</Button>
+    <Button variant="link" class="self-center" on:click={handleResetAll}>Reset All</Button>
 
     <div class="w-full divide-y overflow-hidden rounded-lg border">
         {#each data.userRoleArray as userRoleData}

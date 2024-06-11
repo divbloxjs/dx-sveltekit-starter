@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { Button } from "$lib/components/ui/button/index.js";
-    import * as Card from "$lib/components/ui/card/index.js";
-    import * as Select from "$lib/components/ui/select/index.js";
-    import { Input } from "$lib/components/ui/input/index.js";
-    import { Label } from "$lib/components/ui/label/index.js";
+    import { Button } from "$lib/shadcn/ui/button/index.js";
+    import * as Card from "$lib/shadcn/ui/card/index.js";
+    import * as Select from "$lib/shadcn/ui/select/index.js";
+    import { Input } from "$lib/shadcn/ui/input/index.js";
+    import { Label } from "$lib/shadcn/ui/label/index.js";
 
     const frameworks = [
         {

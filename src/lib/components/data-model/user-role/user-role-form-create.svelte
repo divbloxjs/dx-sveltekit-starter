@@ -6,14 +6,14 @@
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
-    import { buttonVariants, Button } from "$lib/components/ui/button";
+    import { buttonVariants, Button } from "$lib/shadcn/ui/button";
 
     import { userRoleCreateSchema } from "./user-role.schema.js";
 
-    import FormInput from "$lib/components/ui/form/_form-input.svelte";
-    import FormTextarea from "$lib/components/ui/form/_form-textarea.svelte";
-    import FormCheckbox from "$lib/components/ui/form/_form-checkbox.svelte";
-    import FormSelect from "$lib/components/ui/form/_form-select.svelte";
+    import FormInput from "$lib/shadcn/ui/form/_form-input.svelte";
+    import FormTextarea from "$lib/shadcn/ui/form/_form-textarea.svelte";
+    import FormCheckbox from "$lib/shadcn/ui/form/_form-checkbox.svelte";
+    import FormSelect from "$lib/shadcn/ui/form/_form-select.svelte";
 
     export let data;
     export let basePath = "/user-role";
@@ -32,10 +32,8 @@
 </script>
 
 <form method="POST" action={`${basePath}/new?/create`} use:enhance class="@container w-full p-1">
-    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
-	<FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
-
-
+    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 columns-1 child:break-inside-avoid-column">
+        <FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
     </div>
 
     {#if $message}

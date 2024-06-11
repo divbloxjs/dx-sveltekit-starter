@@ -5,16 +5,16 @@
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
     import { toast } from "svelte-sonner";
-    import { Button, buttonVariants } from "$lib/components/ui/button";
+    import { Button, buttonVariants } from "$lib/shadcn/ui/button";
 
     import { userRoleUpdateSchema } from "./user-role.schema.js";
 
-    import FormSelect from "$lib/components/ui/form/_form-select.svelte";
-    import FormInput from "$lib/components/ui/form/_form-input.svelte";
-    import FormTextarea from "$lib/components/ui/form/_form-textarea.svelte";
-    import FormCheckbox from "$lib/components/ui/form/_form-checkbox.svelte";
+    import FormSelect from "$lib/shadcn/ui/form/_form-select.svelte";
+    import FormInput from "$lib/shadcn/ui/form/_form-input.svelte";
+    import FormTextarea from "$lib/shadcn/ui/form/_form-textarea.svelte";
+    import FormCheckbox from "$lib/shadcn/ui/form/_form-checkbox.svelte";
 
-    import AlertDialog from "$lib/components/ui/alert-dialog/_alert-dialog.svelte";
+    import AlertDialog from "$lib/shadcn/ui/alert-dialog/_alert-dialog.svelte";
 
     export let data;
     export let basePath = "/user-role";
@@ -36,12 +36,10 @@
 </script>
 
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="@container w-full p-1">
-    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
-    <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
+    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 columns-1 child:break-inside-avoid-column">
+        <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
 
-	<FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
-
-
+        <FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
     </div>
 
     {#if $message}

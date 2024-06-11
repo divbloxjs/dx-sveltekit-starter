@@ -7,8 +7,8 @@
     import dataTableConfig from "./data-series/user-role-data-table.config.json";
 
     import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
-    import { Button, buttonVariants } from "$lib/components/ui/button";
-    import { Input } from "$lib/components/ui/input";
+    import { Button, buttonVariants } from "$lib/shadcn/ui/button";
+    import { Input } from "$lib/shadcn/ui/input";
     import { Pencil, X } from "lucide-svelte";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
@@ -90,7 +90,7 @@
         {#each Object.values(attributeMap) as { displayName, stack, attributeName }}
             <th class="border-b p-2 text-left">
                 <div class="flex">
-                    <Input 
+                    <Input
                         type="text"
                         name={displayName}
                         placeholder="Filter..."

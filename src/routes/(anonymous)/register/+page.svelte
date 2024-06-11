@@ -1,14 +1,14 @@
 <script>
-    import { buttonVariants } from "$lib/components/ui/button";
-    import * as Form from "$lib/components/ui/form";
-    import { Input } from "$lib/components/ui/input";
+    import { buttonVariants } from "$lib/shadcn/ui/button";
+    import * as Form from "$lib/shadcn/ui/form";
+    import { Input } from "$lib/shadcn/ui/input";
 
     import { registerSchema } from "./register.schema";
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
     import AppLogo from "$lib/components/app-images/app-logo.svelte";
 
-    import * as Card from "$lib/components/ui/card";
+    import * as Card from "$lib/shadcn/ui/card";
     import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
 
     export let data;

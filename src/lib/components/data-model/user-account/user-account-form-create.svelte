@@ -3,20 +3,20 @@
 
     import { toast } from "svelte-sonner";
 
-    import * as Form from "$lib/components/ui/form";
+    import * as Form from "$lib/shadcn/ui/form";
 
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
-    import { buttonVariants, Button } from "$lib/components/ui/button";
+    import { buttonVariants, Button } from "$lib/shadcn/ui/button";
 
     import { userAccountCreateSchema } from "./user-account.schema.js";
 
-    import FormInput from "$lib/components/ui/form/_form-input.svelte";
-    import FormTextarea from "$lib/components/ui/form/_form-textarea.svelte";
-    import FormCheckbox from "$lib/components/ui/form/_form-checkbox.svelte";
-    import FormSelect from "$lib/components/ui/form/_form-select.svelte";
-    import Input from "$lib/components/ui/input/input.svelte";
+    import FormInput from "$lib/shadcn/ui/form/_form-input.svelte";
+    import FormTextarea from "$lib/shadcn/ui/form/_form-textarea.svelte";
+    import FormCheckbox from "$lib/shadcn/ui/form/_form-checkbox.svelte";
+    import FormSelect from "$lib/shadcn/ui/form/_form-select.svelte";
+    import Input from "$lib/shadcn/ui/input/input.svelte";
 
     export let data;
     export let basePath = "/user-account";

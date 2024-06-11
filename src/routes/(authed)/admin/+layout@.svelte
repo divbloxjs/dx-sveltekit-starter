@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { buttonVariants, Button } from "$lib/components/ui/button";
+    import { buttonVariants, Button } from "$lib/shadcn/ui/button";
 </script>
 
 <div class="flex h-full w-full flex-col">
