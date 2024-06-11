@@ -29,8 +29,8 @@
     <Uploader
         bind:preloadedFiles
         on:transferComplete={toggleView}
-        getFilesEndpoint="/api/file-upload/user-account?id=1&category=profilePicture"
-        postFilesEndpoint="/api/file-upload/user-account?id=1"
+        getFilesEndpoint="/api/file-upload/user-account?category=profilePicture"
+        postFilesEndpoint="/api/file-upload/user-account"
         deleteFileEndpoint="api/file-upload/user-account"
         updateFileNameEndpoint="api/file-upload"
         {...$$restProps}>

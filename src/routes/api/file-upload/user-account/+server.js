@@ -91,11 +91,29 @@ export async function POST({ request, url, locals }) {
 }
 
 /** @type {import('./$types').RequestHandler} */
+export async function PUT({ request, url, locals }) {
+    // TODO Auth on who you are and what files you can update
+    const linkedEntityId = url.searchParams.get("id") ?? locals.user.id;
+    const linkedEntity = "userAccount";
+
+    prisma.file.update({ where: { id: fileId } });
+
+    try {
+        return json({});
+    } catch (err) {
+        console.error(err);
+        return error(400, err?.message);
+    }
+}
+
+/** @type {import('./$types').RequestHandler} */
 export async function GET({ request, url, locals }) {
-    console.log(" locals.user", locals);
+    locals.auth.isAuthenticated();
+
+    console.log(" locals.user.id", locals?.user?.id);
     // TODO Auth on who you are and what files you can update
     try {
-        const linkedEntityId = url.searchParams.get("id") ?? locals.user.id;
+        const linkedEntityId = url.searchParams.get("id") ?? locals?.user?.id;
 
         console.log("linkedEntityId", linkedEntityId);
         const category = url.searchParams.get("category") ?? "";
