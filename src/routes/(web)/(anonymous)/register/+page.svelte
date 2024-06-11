@@ -19,14 +19,14 @@
     const { form: formData, enhance, message, errors, submitting } = form;
 </script>
 
-<div class="flex h-full w-full items-center justify-center">
+<div class="flex h-full w-full flex-col items-center justify-center">
     <Card.Root class="w-fit bg-card shadow-2xl">
         <Card.Header class="mb-2 p-0 text-center">
             <AppLogo class="w-56 self-center py-8" />
             <Card.Title>Create your {PUBLIC_APP_DISPLAY_NAME} account</Card.Title>
         </Card.Header>
         <Card.Content class="flex flex-col">
-            <form action="?/register" method="POST" class="w-80" use:enhance>
+            <form action="?/register" method="POST" class="min-w-72" use:enhance>
                 <Form.Field {form} name="emailAddress">
                     <Form.Control let:attrs>
                         <Form.Label>Email Address</Form.Label>
