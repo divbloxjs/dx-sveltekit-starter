@@ -2,9 +2,9 @@
     import { createEventDispatcher, onMount } from "svelte";
     import { fade } from "svelte/transition";
 
-    import InputFile from "../ui/input-file/input-file.svelte";
+    import InputFile from "$lib/components/shadcn/ui/input-file/input-file.svelte";
     import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
-    import Button from "../ui/button/button.svelte";
+    import Button from "$lib/components/shadcn/ui/button/button.svelte";
     import { LoaderCircle } from "lucide-svelte";
     import Preview from "./_partials/preview.svelte";
 

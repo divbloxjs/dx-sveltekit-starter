@@ -1,0 +1,7 @@
+{
+	"roleName": {
+		"displayName": "Role name",
+		"type": "text",
+		"column": 1
+	}
+}

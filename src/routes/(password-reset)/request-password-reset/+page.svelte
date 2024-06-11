@@ -1,16 +1,16 @@
 <script>
-    import * as Form from "$lib/components/ui/form";
-    import { Input } from "$lib/components/ui/input";
+    import * as Form from "$lib/components/shadcn/ui/form";
+    import { Input } from "$lib/components/shadcn/ui/input";
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
     import { requestPasswordResetSchema } from "./request-password-reset.schema";
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
-    import { buttonVariants } from "$lib/components/ui/button";
+    import { buttonVariants } from "$lib/components/shadcn/ui/button";
 
     import AppLogo from "$lib/components/app-images/app-logo.svelte";
 
-    import * as Card from "$lib/components/ui/card";
+    import * as Card from "$lib/components/shadcn/ui/card";
     import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
 
     /** @type {import('./$types').PageData} */

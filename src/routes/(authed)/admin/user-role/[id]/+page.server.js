@@ -1,49 +1,63 @@
-import { getIntId, getRefererFromRequest } from "$lib/dx-components/data-model/_helpers/helpers";
-import { getRequestBody } from "$lib/dx-components/data-model/_helpers/helpers.server";
-import { fail, redirect } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
+import { prisma } from "$lib/server/prisma-instance";
+import { message, superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
+import {
+    userRoleCreateSchema,
+    userRoleUpdateSchema,
+} from "$lib/components/data-model/user-role/user-role.schema";
 
-import { createUserRole, deleteUserRole, loadUserRole, updateUserRole } from "$lib/dx-components/data-model/userRole/userRole.server";
-
-let redirectPath = "/userRole/overview";
+import {
+    loadUserRole,
+    getUserRoleRelationshipData,
+    updateUserRole,
+} from "$lib/components/data-model/user-role/user-role.server";
 
 /** @type {import('./$types').PageServerLoad} */
-export const load = async ({ params, request }) => {
-    redirectPath = getRefererFromRequest(request, redirectPath);
+export const load = async (event) => {
+    const { params } = event;
 
+    let form;
     if (params?.id.toLowerCase() === "new") {
-        return {};
+        form = await superValidate(event, zod(userRoleCreateSchema));
+        const relationshipData = await getUserRoleRelationshipData();
+        return { form, ...relationshipData };
+    } else {
+        form = await superValidate(event, zod(userRoleUpdateSchema));
     }
 
-    return await loadUserRole(params?.id);
+    const userRoleData = await loadUserRole(params?.id);
+
+    form.data = { ...userRoleData.userRole };
+
+    return { form, ...userRoleData };
 };
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-    create: async (data) => {
-        const requestBody = await getRequestBody(data, "userRole");
+    create: async (event) => {
+        const form = await superValidate(event, zod(userRoleCreateSchema));
 
-        const result = await createUserRole(requestBody);
+        if (!form.valid) return fail(400, { form });
 
-        if (!result) return fail(400, requestBody);
-
-        redirect(302, redirectPath);
+        try {
+            await prisma.userRole.create({ data: form.data });
+        } catch (error) {
+            console.error(error);
+            return message(form, "Something went wrong. Please try again");
+        }
     },
-    update: async (data) => {
-        const requestBody = await getRequestBody(data, "userRole");
+    update: async (event) => {
+        const form = await superValidate(event, zod(userRoleUpdateSchema));
 
-        const result = await updateUserRole(requestBody);
+        if (!form.valid) return fail(400, { form });
 
-        if (!result) return fail(400, requestBody);
+        const result = await updateUserRole(form.data);
+        if (!result) return message(form, "Bad!");
 
-        redirect(302, redirectPath);
+        return { form, message: "Updated successfully!" };
     },
-    delete: async (data) => {
-        const requestBody = await getRequestBody(data, "userRole");
-
-        const result = await deleteUserRole(getIntId(data.params?.id));
-
-        if (!result) return fail(400, requestBody);
-
-        redirect(302, redirectPath);
-    }
+    delete: async (event) => {
+        await prisma.userRole.delete({ where: { id: event.params?.id } });
+    },
 };

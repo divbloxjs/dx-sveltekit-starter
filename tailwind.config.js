@@ -83,6 +83,7 @@ const config = {
         }
     },
     plugins: [
+        require("@tailwindcss/container-queries"),
         function ({ addVariant }) {
             addVariant("child", "& > *");
             addVariant("child-hover", "& > *:hover");

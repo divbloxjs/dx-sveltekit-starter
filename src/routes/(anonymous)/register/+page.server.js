@@ -1,6 +1,6 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { superValidate, setError } from "sveltekit-superforms";
-import { registerSchema, initialData } from "./register.schema";
+import { registerSchema } from "./register.schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { prisma } from "$lib/server/prisma-instance";
 import { addMinutes } from "date-fns";
@@ -11,7 +11,7 @@ import { SESSION_LENGTH_IN_MINS } from "$env/static/private";
 /** @type {import('./$types').PageServerLoad} */
 export const load = async () => {
     return {
-        registerForm: await superValidate(initialData, zod(registerSchema))
+        registerForm: await superValidate(zod(registerSchema))
     };
 };
 

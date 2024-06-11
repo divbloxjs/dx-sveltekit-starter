@@ -8,18 +8,18 @@
     import { initFirebase, firebaseMessaging, serviceWorkerRegistration } from "$lib/firebase.js";
     import { getToken, onMessage } from "firebase/messaging";
 
-    import Button from "$lib/dx-components/form-elements/button.svelte";
+    import { Button } from "$lib/components/shadcn/ui/button";
 
     import { pushNotificationUniqueIdentifier } from "./stores";
-    import * as Tooltip from "$lib/components/ui/tooltip";
+    import * as Tooltip from "$lib/components/shadcn/ui/tooltip";
     import { toast } from "svelte-sonner";
     import { checkFormActionResultStatus, handleFormActionToast } from "$lib";
     import { CircleHelp } from "lucide-svelte";
-    import * as Form from "$lib/components/ui/form";
-    import { Input } from "$lib/components/ui/input";
+    import * as Form from "$lib/components/shadcn/ui/form";
+    import { Input } from "$lib/components/shadcn/ui/input";
     import AppLogo from "$lib/components/app-images/app-logo.svelte";
 
-    import * as Card from "$lib/components/ui/card";
+    import * as Card from "$lib/components/shadcn/ui/card";
     import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
 
     export let data;

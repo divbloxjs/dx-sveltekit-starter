@@ -1,11 +1,9 @@
 <script>
-    import DataListUserAccount from "$lib/dx-components/data-model/userAccount/userAccount-data-list.svelte";
-    import DataTableUserAccount from "$lib/dx-components/data-model/userAccount/userAccount-data-table.svelte";
+    import DataListUserAccount from "$lib/components/data-model/user-account/user-account-data-list.svelte";
+    import DataTableUserAccount from "$lib/components/data-model/user-account/user-account-data-table.svelte";
 
     export let data;
     export let form;
-
-    const basePath = "/admin/user-account";
 
     export let displayAsList = false;
 
@@ -17,7 +15,7 @@
 <svelte:window bind:innerWidth={viewportWidth} />
 
 {#if displayAsList}
-    <DataListUserAccount {data} {basePath} />
+    <DataListUserAccount {data} basePath="/admin/user-account" />
 {:else}
-    <DataTableUserAccount {data} {basePath} allowDelete={true} allowEdit={true} />
+    <DataTableUserAccount {data} allowDelete={true} allowEdit={true} basePath="/admin/user-account" />
 {/if}

@@ -1,0 +1,34 @@
+{
+	"lastName": {
+		"displayName": "lastName",
+		"type": "text",
+		"column": 1
+	},
+	"firstName": {
+		"displayName": "firstName",
+		"type": "text",
+		"column": 2
+	},
+	"emailAddress": {
+		"displayName": "emailAddress",
+		"type": "text",
+		"column": 3
+	},
+	"hashedPassword": {
+		"displayName": "hashedPassword",
+		"type": "text",
+		"column": 4
+	},
+	"username": {
+		"displayName": "username",
+		"type": "text",
+		"column": 5
+	},
+	"userRole": {
+		"roleName": {
+			"displayName": "roleName",
+			"type": "text",
+			"column": 6
+		}
+	}
+}

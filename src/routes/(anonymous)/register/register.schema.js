@@ -11,9 +11,3 @@ export const registerSchema = z
         message: "Passwords don't match",
         path: ["confirmPassword"] // Path of error
     });
-
-export const initialData = {
-    emailAddress: "dani.simeonov@gmail.com",
-    password: "12345678",
-    confirmPassword: "12345678"
-};

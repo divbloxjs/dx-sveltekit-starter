@@ -1,11 +1,11 @@
 <script>
     import AppIcon from "$lib/components/app-images/app-icon.svelte";
-    import { Button } from "$lib/components/ui/button";
+    import { Button } from "$lib/components/shadcn/ui/button";
     import UserRound from "lucide-svelte/icons/user-round";
     import AlignJustify from "lucide-svelte/icons/align-justify";
     import Power from "lucide-svelte/icons/power";
     import { goto } from "$app/navigation";
-    import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+    import * as DropdownMenu from "$lib/components/shadcn/ui/dropdown-menu/index.js";
 
     /**
      * @type {HTMLFormElement}

@@ -1,106 +1,99 @@
-import { getIntId, getRefererFromRequest } from "$lib/dx-components/data-model/_helpers/helpers";
-import { getRequestBody } from "$lib/dx-components/data-model/_helpers/helpers.server";
-import { error, fail, json, redirect } from "@sveltejs/kit";
-
-import {
-    createUserAccount,
-    deleteUserAccount,
-    loadUserAccount,
-    updateUserAccount
-} from "$lib/dx-components/data-model/userAccount/userAccount.server";
-import { userAccountSchema } from "$lib/dx-components/data-model/userAccount/userAccount.schema";
+import { error, fail } from "@sveltejs/kit";
+import { prisma } from "$lib/server/prisma-instance";
 import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import argon2d from "argon2";
-import { prisma } from "$lib/server/prisma-instance";
+import { userAccountCreateSchema, userAccountUpdateSchema } from "$lib/components/data-model/user-account/user-account.schema";
 
-let redirectPath = "/admin/user-account/overview";
+import {
+    loadUserAccount,
+    getUserAccountRelationshipData,
+    updateUserAccount
+} from "$lib/components/data-model/user-account/user-account.server";
+import { deliverPushNotificationToAllSubscriptionsForUserAccount } from "$lib/server/web-push";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
-    console.log("load()");
-    const { params, request, cookies } = event;
-    const form = await superValidate(zod(userAccountSchema));
+    event.locals.auth.isAdmin();
 
+    const { params } = event;
+
+    let form;
     if (params?.id.toLowerCase() === "new") {
-        return { form };
+        form = await superValidate(event, zod(userAccountCreateSchema));
+        const relationshipData = await getUserAccountRelationshipData();
+        return { form, ...relationshipData };
+    } else {
+        form = await superValidate(event, zod(userAccountUpdateSchema));
     }
 
-    const { userAccount } = await loadUserAccount(params?.id);
+    const userAccountData = await loadUserAccount(params?.id);
 
-    form.data.id = userAccount.id.toString();
-    form.data.firstName = userAccount.firstName;
-    form.data.lastName = userAccount.lastName;
-    form.data.emailAddress = userAccount.emailAddress;
-    form.data.username = userAccount.username;
+    form.data = { ...userAccountData.userAccount };
 
-    return { form };
+    return { form, ...userAccountData };
 };
 
 /** @type {import('./$types').Actions} */
 export const actions = {
     create: async (event) => {
-        const form = await superValidate(event, zod(userAccountSchema));
+        event.locals.auth.isAdmin();
 
-        if (!form.valid) {
-            return fail(400, {
-                form
-            });
+        const form = await superValidate(event, zod(userAccountCreateSchema));
+
+        if (!form.valid) return fail(400, { form });
+        if (form.data.userRoleId?.length === 0) {
+            delete form.data.userRoleId;
         }
-
-        const userAccount = {
-            firstName: form.data.firstName,
-            lastName: form.data.lastName,
-            emailAddress: form.data.emailAddress,
-            username: form.data.emailAddress,
-            hashedPassword: await argon2d.hash("password")
-        };
-
+        form.data.username = form.data.emailAddress;
+        form.data.hashedPassword = "password";
         try {
-            await prisma.userAccount.create({ data: userAccount });
+            await prisma.userAccount.create({ data: form.data });
         } catch (error) {
-            console.error(error?.code === "P2002");
+            console.error(error);
+            // https://www.prisma.io/docs/orm/reference/error-reference#p2002
             if (error?.code === "P2002") {
-                return setError(form, "emailAddress", "E-mail already exists.");
+                return setError(form, "emailAddress", "User already exists");
             }
 
-            return message(form, "Something went wrong. Please try again");
+            return fail(400, { form });
         }
     },
     update: async (event) => {
-        console.log("UPDATING");
-        const form = await superValidate(event, zod(userAccountSchema));
-        console.log("form", form);
+        event.locals.auth.isAdmin();
 
-        if (!form.valid) {
-            return fail(400, {
-                form
-            });
+        const form = await superValidate(event, zod(userAccountUpdateSchema));
+
+        if (!form.valid) return fail(400, { form });
+
+        const result = await updateUserAccount(form.data);
+        if (!result) return fail(400, form);
+
+        return { form };
+    },
+    delete: async (event) => {
+        event.locals.auth.isAdmin();
+
+        await prisma.userAccount.delete({ where: { id: event.params?.id } });
+    },
+    testNotification: async ({ request, locals, params }) => {
+        locals.auth.isAdmin();
+
+        const data = await request.formData();
+        const userAccountId = data.get("id");
+
+        if (!userAccountId) return fail(400, { message: "No ID provided" });
+
+        const { pushSubscriptions, errors } = await deliverPushNotificationToAllSubscriptionsForUserAccount({ userAccountId });
+
+        if (errors.length !== 0) {
+            return fail(400, { message: "Could not deliver push notification", errors });
         }
 
-        const userAccount = {
-            id: form.data.id,
-            firstName: form.data.firstName,
-            lastName: form.data.lastName,
-            emailAddress: form.data.emailAddress,
-            username: form.data.emailAddress
+        if (pushSubscriptions.length === 0) return { type: "info", message: "No active push subscriptions found" };
+
+        return {
+            type: "success",
+            message: `Test notification sent to ${pushSubscriptions.length} subscription ${pushSubscriptions.length > 1 ? "s" : ""}`
         };
-
-        console.log("ABOUT TO START");
-        const result = await updateUserAccount(userAccount);
-        console.log(result);
-        if (!result) return message(form, "Bad!");
-
-        console.log("form", form);
-        return { form, message: "Updated successfully!" };
-    },
-    delete: async (data) => {
-        const requestBody = await getRequestBody(data, "userAccount");
-
-        const result = await deleteUserAccount(getIntId(data.params?.id));
-
-        if (!result) return fail(400, requestBody);
-
-        redirect(302, redirectPath);
     }
 };

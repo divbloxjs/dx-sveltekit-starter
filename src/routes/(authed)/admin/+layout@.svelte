@@ -1,6 +1,5 @@
-<script>
-    import { buttonVariants } from "$lib/components/ui/button";
-    import Button from "$lib/dx-components/form-elements/button.svelte";
+<script lang="ts">
+    import { buttonVariants, Button } from "$lib/components/shadcn/ui/button";
 </script>
 
 <div class="flex h-full w-full flex-col">
@@ -11,11 +10,11 @@
             <Button type="submit" variant="outline">Log out</Button>
         </form>
     </div>
-    <div class="flex w-full flex-grow">
-        <div class="flex h-full w-48 flex-col gap-2 border-r p-2">
-            <a href="/admin/user-account/overview" class={buttonVariants({ variant: "outline" })}>User Accounts</a>
-            <a href="/admin/user-role/overview" class={buttonVariants({ variant: "outline" })}>User Roles</a>
-            <a href="/admin/organisation/overview" class={buttonVariants({ variant: "outline" })}>Organisations</a>
+
+    <div class="flex w-full flex-grow flex-col">
+        <div class="flex flex-row gap-2 border-r p-2">
+            <a href="/admin/user-account/overview" class={buttonVariants({ variant: "link", size: "sm" })}>User Accounts</a>
+            <a href="/admin/user-role/overview" class={buttonVariants({ variant: "link", size: "sm" })}>User Roles</a>
         </div>
 
         <div class="flex flex-grow flex-col p-5">

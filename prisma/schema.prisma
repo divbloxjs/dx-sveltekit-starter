@@ -23,7 +23,7 @@ model organisation {
   id                   BigInt              @id @default(autoincrement())
   effort               String              @db.VarChar(23)
   description          String?             @db.VarChar(25)
-  details              Json
+  details              Json?
   isDefault            Boolean?            @default(false)
   organisationName     String?             @db.VarChar(25)
   lastUpdated          DateTime            @default(now()) @db.DateTime(0)
@@ -86,7 +86,7 @@ model userAccount {
   username         String             @unique(map: "userAccountUsername") @db.VarChar(250)
   firstName        String?            @db.VarChar(100)
   emailAddress     String             @db.VarChar(250)
-  hashedPassword   String             @db.VarChar(100)
+  hashedPassword   String?            @db.VarChar(100)
   lastUpdated      DateTime           @default(now()) @db.DateTime(0)
   userRoleId       BigInt?
   pushSubscription pushSubscription[]

@@ -1,6 +1,6 @@
 // export const ssr = false;
 
-import { loadUserRoleArray } from "$lib/dx-components/data-model/userRole/userRole.server";
+import { loadUserRoleArray } from "$lib/components/data-model/user-role/user-role.server";
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
 

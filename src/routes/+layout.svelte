@@ -1,8 +1,7 @@
 <script>
     import "../app.pcss";
     import { ModeWatcher } from "mode-watcher";
-    import { Toaster } from "$lib/components/ui/sonner";
-    import { browser } from "$app/environment";
+    import { Toaster } from "$lib/components/shadcn/ui/sonner";
 
     BigInt.prototype.toJSON = function () {
         const int = Number.parseInt(this.toString());
@@ -13,4 +12,6 @@
 <ModeWatcher />
 <Toaster richColors closeButton />
 
-<slot />
+<div class="flex h-full w-full flex-col">
+    <slot />
+</div>

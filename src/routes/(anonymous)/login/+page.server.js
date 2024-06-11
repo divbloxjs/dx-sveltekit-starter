@@ -1,6 +1,6 @@
 import { fail, json, redirect } from "@sveltejs/kit";
 import { superValidate, message } from "sveltekit-superforms";
-import { loginSchema, initialData } from "./login.schema";
+import { loginSchema } from "./login.schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { prisma } from "$lib/server/prisma-instance";
 import { addDays, addMinutes } from "date-fns";
@@ -12,7 +12,7 @@ import { SESSION_LENGTH_IN_MINS } from "$env/static/private";
 /** @type {import('./$types').PageServerLoad} */
 export const load = async ({ cookies }) => {
     const returnData = {
-        loginForm: await superValidate(initialData, zod(loginSchema))
+        loginForm: await superValidate(zod(loginSchema))
     };
 
     const sessionId = cookies.get("sessionId");

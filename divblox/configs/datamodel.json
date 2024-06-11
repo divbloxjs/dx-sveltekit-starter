@@ -223,7 +223,7 @@
 			},
 			"hashedPassword": {
 				"type": "VARCHAR",
-				"allowNull": false,
+				"allowNull": true,
 				"lengthOrValues": "100"
 			}
 		},
@@ -364,7 +364,7 @@
 			"details": {
 				"type": "JSON",
 				"default": null,
-				"allowNull": false,
+				"allowNull": true,
 				"lengthOrValues": null
 			},
 			"isDefault": {

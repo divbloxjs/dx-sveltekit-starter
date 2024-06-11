@@ -1,21 +1,21 @@
 <script>
-	import DataListUserRole from '$lib/dx-components/data-model/userRole/userRole-data-list.svelte';
-	import DataTableUserRole from '$lib/dx-components/data-model/userRole/userRole-data-table.svelte';
+    import DataListUserRole from "$lib/components/data-model/user-role/user-role-data-list.svelte";
+    import DataTableUserRole from "$lib/components/data-model/user-role/user-role-data-table.svelte";
 
-	export let data;
-	export let form;
+    export let data;
+    export let form;
 
-	export let displayAsList = false;
+    export let displayAsList = false;
 
-	let viewportWidth = 700;
+    let viewportWidth = 700;
 
-	$: displayAsList = viewportWidth < 600;
+    $: displayAsList = viewportWidth < 600;
 </script>
 
 <svelte:window bind:innerWidth={viewportWidth} />
 
 {#if displayAsList}
-	<DataListUserRole {data}/>
+    <DataListUserRole {data} basePath="/admin/user-role" />
 {:else}
-	<DataTableUserRole {data} allowDelete={true} allowEdit={true}/>
+    <DataTableUserRole {data} allowDelete={true} allowEdit={true} basePath="/admin/user-role" />
 {/if}
