@@ -9,6 +9,7 @@
     import { Input } from "$lib/components/shadcn/ui/input";
     import { enhance } from "$app/forms";
     import { handleFormActionToast } from "$lib";
+    import { focusTrap } from "$lib/actions/focus-trap.action";
 
     export let preloadedFile;
 
@@ -25,6 +26,10 @@
         isNew = false;
     });
 
+    const focusOnMount = (el) => {
+        el?.focus();
+    };
+
     let file = preloadedFile;
     console.log(file);
 
@@ -39,7 +44,16 @@
         if (deleteResult.ok) dispatch("deleted", { toRemoveIndex: index });
     };
 
+    let displayNameInputEl;
     let isEditingDisplayName = false;
+    let isEditingDisplayNameFocusTrapState = false;
+    $: isEditingDisplayName,
+        (async () => {
+            await sleep(100);
+            isEditingDisplayNameFocusTrapState = !isEditingDisplayNameFocusTrapState;
+
+            if (isEditingDisplayNameFocusTrapState) displayNameInputEl?.select();
+        })();
     let submittingUpdate = false;
     /**
      *  @type {import('./$types').SubmitFunction}
@@ -54,7 +68,7 @@
                 file.displayName = formData.get("displayName");
             }
 
-            // dispatch("updated", { updatedIndex: formData.get("id") });
+            dispatch("updated", { updatedIndex: formData.get("id") });
             isEditingDisplayName = false;
             handleFormActionToast(result);
         };
@@ -89,9 +103,10 @@
                 bind:this={updateDisplayNameFormEl}
                 action={`${updateFileNameEndpoint}`}
                 method="POST"
+                use:focusTrap={isEditingDisplayNameFocusTrapState}
                 use:enhance={submitDisplayNameUpdate}>
+                <Input bind:inputEl={displayNameInputEl} name="displayName" value={file.displayName}></Input>
                 <Input type="hidden" name="id" value={file.id}></Input>
-                <Input name="displayName" value={file.displayName}></Input>
             </form>
         </span>
 

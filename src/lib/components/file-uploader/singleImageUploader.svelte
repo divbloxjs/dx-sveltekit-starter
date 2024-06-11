@@ -27,7 +27,10 @@
 {/if}
 <div class:hidden={viewOnly} class="mx-auto w-56 sm:w-72">
     <Uploader
+        multiple={false}
         bind:preloadedFiles
+        FILE_NUMBER_LIMIT={1}
+        on:updated={toggleView}
         on:transferComplete={toggleView}
         getFilesEndpoint="/api/file-upload/user-account?category=profilePicture"
         postFilesEndpoint="/api/file-upload/user-account"

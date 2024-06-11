@@ -328,10 +328,10 @@
                     {updateFileNameEndpoint}
                     {preloadedFile}
                     {index}
-                    on:clicked={(event) => {
-                        console.log("event.detail", event.detail);
+                    on:clicked={(event) => {}}
+                    on:updated={(event) => {
+                        dispatch("updated", event.detail);
                     }}
-                    on:updated={refreshFiles}
                     on:deleted={(event) => {
                         preloadedFiles = JSON.parse(
                             JSON.stringify(preloadedFiles.filter((file, index) => index !== event.detail.toRemoveIndex))
