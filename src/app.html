@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 	<link rel="manifest" href="%sveltekit.assets%/manifest.json" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<link rel="apple-touch-icon" href="%sveltekit.assets%/images/app_icon_192.jpg" />
@@ -25,8 +25,9 @@
 	%sveltekit.head%
 </head>
 
-<body data-sveltekit-preload-data="hover" class="font-montserrat" style="height: 100dvh;">
-	<div style="display: contents; height: 100dvh; overflow: scroll;">%sveltekit.body%</div>
+<body data-sveltekit-preload-data="hover" class="font-montserrat" style="height: 100vh; overflow: scroll; ">
+	<div style="display: contents; height: 100vh; overflow: scroll; ">
+		%sveltekit.body%</div>
 </body>
 
 </html>

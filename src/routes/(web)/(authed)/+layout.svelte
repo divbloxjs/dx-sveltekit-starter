@@ -17,7 +17,7 @@
 <!-- Todo: figure out page height here for bottom nav scroll-->
 <TopNavAdmin />
 
-<div class="flex w-full flex-col pb-16 pt-14">
+<div class="flex h-full w-full flex-col pb-[calc(env(safe-area-inset-bottom)+4rem)] pt-[calc(env(safe-area-inset-top)+3.5rem)]">
     <!--<div class="flex bg-slate-200 p-2">
         <a
             href="/dashboard"
