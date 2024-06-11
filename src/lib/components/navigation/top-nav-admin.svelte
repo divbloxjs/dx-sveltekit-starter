@@ -20,7 +20,8 @@
 
 <form bind:this={logoutForm} action="/api/logout" method="POST"></form>
 
-<div class="fixed top-[env(safe-area-inset-top)] z-50 flex h-14 w-full items-center justify-between bg-slate-200 px-2 shadow-sm">
+<div
+    class="fixed top-0 z-50 flex h-[calc(env(safe-area-inset-top)+3rem)] w-full items-end justify-between bg-slate-200 px-2 pb-1 pt-[env(safe-area-inset-top)] shadow-sm">
     <div class="flex items-center justify-start">
         <a href="/"><AppIcon class="max-h-10" /></a>
     </div>
