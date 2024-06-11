@@ -14,6 +14,7 @@
     export let TOTAL_MAX_UPLOAD_SIZE = 2 * SINGLE_MAX_UPLOAD_SIZE;
     export let FILE_NUMBER_LIMIT: number = 3;
 
+    export let replaceExistingFiles = false;
     export let accept = "";
     export let multiple = false;
     export let createThumbnailAndWebImages = true;
@@ -22,7 +23,7 @@
     export let getFilesEndpoint: string | undefined;
     export let postFilesEndpoint: string;
 
-    const fullUploadEndpoint = `${postFilesEndpoint}&createThumbnailAndWebImages=${createThumbnailAndWebImages}&uploadAsPublic=${uploadAsPublic}`;
+    const fullUploadEndpoint = `${postFilesEndpoint}?createThumbnailAndWebImages=${createThumbnailAndWebImages}&uploadAsPublic=${uploadAsPublic}&replaceExistingFiles=${replaceExistingFiles}`;
 
     export let deleteFileEndpoint: string;
     export let updateFileNameEndpoint: string;
@@ -32,13 +33,18 @@
     export let preloadedFiles: [] = [];
 
     onMount(async () => {
+        await refreshFiles();
+    });
+
+    const refreshFiles = async () => {
         if (!getFilesEndpoint) return;
 
         const response = await fetch(getFilesEndpoint);
         const result = await response.json();
 
         preloadedFiles = result?.files ?? [];
-    });
+        console.log("preloadedFiles", preloadedFiles);
+    };
 
     const handleChange = (event: Event) => {
         const target = event.target;
@@ -133,7 +139,7 @@
         }
     };
 
-    const transferComplete = (evt) => {
+    const transferComplete = async (evt) => {
         isTransferComplete = true;
         uploadingFiles = false;
 
@@ -144,6 +150,8 @@
 
         const newFiles = JSON.parse(evt.currentTarget.response).files;
         preloadedFiles = newFiles;
+
+        await refreshFiles();
         removeInputFiles();
         dispatch("transferComplete");
     };
@@ -320,10 +328,11 @@
                 <PreloadedFileRow
                     {deleteFileEndpoint}
                     {updateFileNameEndpoint}
-                    {preloadedFile}
+                    preloadedFile={preloadedFiles[index]}
                     {index}
-                    on:clicked={(event) => {
-                        console.log("event.detail", event.detail);
+                    on:clicked={(event) => {}}
+                    on:updated={(event) => {
+                        dispatch("updated", event.detail);
                     }}
                     on:deleted={(event) => {
                         preloadedFiles = JSON.parse(
