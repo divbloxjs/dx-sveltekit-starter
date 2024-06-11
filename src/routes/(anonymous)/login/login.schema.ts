@@ -6,8 +6,8 @@ export const loginSchema = z.object({
 });
 
 export const initialData = {
-    emailAddress: "dani.simeonov@gmail.com",
-    password: "12345678"
+    emailAddress: "",
+    password: ""
 };
 
 export type LoginSchema = typeof loginSchema;

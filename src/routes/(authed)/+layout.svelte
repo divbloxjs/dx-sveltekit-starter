@@ -1,6 +1,9 @@
 <script>
     import { page } from "$app/stores";
     import { Button, buttonVariants } from "$lib/components/ui/button";
+    import TopNavUser from "$lib/components/navigation/top-nav-user.svelte";
+    import TopNavAdmin from "$lib/components/navigation/top-nav-admin.svelte";
+    import BottomNavUser from "$lib/components/navigation/bottom-nav-user.svelte";
 
     import Sun from "lucide-svelte/icons/sun";
     import Moon from "lucide-svelte/icons/moon";
@@ -9,8 +12,13 @@
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 </script>
 
-<div class="flex h-full w-full flex-col">
-    <div class="flex bg-slate-200 p-2">
+<TopNavUser />
+<!-- Dani help! How do I check for admin here?-->
+<!-- Todo: figure out page height here for bottom nav scroll-->
+<TopNavAdmin />
+
+<div class="flex w-full flex-col pt-14">
+    <!--<div class="flex bg-slate-200 p-2">
         <a
             href="/dashboard"
             class="{$page.url.pathname.includes('dashboard') ? 'bg-blue-100 hover:bg-blue-200' : ''} {buttonVariants({
@@ -44,9 +52,8 @@
                 <Button type="submit" variant="outline">Log out</Button>
             </form>
         </div>
-    </div>
+    </div>-->
 
-    <div class="flex flex-grow flex-col">
-        <slot />
-    </div>
+    <slot />
 </div>
+<BottomNavUser />
