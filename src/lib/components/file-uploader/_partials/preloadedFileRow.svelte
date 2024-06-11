@@ -6,8 +6,8 @@
     import { createEventDispatcher, onMount } from "svelte";
     import { quintOut } from "svelte/easing";
     import { sleep } from "dx-utilities";
-    import FormInput from "$lib/components/ui/form/_form-input.svelte";
-    import Input from "$lib/components/ui/input/input.svelte";
+    import FormInput from "$lib/components/shadcn/ui/form/_form-input.svelte";
+    import { Input } from "$lib/components/shadcn/ui/input";
     import { enhance } from "$app/forms";
     import { handleFormActionToast } from "$lib";
 
@@ -41,13 +41,6 @@
     };
 
     let isEditingDisplayName = false;
-    const toggleEditingDisplayName = async () => {
-        isEditingDisplayName = true;
-        console.log(file);
-
-        isEditingDisplayName = false;
-    };
-
     let submittingUpdate = false;
     /**
      *  @type {import('./$types').SubmitFunction}

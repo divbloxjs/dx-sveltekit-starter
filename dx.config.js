@@ -11,7 +11,7 @@ export default {
     codeGen: {
         dataModelUiConfigPath: "divblox/code-gen/datamodel-ui.config.json", // Path from route to the data model UI configuration file
         componentsPath: { fromRoot: "/src/lib/components/shadcn", alias: "$lib/components/shadcn" },
-        routesPath: { fromRoot: "/src/routes", alias: "$src/routes" },
+        routesPath: { fromRoot: "/src/routes/(web)", alias: "$src/routes/(web)" },
         uiImplementation: "shadcn"
     }
 };
