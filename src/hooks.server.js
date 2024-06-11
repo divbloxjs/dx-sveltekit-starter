@@ -4,9 +4,12 @@ import { redirect } from "@sveltejs/kit";
 
 /** @type {import('@sveltejs/kit').Handle} */
 export const handle = async ({ event, resolve }) => {
+    console.log("event.route.id", event.route.id);
     // If in the (authed) route group, check sessionId for current user
     if (event.route.id?.includes("/(authed)")) {
+        console.log("AUTHED");
         event.locals.user = await authenticateUser(event);
+        console.log("event.locals.user", event.locals.user);
         if (!event.locals.user) {
             throw redirect(303, "/login");
         }
