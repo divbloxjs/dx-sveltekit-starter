@@ -27,6 +27,16 @@ export async function POST({ request, url, locals }) {
         isPublic = url.searchParams.get("uploadAsPublic").toLowerCase() === "true" ? true : false;
     }
 
+    let replaceExistingFiles = false;
+    if (url.searchParams.get("replaceExistingFiles")) {
+        replaceExistingFiles = url.searchParams.get("replaceExistingFiles").toLowerCase() === "true" ? true : false;
+    }
+
+    if (replaceExistingFiles) {
+        const files = await prisma.file.findMany({ where: { linkedEntityId, linkedEntity: "userAccount", category: "profilePicture" } });
+        await deleteFiles(files);
+    }
+
     const formData = Object.fromEntries(await request.formData());
     const filesToUpload = Object.values(formData);
     if (filesToUpload.length === 0) {
@@ -181,3 +191,28 @@ export async function DELETE({ request }) {
         return fail(400);
     }
 }
+
+const deleteFiles = async (files) => {
+    try {
+        for (const file of files) {
+            const fileController = new FileController();
+
+            for (let sizeType of file?.sizesSaved ?? []) {
+                let finalObjectIdentifier = `${sizeType}_${file.objectIdentifier}`;
+                let containerIdentifier = AWS_PRIVATE_BUCKET_NAME;
+                if (file?.cloudIsPubliclyAvailable) {
+                    finalObjectIdentifier = `public/${finalObjectIdentifier}`;
+                    containerIdentifier = AWS_PUBLIC_BUCKET_NAME;
+                }
+
+                await fileController.deleteFile({ objectIdentifier: finalObjectIdentifier, containerIdentifier });
+            }
+        }
+    } catch (err) {
+        console.error(err);
+        return fail(400);
+    }
+
+    await prisma.file.deleteMany({ where: { id: { in: files.map((file) => file.id) } } });
+    return json({ message: "Deleted successfully!" });
+};

@@ -28,6 +28,7 @@
 <div class:hidden={viewOnly} class="mx-auto w-56 sm:w-72">
     <Uploader
         multiple={false}
+        replaceExistingFiles={true}
         bind:preloadedFiles
         FILE_NUMBER_LIMIT={1}
         on:updated={toggleView}
