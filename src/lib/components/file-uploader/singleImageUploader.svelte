@@ -27,10 +27,14 @@
 {/if}
 <div class:hidden={viewOnly} class="mx-auto w-56 sm:w-72">
     <Uploader
+        multiple={false}
+        replaceExistingFiles={true}
         bind:preloadedFiles
+        FILE_NUMBER_LIMIT={1}
+        on:updated={toggleView}
         on:transferComplete={toggleView}
-        getFilesEndpoint="/api/file-upload/user-account?id=1&category=profilePicture"
-        postFilesEndpoint="/api/file-upload/user-account?id=1"
+        getFilesEndpoint="/api/file-upload/user-account?category=profilePicture"
+        postFilesEndpoint="/api/file-upload/user-account"
         deleteFileEndpoint="api/file-upload/user-account"
         updateFileNameEndpoint="api/file-upload"
         {...$$restProps}>
