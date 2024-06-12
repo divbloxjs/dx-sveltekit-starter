@@ -1,6 +1,8 @@
 // export const ssr = false;
 
 import { loadUserAccountArray } from "$lib/components/shadcn/data-model/user-account/user-account.server";
+import { deliverPushNotificationToAllSubscriptionsForUserAccount } from "$lib/server/web-push";
+import { fail } from "@sveltejs/kit";
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
 
@@ -33,4 +35,31 @@ export const load = async ({ url, params, locals }) => {
     }
 
     return await loadUserAccountArray(constraints);
+};
+
+/** @type {import('./$types').Actions} */
+export const actions = {
+    testPushNotification: async ({ request, locals }) => {
+        const data = await request.formData();
+
+        if (!data.get("id")) return fail(400, { message: "Invalid ID provided" });
+
+        const title = data.get("title") ?? "Test notification";
+        const body = data.get("body") ?? "Test notification body";
+        const { pushSubscriptions, errors } = await deliverPushNotificationToAllSubscriptionsForUserAccount({
+            userAccountId: locals?.user?.id,
+            notificationContent: { title, body }
+        });
+
+        if (errors.length !== 0) {
+            return fail(400, { message: "Could not deliver push notification", errors });
+        }
+
+        if (pushSubscriptions.length === 0) return { type: "info", message: "No active push subscriptions found" };
+
+        return {
+            type: "success",
+            message: `Test notification sent to ${pushSubscriptions.length} subscription ${pushSubscriptions.length > 1 ? "s" : ""}`
+        };
+    }
 };
