@@ -146,12 +146,12 @@
                 {#if allowEdit || allowDelete}
                     <td class="flex items-center justify-center text-center">
                         <a
-                            href={`${basePath}/${data?.userAccountArray[index]?.id}`}
+                        href={`${basePath}/${data?.userAccountArray[index]?.id}`}
                             class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
                             <Pencil class="h-4 w-4" /></a>
 
-                        <form action={`${basePath}/${data?.userAccountArray[index]?.id}?/delete`} use:enhance method="POST">
-                            <input type="hidden" bind:value={data.userAccountArray[index].id} />
+                    <form action={`${basePath}/${data?.userAccountArray[index]?.id}?/delete`} use:enhance method="POST">
+                        <input type="hidden" bind:value={data.userAccountArray[index].id} />
                             <Button type="submit" class="border-none" variant="destructive-outline" size="inline-icon">
                                 <X class="h-4 w-4" /></Button>
                         </form>

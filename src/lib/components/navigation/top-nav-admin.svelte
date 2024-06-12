@@ -21,25 +21,22 @@
 <form bind:this={logoutForm} action="/api/logout" method="POST"></form>
 
 <div
-    class="fixed top-0 z-50 flex h-[calc(env(safe-area-inset-top)+3rem)] w-full items-end justify-between bg-slate-200 px-2 pb-1 pt-[env(safe-area-inset-top)] shadow-sm">
+    class="bg-background-200 fixed top-0 z-50 flex h-[calc(env(safe-area-inset-top)+3rem)] w-full items-end justify-between px-2 pb-1 pt-[env(safe-area-inset-top)] shadow-sm">
     <div class="flex items-center justify-start">
         <a href="/"><AppIcon class="max-h-10" /></a>
     </div>
     <div class="hidden items-center justify-end sm:visible sm:flex">
         <Button
-            type="button"
             variant="link"
             on:click={() => {
                 goto("/admin");
             }}><UserCog /></Button>
         <Button
-            type="button"
             variant="link"
             on:click={() => {
                 goto("/profile");
             }}><UserRound /></Button>
         <Button
-            type="button"
             variant="link"
             on:click={() => {
                 doLogout();

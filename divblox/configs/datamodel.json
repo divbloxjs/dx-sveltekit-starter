@@ -1,534 +1,307 @@
 {
-	"file": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": false
-		},
-		"attributes": {
-			"category": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": "300"
-			},
-			"mimeType": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "150"
-			},
-			"sizesSaved": {
-				"type": "JSON",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"baseFileUrl": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": "1000"
-			},
-			"displayName": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": "500"
-			},
-			"linkedEntity": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "150"
-			},
-			"linkedEntityId": {
-				"type": "BIGINT",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": null
-			},
-			"objectIdentifier": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "500"
-			},
-			"originalSizeInBytes": {
-				"type": "INT",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"uploadedFileExtension": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "150"
-			},
-			"cloudContainerIdentifier": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "150"
-			},
-			"cloudIsPubliclyAvailable": {
-				"type": "BOOLEAN",
-				"default": 0,
-				"allowNull": false,
-				"lengthOrValues": null
-			}
-		},
-		"relationships": {},
-		"dataModellerCoordinates": {
-			"x": 2508.0091110525623,
-			"y": 546.0636192849777
-		}
-	},
-	"place": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"placeName": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "15"
-			}
-		},
-		"relationships": {
-			"parentPlace": [
-				"parentPlaceId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 368.8638836651028,
-			"y": 421.3155902643403
-		}
-	},
-	"customer": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"customerName": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "250"
-			},
-			"emailAddress": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "250"
-			},
-			"contactNumber": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "10"
-			}
-		},
-		"relationships": {
-			"organisation": [
-				"organisationId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 989.1139240506332,
-			"y": 692.2278481012656
-		}
-	},
-	"userRole": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"roleName": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "100"
-			}
-		},
-		"relationships": {},
-		"dataModellerCoordinates": {
-			"x": 2489.2766171234107,
-			"y": 292.20287089269675
-		}
-	},
-	"parentPlace": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"placeName": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "250"
-			}
-		},
-		"relationships": {},
-		"dataModellerCoordinates": {
-			"x": 366.3278433595947,
-			"y": 133.502177857626
-		}
-	},
-	"userAccount": {
-		"module": "main",
-		"indexes": [
-			{
-				"type": "BTREE",
-				"attribute": "username",
-				"indexName": "userAccountUsername",
-				"indexChoice": "unique"
-			}
-		],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"lastName": {
-				"type": "VARCHAR",
-				"allowNull": true,
-				"lengthOrValues": "150"
-			},
-			"username": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "250"
-			},
-			"firstName": {
-				"type": "VARCHAR",
-				"allowNull": true,
-				"lengthOrValues": "100"
-			},
-			"emailAddress": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "250"
-			},
-			"hashedPassword": {
-				"type": "VARCHAR",
-				"allowNull": true,
-				"lengthOrValues": "100"
-			}
-		},
-		"relationships": {
-			"userRole": [
-				"userRoleId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 1959.3438721191824,
-			"y": 286.1236051632118
-		}
-	},
-	"userSession": {
-		"module": "main",
-		"indexes": [
-			{
-				"type": "BTREE",
-				"attribute": "sessionId",
-				"indexName": "userSessionSessionid",
-				"indexChoice": "unique"
-			}
-		],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"sessionId": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "50"
-			},
-			"userAgent": {
-				"type": "VARCHAR",
-				"allowNull": true,
-				"lengthOrValues": "200"
-			},
-			"sessionData": {
-				"type": "JSON",
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"expiryDateTime": {
-				"type": "DATETIME",
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"durationInMinutes": {
-				"type": "INT",
-				"allowNull": false,
-				"lengthOrValues": null
-			}
-		},
-		"relationships": {
-			"userAccount": [
-				"userAccountId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 1975.4329146474656,
-			"y": 783.4065244098033
-		}
-	},
-	"oneTimeToken": {
-		"module": "main",
-		"indexes": [
-			{
-				"type": "BTREE",
-				"attribute": "tokenValue",
-				"indexName": "oneTimeTokenTokenValue",
-				"indexChoice": "unique"
-			}
-		],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"expiresAt": {
-				"type": "DATETIME",
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"tokenType": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "100"
-			},
-			"tokenValue": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "32"
-			},
-			"linkedEntityId": {
-				"type": "BIGINT",
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"linkedEntityName": {
-				"type": "VARCHAR",
-				"allowNull": false,
-				"lengthOrValues": "100"
-			},
-			"timeToLiveInMinutes": {
-				"type": "INT",
-				"allowNull": false,
-				"lengthOrValues": null
-			}
-		},
-		"relationships": {},
-		"dataModellerCoordinates": {
-			"x": 1503.3625218914178,
-			"y": 56.74255691768802
-		}
-	},
-	"organisation": {
-		"module": "main",
-		"indexes": [
-			{
-				"type": "BTREE",
-				"attribute": "organisationName",
-				"indexName": "exampleEntityTwo_exampleTwoBigInt",
-				"indexChoice": "index"
-			}
-		],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"effort": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": "23"
-			},
-			"details": {
-				"type": "JSON",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": null
-			},
-			"isDefault": {
-				"type": "TINYINT",
-				"default": 0,
-				"allowNull": true,
-				"lengthOrValues": null
-			},
-			"description": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "25"
-			},
-			"organisationName": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "25"
-			}
-		},
-		"relationships": {
-			"place": [
-				"placeId"
-			],
-			"parentOrganisation": [
-				"parentOrganisationId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 364.8206888107177,
-			"y": 626.2624593837743
-		}
-	},
-	"pushSubscription": {
-		"module": "main",
-		"indexes": [
-			{
-				"type": "BTREE",
-				"attribute": "uniqueIdentifier",
-				"indexName": "pushSubscriptionUniqueIdentifier",
-				"indexChoice": "unique"
-			}
-		],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"isActive": {
-				"type": "BOOLEAN",
-				"default": 1,
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"uniqueIdentifier": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": 50
-			},
-			"hasUnseenNotification": {
-				"type": "BOOLEAN",
-				"default": 0,
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"pushSubscriptionDetails": {
-				"type": "JSON",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": null
-			}
-		},
-		"relationships": {
-			"userAccount": [
-				"userAccountId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 1977.4403818391377,
-			"y": 10.511041100177144
-		}
-	},
-	"parentOrganisation": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"effort": {
-				"type": "DOUBLE",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"isDefault": {
-				"type": "TINYINT",
-				"default": 0,
-				"allowNull": true,
-				"lengthOrValues": null
-			},
-			"description": {
-				"type": "LONGTEXT",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": null
-			},
-			"organisationName": {
-				"type": "TEXT",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": null
-			}
-		},
-		"relationships": {
-			"grandParentOrganisation": [
-				"grandParentOrganisationId"
-			]
-		},
-		"dataModellerCoordinates": {
-			"x": 1011.9710210796356,
-			"y": 355.24690823150917
-		}
-	},
-	"grandParentOrganisation": {
-		"module": "main",
-		"indexes": [],
-		"options": {
-			"isAuditEnabled": true,
-			"enforceLockingConstraints": true
-		},
-		"attributes": {
-			"effort": {
-				"type": "TEXT",
-				"default": null,
-				"allowNull": false,
-				"lengthOrValues": null
-			},
-			"isDefault": {
-				"type": "TINYINT",
-				"default": 0,
-				"allowNull": true,
-				"lengthOrValues": null
-			},
-			"description": {
-				"type": "MEDIUMTEXT",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": null
-			},
-			"organisationName": {
-				"type": "LONGTEXT",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": null
-			}
-		},
-		"relationships": {},
-		"dataModellerCoordinates": {
-			"x": 1012.9835848813208,
-			"y": 64.77468180254559
-		}
-	}
+    "file": {
+        "module": "main",
+        "indexes": [],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": false
+        },
+        "attributes": {
+            "category": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": "300"
+            },
+            "mimeType": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "sizesSaved": {
+                "type": "JSON",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "baseFileUrl": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": "1000"
+            },
+            "displayName": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": "500"
+            },
+            "linkedEntity": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "linkedEntityId": {
+                "type": "BIGINT",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "objectIdentifier": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "500"
+            },
+            "originalSizeInBytes": {
+                "type": "INT",
+                "default": null,
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "uploadedFileExtension": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "cloudContainerIdentifier": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "cloudIsPubliclyAvailable": {
+                "type": "BOOLEAN",
+                "default": 0,
+                "allowNull": false,
+                "lengthOrValues": null
+            }
+        },
+        "relationships": {},
+        "dataModellerCoordinates": {
+            "x": 2508.0091110525623,
+            "y": 546.0636192849777
+        }
+    },
+    "userRole": {
+        "module": "main",
+        "indexes": [],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "roleName": {
+                "type": "VARCHAR",
+                "allowNull": false,
+                "lengthOrValues": "100"
+            }
+        },
+        "relationships": {},
+        "dataModellerCoordinates": {
+            "x": 2489.2766171234107,
+            "y": 292.20287089269675
+        }
+    },
+    "userAccount": {
+        "module": "main",
+        "indexes": [
+            {
+                "type": "BTREE",
+                "attribute": "username",
+                "indexName": "userAccountUsername",
+                "indexChoice": "unique"
+            }
+        ],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "lastName": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "username": {
+                "type": "VARCHAR",
+                "allowNull": false,
+                "lengthOrValues": "250"
+            },
+            "firstName": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "100"
+            },
+            "emailAddress": {
+                "type": "VARCHAR",
+                "allowNull": false,
+                "lengthOrValues": "250"
+            },
+            "hashedPassword": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "100"
+            }
+        },
+        "relationships": {
+            "userRole": ["userRoleId"]
+        },
+        "dataModellerCoordinates": {
+            "x": 1959.3438721191824,
+            "y": 286.1236051632118
+        }
+    },
+    "userSession": {
+        "module": "main",
+        "indexes": [
+            {
+                "type": "BTREE",
+                "attribute": "sessionId",
+                "indexName": "userSessionSessionid",
+                "indexChoice": "unique"
+            }
+        ],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "sessionId": {
+                "type": "VARCHAR",
+                "allowNull": false,
+                "lengthOrValues": "50"
+            },
+            "userAgent": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "200"
+            },
+            "sessionData": {
+                "type": "JSON",
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "expiryDateTime": {
+                "type": "DATETIME",
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "durationInMinutes": {
+                "type": "INT",
+                "allowNull": false,
+                "lengthOrValues": null
+            }
+        },
+        "relationships": {
+            "userAccount": ["userAccountId"]
+        },
+        "dataModellerCoordinates": {
+            "x": 1975.4329146474656,
+            "y": 783.4065244098033
+        }
+    },
+    "oneTimeToken": {
+        "module": "main",
+        "indexes": [
+            {
+                "type": "BTREE",
+                "attribute": "tokenValue",
+                "indexName": "oneTimeTokenTokenValue",
+                "indexChoice": "unique"
+            }
+        ],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "expiresAt": {
+                "type": "DATETIME",
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "tokenType": {
+                "type": "VARCHAR",
+                "allowNull": false,
+                "lengthOrValues": "100"
+            },
+            "tokenValue": {
+                "type": "VARCHAR",
+                "allowNull": false,
+                "lengthOrValues": "32"
+            },
+            "linkedEntityId": {
+                "type": "BIGINT",
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "linkedEntityName": {
+                "type": "VARCHAR",
+                "allowNull": false,
+                "lengthOrValues": "100"
+            },
+            "timeToLiveInMinutes": {
+                "type": "INT",
+                "allowNull": false,
+                "lengthOrValues": null
+            }
+        },
+        "relationships": {},
+        "dataModellerCoordinates": {
+            "x": 1503.3625218914178,
+            "y": 56.74255691768802
+        }
+    },
+    "pushSubscription": {
+        "module": "main",
+        "indexes": [
+            {
+                "type": "BTREE",
+                "attribute": "uniqueIdentifier",
+                "indexName": "pushSubscriptionUniqueIdentifier",
+                "indexChoice": "unique"
+            }
+        ],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "isActive": {
+                "type": "BOOLEAN",
+                "default": 1,
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "uniqueIdentifier": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": 50
+            },
+            "hasUnseenNotification": {
+                "type": "BOOLEAN",
+                "default": 0,
+                "allowNull": false,
+                "lengthOrValues": null
+            },
+            "pushSubscriptionDetails": {
+                "type": "JSON",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": null
+            }
+        },
+        "relationships": {
+            "userAccount": ["userAccountId"]
+        },
+        "dataModellerCoordinates": {
+            "x": 1977.4403818391377,
+            "y": 10.511041100177144
+        }
+    }
 }

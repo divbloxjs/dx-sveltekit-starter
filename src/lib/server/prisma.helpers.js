@@ -1,5 +1,5 @@
 import dataModel from "datamodel";
-import { isEmptyObject, getCaseNormalizedString } from "dx-utilities";
+import { isEmptyObject, getCamelCaseSplittedToLowerCase, convertLowerCaseToPascalCase, convertLowerCaseToCamelCase } from "dx-utilities";
 import dxConfig from "../../../dx.config";
 
 export const getPrismaSelectAllFromEntity = (entityName, select = {}) => {
@@ -101,3 +101,21 @@ const convertFilterClauseToPrismaClause = (filterConstraint = {}, prismaFilterCo
 const getObjectDepth = (objectToCheck) => {
     return Object(objectToCheck) === objectToCheck ? 1 + Math.max(-1, ...Object.values(objectToCheck).map(getObjectDepth)) : 0;
 };
+
+export const getCaseNormalizedString = (inputString = "", databaseCaseImplementation = DB_IMPLEMENTATION_TYPES.SNAKE_CASE) => {
+    let preparedString = inputString;
+    switch (databaseCaseImplementation.toLowerCase()) {
+        case DB_IMPLEMENTATION_TYPES.SNAKE_CASE:
+            return getCamelCaseSplittedToLowerCase(inputString, "_");
+        case DB_IMPLEMENTATION_TYPES.PASCAL_CASE:
+            preparedString = getCamelCaseSplittedToLowerCase(inputString, "_");
+            return convertLowerCaseToPascalCase(preparedString, "_");
+        case DB_IMPLEMENTATION_TYPES.CAMEL_CASE:
+            preparedString = getCamelCaseSplittedToLowerCase(inputString, "_");
+            return convertLowerCaseToCamelCase(preparedString, "_");
+        default:
+            return getCamelCaseSplittedToLowerCase(inputString, "_");
+    }
+};
+
+export const DB_IMPLEMENTATION_TYPES = { SNAKE_CASE: "snakecase", PASCAL_CASE: "pascalcase", CAMEL_CASE: "camelcase" };

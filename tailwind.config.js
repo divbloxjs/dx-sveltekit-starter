@@ -19,6 +19,9 @@ const config = {
                 input: "hsl(var(--input) / <alpha-value>)",
                 ring: "hsl(var(--ring) / <alpha-value>)",
                 background: "hsl(var(--background) / <alpha-value>)",
+                "background-100": "hsl(var(--background-100) / <alpha-value>)",
+                "background-200": "hsl(var(--background-200) / <alpha-value>)",
+                "background-300": "hsl(var(--background-300) / <alpha-value>)",
                 foreground: "hsl(var(--foreground) / <alpha-value>)",
                 primary: {
                     DEFAULT: "hsl(var(--primary) / <alpha-value>)",
@@ -28,9 +31,17 @@ const config = {
                     DEFAULT: "hsl(var(--secondary) / <alpha-value>)",
                     foreground: "hsl(var(--secondary-foreground) / <alpha-value>)"
                 },
-                banana: {
-                    DEFAULT: "hsl(var(--secondary) / <alpha-value>)",
-                    foreground: "hsl(var(--secondary-foreground) / <alpha-value>)"
+                tertiary: {
+                    DEFAULT: "hsl(var(--tertiary) / <alpha-value>)",
+                    foreground: "hsl(var(--tertiary-foreground) / <alpha-value>)"
+                },
+                success: {
+                    DEFAULT: "hsl(var(--success) / <alpha-value>)",
+                    foreground: "hsl(var(--success-foreground) / <alpha-value>)"
+                },
+                warning: {
+                    DEFAULT: "hsl(var(--warning) / <alpha-value>)",
+                    foreground: "hsl(var(--warning-foreground) / <alpha-value>)"
                 },
                 destructive: {
                     DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
