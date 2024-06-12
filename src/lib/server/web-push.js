@@ -1,11 +1,11 @@
-import { PRIVATE_VAPID_KEY } from "$env/static/private";
-import { PUBLIC_VAPID_KEY, PUBLIC_WEB_PUSH_CONTACT_EMAIL_ADDRESS } from "$env/static/public";
+import { env } from "$env/dynamic/private";
+import { env as publicEnv } from "$env/dynamic/public";
 
 // https://github.com/web-push-libs/web-push
 import webPush from "web-push";
 import { prisma } from "./prisma-instance";
 
-webPush.setVapidDetails(`mailto:${PUBLIC_WEB_PUSH_CONTACT_EMAIL_ADDRESS}`, PUBLIC_VAPID_KEY, PRIVATE_VAPID_KEY);
+webPush.setVapidDetails(`mailto:${publicEnv.PUBLIC_WEB_PUSH_CONTACT_EMAIL_ADDRESS}`, publicEnv.PUBLIC_VAPID_KEY, env.PRIVATE_VAPID_KEY);
 
 /**
  * Delivers a push notification to a specific subscription

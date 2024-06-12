@@ -8,9 +8,8 @@ import { zod } from "sveltekit-superforms/adapters";
 import { prisma } from "$lib/server/prisma-instance";
 import { addMinutes } from "date-fns";
 import { getGuid } from "$lib/server/helpers";
-
-import { SESSION_LENGTH_IN_MINS } from "$env/static/private";
 import { DEFAULT_ROUTE } from "$constants/constants";
+import { env } from "$env/dynamic/private";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async () => {
@@ -41,8 +40,8 @@ export const actions = {
 
         const newSession = await prisma.userSession.create({
             data: {
-                durationInMinutes: parseInt(SESSION_LENGTH_IN_MINS ?? 20),
-                expiryDateTime: addMinutes(new Date(), parseInt(SESSION_LENGTH_IN_MINS ?? 20)),
+                durationInMinutes: parseInt(env.SESSION_LENGTH_IN_MINS ?? 20),
+                expiryDateTime: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
                 sessionData: {},
                 sessionId: getGuid(),
                 userAgent: request.headers.get("user-agent"),

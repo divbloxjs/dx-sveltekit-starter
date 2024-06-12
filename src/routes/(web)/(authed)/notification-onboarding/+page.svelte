@@ -3,8 +3,6 @@
     import { onMount } from "svelte";
     import { enhance } from "$app/forms";
 
-    import { PUBLIC_VAPID_KEY } from "$env/static/public";
-
     import { initFirebase, firebaseMessaging, serviceWorkerRegistration } from "$lib/firebase.js";
     import { getToken, onMessage } from "firebase/messaging";
 
@@ -20,7 +18,7 @@
     import AppLogo from "$lib/components/app-images/app-logo.svelte";
 
     import * as Card from "$lib/components/shadcn/ui/card";
-    import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
+    import { env } from "$env/dynamic/public";
 
     export let data;
 
@@ -57,7 +55,7 @@
         }
 
         try {
-            // const fetchedToken = await getToken(firebaseMessaging, { serviceWorkerRegistration, vapidKey: PUBLIC_VAPID_KEY });
+            // const fetchedToken = await getToken(firebaseMessaging, { serviceWorkerRegistration, vapidKey: env.PUBLIC_VAPID_KEY });
 
             // console.log("fetchedToken", fetchedToken);
 
@@ -66,7 +64,7 @@
             // Store the received token
             const pushSubscriptionDetails = await serviceWorkerRegistration.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: PUBLIC_VAPID_KEY
+                applicationServerKey: env.PUBLIC_VAPID_KEY
             });
 
             formData.append("pushSubscriptionDetailsString", JSON.stringify(pushSubscriptionDetails));
@@ -122,7 +120,7 @@
             <Card.Title>Notification Permission</Card.Title>
             <Card.Description>
                 <!-- DX-NOTE: Change this message to suite your app's needs -->
-                Allow {PUBLIC_APP_DISPLAY_NAME} to notify you of time sensitive events?
+                Allow {env.PUBLIC_APP_DISPLAY_NAME} to notify you of time sensitive events?
             </Card.Description>
         </Card.Header>
         <Card.Content class="flex flex-col">

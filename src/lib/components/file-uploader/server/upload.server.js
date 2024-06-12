@@ -1,4 +1,4 @@
-import { CLOUD_STORAGE_PROVIDER, LOCAL_STORAGE_FOLDER_PATH, STORE_FILES_IN_CLOUD, STORE_FILES_LOCALLY } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 import { S3Controller } from "./s3.server";
 import { getFileExtension, getFileWithoutExtension, insertBeforeFileExtension } from "../functions";
 import { mkdirSync, writeFileSync } from "fs";
@@ -12,13 +12,13 @@ export class FileController {
     #cloudController;
 
     constructor({
-        saveLocally = STORE_FILES_LOCALLY.toLowerCase() === "true" ? true : false,
-        saveInCloud = STORE_FILES_IN_CLOUD.toLowerCase() === "true" ? true : false
+        saveLocally = env.STORE_FILES_LOCALLY.toLowerCase() === "true" ? true : false,
+        saveInCloud = env.STORE_FILES_IN_CLOUD.toLowerCase() === "true" ? true : false
     } = {}) {
         if (saveLocally) this.#saveLocally = saveLocally;
         if (saveInCloud) this.#saveInCloud = saveInCloud;
 
-        switch (CLOUD_STORAGE_PROVIDER) {
+        switch (env.CLOUD_STORAGE_PROVIDER) {
             case "aws_s3":
                 this.#cloudController = new S3Controller();
                 this.#saveInCloud = true;
@@ -85,10 +85,10 @@ export class FileController {
             for (let i = 0; i < filesToUpload.length; i++) {
                 localStaticFileUrls[i] = {};
                 for (let [sizeType, { fileArrayBuffer, objectIdentifier }] of Object.entries(filesToUpload[i].sizesSaved)) {
-                    const localStaticFilePath = `${LOCAL_STORAGE_FOLDER_PATH}/${objectIdentifier}`;
+                    const localStaticFilePath = `${env.LOCAL_STORAGE_FOLDER_PATH}/${objectIdentifier}`;
 
-                    if (!existsSync(LOCAL_STORAGE_FOLDER_PATH)) {
-                        mkdirSync(LOCAL_STORAGE_FOLDER_PATH);
+                    if (!existsSync(env.LOCAL_STORAGE_FOLDER_PATH)) {
+                        mkdirSync(env.LOCAL_STORAGE_FOLDER_PATH);
                     }
                     writeFileSync(localStaticFilePath, Buffer.from(fileArrayBuffer));
                     localStaticFileUrls[i][sizeType] = localStaticFilePath;
@@ -123,7 +123,7 @@ export class FileController {
 
                 displayName: files[i].name,
                 sizesSaved: [],
-                baseFileUrl: LOCAL_STORAGE_FOLDER_PATH
+                baseFileUrl: env.LOCAL_STORAGE_FOLDER_PATH
             };
 
             if (this.#saveInCloud) {
@@ -187,7 +187,7 @@ export class FileController {
     }
 
     async getUrlForDownload({ containerIdentifier, objectIdentifier, cloudIsPubliclyAvailable = false }) {
-        if (this.#saveLocally) return `${LOCAL_STORAGE_FOLDER_PATH}/${objectIdentifier}`;
+        if (this.#saveLocally) return `${env.LOCAL_STORAGE_FOLDER_PATH}/${objectIdentifier}`;
 
         if (cloudIsPubliclyAvailable) {
             return this.#cloudController?.getStaticUrl({ containerIdentifier, objectIdentifier: `public/${objectIdentifier}` });
