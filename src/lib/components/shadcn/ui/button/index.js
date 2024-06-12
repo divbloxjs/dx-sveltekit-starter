@@ -5,11 +5,23 @@ const buttonVariants = tv({
     variants: {
         variant: {
             default: "bg-primary text-primary-foreground hover:bg-primary/90",
+            outline: "border border-primary hover:bg-accent hover:text-accent-foreground",
+
+            secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90",
+            "secondary-outline": "border border-secondary text-secondary hover:bg-secondary/90 hover:text-secondary-foreground",
+
+            tertiary: "bg-tertiary text-tertiary-foreground hover:bg-tertiary/90",
+            "tertiary-outline": "border border-tertiary text-tertiary hover:bg-tertiary/90 hover:text-tertiary-foreground",
+
             destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
             "destructive-outline": "border border-destructive text-destructive hover:bg-destructive/90 hover:text-destructive-foreground",
-            outline: "border border-primary hover:bg-accent hover:text-accent-foreground",
-            secondary: "border border-secondary text-secondary-foreground hover:bg-secondary/80",
-            "secondary-outline": "border border-green-300 text-green-300 hover:bg-green-500/90 hover:text-white",
+
+            success: "bg-success text-success-foreground hover:bg-success/90",
+            "success-outline": "border border-success text-success hover:bg-success/90 hover:text-success-foreground",
+
+            warning: "bg-warning text-warning-foreground hover:bg-warning/90",
+            "warning-outline": "border border-warning text-warning hover:bg-warning/90 hover:text-warning-foreground",
+
             ghost: "hover:bg-accent hover:text-accent-foreground",
             link: "text-primary underline-offset-4 hover:underline "
         },
