@@ -5,7 +5,7 @@
     import InputFile from "$lib/components/shadcn/ui/input-file/input-file.svelte";
     import PreloadedFileRow from "./_partials/preloadedFileRow.svelte";
     import Button from "$lib/components/shadcn/ui/button/button.svelte";
-    import { LoaderCircle } from "lucide-svelte";
+    import LoaderCircle from "lucide-svelte/icons/loader-circle";
     import Preview from "./_partials/preview.svelte";
 
     const dispatch = createEventDispatcher();

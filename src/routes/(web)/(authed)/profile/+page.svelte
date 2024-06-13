@@ -7,6 +7,7 @@
 
     import * as Tabs from "$lib/components/shadcn/ui/tabs/index.js";
     import * as Card from "$lib/components/shadcn/ui/card/index.js";
+    import { FILE_CATEGORY } from "$lib/constants/constants";
 
     export let data;
 
@@ -29,7 +30,7 @@
                     <Card.Content class="space-y-2">
                         <div class="mt-4 flex flex-col self-center">
                             <SingleImageUploader
-                                getFilesEndpoint="/api/file-upload/user-account?category=profilePicture"
+                                getFilesEndpoint={`/api/file-upload/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
                                 postFilesEndpoint="/api/file-upload/user-account"
                                 deleteFileEndpoint="api/file-upload/user-account"
                                 updateFileNameEndpoint="?/updateProfilePictureDisplayName" />

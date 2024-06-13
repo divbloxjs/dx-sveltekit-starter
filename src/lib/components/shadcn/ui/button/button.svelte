@@ -2,7 +2,7 @@
     import { Button as ButtonPrimitive } from "bits-ui";
     import { buttonVariants } from "./index.js";
     import { cn } from "$lib/components/shadcn/utils.js";
-    import { LoaderCircle } from "lucide-svelte";
+    import LoaderCircle from "lucide-svelte/icons/loader-circle";
     let className = undefined;
     export let variant = "default";
     export let size = "default";

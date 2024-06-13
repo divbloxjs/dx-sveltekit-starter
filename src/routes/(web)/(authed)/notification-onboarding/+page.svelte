@@ -14,7 +14,7 @@
     import * as Tooltip from "$lib/components/shadcn/ui/tooltip";
     import { toast } from "svelte-sonner";
     import { checkFormActionResultStatus, handleFormActionToast } from "$lib";
-    import { CircleHelp } from "lucide-svelte";
+    import CircleHelp from "lucide-svelte/icons/circle-help";
     import * as Form from "$lib/components/shadcn/ui/form";
     import { Input } from "$lib/components/shadcn/ui/input";
     import AppLogo from "$lib/components/app-images/app-logo.svelte";

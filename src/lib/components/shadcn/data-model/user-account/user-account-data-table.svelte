@@ -10,7 +10,10 @@
     import { buildAttributeMap, flattenRowObject } from "$lib/components/shadcn/data-model/_helpers/helpers";
     import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Input } from "$lib/components/shadcn/ui/input";
-    import { Bell, Pencil, RotateCcw, X } from "lucide-svelte";
+    import Bell from "lucide-svelte/icons/bell";
+    import Pencil from "lucide-svelte/icons/pencil";
+    import RotateCcw from "lucide-svelte/icons/rotate-ccw";
+    import X from "lucide-svelte/icons/x";
     import { Label } from "$lib/components/shadcn/ui/label";
     import { handleFormActionToast } from "$lib";
     import * as Tooltip from "$lib/components/shadcn/ui/tooltip";
@@ -209,7 +212,7 @@
 
                         <a
                             href={`${basePath}/${data?.userAccountArray[index]?.id}`}
-                            class="bg-tranparent border-tertiary text-tertiary border border-none">
+                            class="bg-tranparent border border-none border-tertiary text-tertiary">
                             <Pencil class="h-4 w-4" /></a>
 
                         <form action={`${basePath}/${data?.userAccountArray[index]?.id}?/delete`} use:enhance method="POST">

@@ -10,7 +10,9 @@
     import { buildAttributeMap, flattenRowObject } from "$lib/components/shadcn/data-model/_helpers/helpers";
     import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Input } from "$lib/components/shadcn/ui/input";
-    import { Pencil, RotateCcw, X } from "lucide-svelte";
+    import Pencil from "lucide-svelte/icons/pencil";
+    import RotateCcw from "lucide-svelte/icons/rotate-ccw";
+    import X from "lucide-svelte/icons/x";
     import { Label } from "$lib/components/shadcn/ui/label";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
@@ -146,12 +148,12 @@
                 {#if allowEdit || allowDelete}
                     <td class="flex items-center justify-center text-center">
                         <a
-                        href={`${basePath}/${data?.userRoleArray[index]?.id}`}
+                            href={`${basePath}/${data?.userRoleArray[index]?.id}`}
                             class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
                             <Pencil class="h-4 w-4" /></a>
 
-                    <form action={`${basePath}/${data?.userRoleArray[index]?.id}?/delete`} use:enhance method="POST">
-                        <input type="hidden" bind:value={data.userRoleArray[index].id} />
+                        <form action={`${basePath}/${data?.userRoleArray[index]?.id}?/delete`} use:enhance method="POST">
+                            <input type="hidden" bind:value={data.userRoleArray[index].id} />
                             <Button type="submit" class="border-none" variant="destructive-outline" size="inline-icon">
                                 <X class="h-4 w-4" /></Button>
                         </form>

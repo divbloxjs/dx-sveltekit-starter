@@ -4,9 +4,10 @@ import { prisma } from "$lib/server/prisma-instance";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
 import { FileController } from "$lib/components/file-uploader/server/upload.server";
 import { AWS_PRIVATE_BUCKET_NAME, AWS_PUBLIC_BUCKET_NAME } from "$env/static/private";
+import { FILE_CATEGORY } from "$lib/constants/constants";
 
 const LINKED_ENTITY = "userAccount";
-const UPLOAD_TYPE = "profilePicture";
+const UPLOAD_TYPE = FILE_CATEGORY.PROFILE_PICTURE;
 
 // TODO COMMENT
 const UPLOAD_AS_PUBLIC = false;
@@ -33,7 +34,9 @@ export async function POST({ request, url, locals }) {
     }
 
     if (replaceExistingFiles) {
-        const files = await prisma.file.findMany({ where: { linkedEntityId, linkedEntity: "userAccount", category: "profilePicture" } });
+        const files = await prisma.file.findMany({
+            where: { linkedEntityId, linkedEntity: "userAccount", category: FILE_CATEGORY.PROFILE_PICTURE }
+        });
         await deleteFiles(files);
     }
 

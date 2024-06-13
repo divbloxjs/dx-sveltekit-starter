@@ -10,7 +10,7 @@
     import PrismaLogo from "$lib/assets/dashboard-images/prisma-logo.svg";
 
     import { buttonVariants } from "$lib/components/shadcn/ui/button";
-    import { ExternalLink } from "lucide-svelte";
+    import  ExternalLink  from "lucide-svelte/icons/external-link";
 
     import DivbloxLogo from "$lib/components/app-images/app-icon.svelte";
 

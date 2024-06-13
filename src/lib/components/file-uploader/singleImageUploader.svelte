@@ -2,6 +2,7 @@
     import { Button } from "$lib/components/shadcn/ui/button";
     import Uploader from "./uploader.svelte";
     import PlaceholderImage from "$lib/assets/images/profile-placeholder.svg";
+    import { FILE_CATEGORY } from "$lib/constants/constants";
 
     let preloadedFiles = [];
     let viewOnly = true;
@@ -32,7 +33,7 @@
         FILE_NUMBER_LIMIT={1}
         on:updated={toggleView}
         on:transferComplete={toggleView}
-        getFilesEndpoint="/api/file-upload/user-account?category=profilePicture"
+        getFilesEndpoint={`/api/file-upload/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
         postFilesEndpoint="/api/file-upload/user-account"
         deleteFileEndpoint="api/file-upload/user-account"
         updateFileNameEndpoint="api/file-upload"
