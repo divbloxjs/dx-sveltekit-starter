@@ -50,7 +50,6 @@ export const deliverPushNotificationToAllSubscriptionsForUserAccount = async ({
     mustSetAsUnseen = false
 }) => {
     const pushSubscriptions = await prisma.pushSubscription.findMany({ where: { userAccountId, isActive: true } });
-    console.log("pushSubscriptions", pushSubscriptions);
 
     if (mustSetAsUnseen) {
         await prisma.pushSubscription.updateMany({ where: { userAccountId }, data: { hasUnseenNotification: true } });

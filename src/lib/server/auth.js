@@ -58,7 +58,7 @@ export const authenticateUser = async ({ route, cookies, request }) => {
         id: userSession.userAccount?.id,
         firstName: userSession.userAccount?.firstName,
         lastName: userSession.userAccount?.lastName,
-        emailAddress: userSession.userAccount?.lastName,
+        emailAddress: userSession.userAccount?.emailAddress,
         userRole: null
     };
 
@@ -87,7 +87,6 @@ export class AuthorisationManager {
     /** @param {import("@sveltejs/kit").RequestEvent} event */
     constructor(event) {
         this.#event = event;
-        console.log(this.#event.route.id);
 
         this.user = event.locals.user;
     }
@@ -99,7 +98,6 @@ export class AuthorisationManager {
     }
 
     isAdmin() {
-        console.log("this.user?.userRole?.roleName", this.user?.userRole?.roleName);
         if (this.user?.userRole?.roleName !== userRoles.admin.name) {
             error(403, "Unauthorized");
         }

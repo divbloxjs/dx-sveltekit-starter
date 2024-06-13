@@ -31,7 +31,6 @@
     };
 
     let file = preloadedFile;
-    console.log(file);
 
     file.url = preloadedFile.urls.original;
     if (preloadedFile.sizesSaved.includes("thumbnail")) {

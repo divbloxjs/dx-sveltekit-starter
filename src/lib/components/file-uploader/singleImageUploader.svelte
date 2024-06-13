@@ -13,7 +13,6 @@
     $: preloadedFiles[0]?.urls?.thumbnail,
         (() => {
             displayUrl = preloadedFiles[0]?.urls?.thumbnail ?? PlaceholderImage;
-            console.log("displayUrl", displayUrl);
         })();
 </script>
 

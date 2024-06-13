@@ -45,7 +45,6 @@
     };
 
     const navigate = (direction) => {
-        console.log("WHY HERE");
         if (direction === "left") {
             handlePrevFile();
         }

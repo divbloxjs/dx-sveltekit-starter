@@ -3,7 +3,6 @@ import { listen } from "svelte/internal";
 export function arrowNavigationAction(node, callback) {
     const handleKeypress = (event) => {
         if (event.key === "ArrowLeft") {
-            console.log(callback);
             node.dispatchEvent(new CustomEvent("arrowleft"));
             callback?.("left");
         }

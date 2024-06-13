@@ -16,8 +16,6 @@
 
     onMount(() => {
         selected = options.find(({ value, label }) => value === selectedValue) ?? { label: "-Please Select-", value: "" };
-        console.log("options", options);
-        console.log("selectedValue", selectedValue);
     });
 </script>
 
