@@ -1,25 +1,12 @@
-#Dockerfile
+FROM node:22
 
-# Use this image as the platform to build the app
-FROM node:18-alpine
-
-# The WORKDIR instruction sets the working directory for everything that will happen next
 WORKDIR /app
+COPY package.json ./
+RUN npm install
 
-# Copy all local files into the image
 COPY . .
-
-# Clean install all node modules
-RUN npm ci
-
-# Build SvelteKit app
 RUN npm run build
 
-# Delete source code files that were used to build the app that are no longer needed
-RUN rm -rf src/ static/ emailTemplates/ docker-compose.yml
+CMD ["node", "build"]
 
-# The USER instruction sets the user name to use as the default user for the remainder of the current stage
-USER node:node
-
-# This is the command that will be run inside the image when you tell Docker to start the container
-CMD ["node",".svelte-kit/output/server/index.js"]
+EXPOSE 3000
