@@ -1,4 +1,6 @@
 <script>
+    import { getContext } from "svelte";
+
     import SingleImageUploader from "$lib/components/file-uploader/singleImageUploader.svelte";
     import FormPassword from "./tabs/form-password.svelte";
     import FormUserAccount from "./tabs/form-user-account.svelte";
@@ -7,6 +9,12 @@
     import * as Card from "$lib/components/shadcn/ui/card/index.js";
 
     export let data;
+
+    /**
+     * @type {import("svelte/store").Writable<import("../../../../app").UserInfo | null>}
+     */
+    const currentUser = getContext("currentUser");
+    console.log("Current User:", $currentUser);
 </script>
 
 <div class="flex h-full w-full justify-center">
