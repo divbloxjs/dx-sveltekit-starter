@@ -1,7 +1,9 @@
 <script>
     import { resetMode, setMode } from "mode-watcher";
     import * as DropdownMenu from "$lib/components/shadcn/ui/dropdown-menu/index.js";
-    import { ExternalLink, Moon, Sun } from "lucide-svelte";
+    import ExternalLink from "lucide-svelte/icons/external-link";
+    import Moon from "lucide-svelte/icons/moon";
+    import Sun from "lucide-svelte/icons/sun";
     import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import * as Card from "$lib/components/shadcn/ui/card";
     import * as Accordion from "$lib/components/shadcn/ui/accordion";
@@ -34,18 +36,18 @@
         <div class="flex w-full">
             <div class="flex h-24 w-full items-center justify-center bg-primary text-primary-foreground">Primary</div>
             <div class="flex h-24 w-full items-center justify-center bg-secondary text-secondary-foreground">Secondary</div>
-            <div class="bg-tertiary text-tertiary-foreground flex h-24 w-full items-center justify-center">Tertiary</div>
+            <div class="flex h-24 w-full items-center justify-center bg-tertiary text-tertiary-foreground">Tertiary</div>
             <div class="flex h-24 w-full items-center justify-center bg-accent text-accent-foreground">Accent</div>
-            <div class="bg-success text-success-foreground flex h-24 w-full items-center justify-center">Success</div>
-            <div class="bg-warning text-warning-foreground flex h-24 w-full items-center justify-center">Warning</div>
+            <div class="flex h-24 w-full items-center justify-center bg-success text-success-foreground">Success</div>
+            <div class="flex h-24 w-full items-center justify-center bg-warning text-warning-foreground">Warning</div>
             <div class="flex h-24 w-full items-center justify-center bg-destructive text-destructive-foreground">Destructive</div>
         </div>
 
         <div class="flex w-full">
             <div class="flex h-24 w-full items-center justify-center bg-background text-foreground">Background</div>
-            <div class="bg-background-100 flex h-24 w-full items-center justify-center text-foreground">Background 100</div>
-            <div class="bg-background-200 flex h-24 w-full items-center justify-center text-foreground">Background 200</div>
-            <div class="bg-background-300 flex h-24 w-full items-center justify-center text-foreground">Background 300</div>
+            <div class="flex h-24 w-full items-center justify-center bg-background-100 text-foreground">Background 100</div>
+            <div class="flex h-24 w-full items-center justify-center bg-background-200 text-foreground">Background 200</div>
+            <div class="flex h-24 w-full items-center justify-center bg-background-300 text-foreground">Background 300</div>
             <div class="flex h-24 w-full items-center justify-center bg-muted text-muted-foreground">Muted</div>
         </div>
     </div>

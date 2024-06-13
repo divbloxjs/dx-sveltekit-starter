@@ -1,6 +1,8 @@
 <script lang="ts">
     import { Button } from "$lib/components/shadcn/ui/button";
-    import { Check, Pencil, X } from "lucide-svelte";
+    import Check from "lucide-svelte/icons/check";
+    import Pencil from "lucide-svelte/icons/pencil";
+    import X from "lucide-svelte/icons/x";
     import MimeType from "./mimeType.svelte";
     import { slide } from "svelte/transition";
     import { createEventDispatcher, onMount } from "svelte";

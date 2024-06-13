@@ -1,5 +1,7 @@
 <script>
-    import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-svelte";
+    import ChevronLeft from "lucide-svelte/icons/chevron-left";
+    import ChevronRight from "lucide-svelte/icons/chevron-right";
+    import ExternalLink from "lucide-svelte/icons/external-link";
     import { toast } from "svelte-sonner";
     import { pressEscapeAction } from "../../../actions/escape.action";
     import { clickOutsideAction } from "../../../actions/click-outside.action";
