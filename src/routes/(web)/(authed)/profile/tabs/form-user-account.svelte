@@ -2,25 +2,25 @@
     import * as Form from "$lib/components/shadcn/ui/form";
 
     import { userAccountSchema } from "../schemas/user-account.schema";
-    import SuperDebug, { superForm } from "sveltekit-superforms";
+    import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
     import { Button } from "$lib/components/shadcn/ui/button/index.js";
     import { Input } from "$lib/components/shadcn/ui/input/index.js";
     import { handleFormActionToast, superFormOnResult, superFormOnSubmit, superFormOnUpdated } from "$lib";
-    import { toast } from "svelte-sonner";
     import { enhance } from "$app/forms";
     import { buttonVariants } from "$lib/components/shadcn/ui/button";
+    import { get } from "svelte/store";
 
     export let data;
-
-    export let basePath = "/profile";
 
     const form = superForm(data.userForm, {
         validators: zodClient(userAccountSchema),
         invalidateAll: "force",
         resetForm: true,
-        onResult: superFormOnResult,
+        onResult: (event) => {
+            handleFormActionToast(event.result);
+        },
         onUpdated: superFormOnUpdated
     });
 
@@ -48,13 +48,6 @@
         <Form.Control let:attrs>
             <Form.Label>Email Address</Form.Label>
             <Input {...attrs} bind:value={$formData.emailAddress} />
-        </Form.Control>
-        <Form.FieldErrors />
-    </Form.Field>
-    <Form.Field {form} name="username">
-        <Form.Control let:attrs>
-            <Form.Label>Username</Form.Label>
-            <Input {...attrs} bind:value={$formData.username} />
         </Form.Control>
         <Form.FieldErrors />
     </Form.Field>
