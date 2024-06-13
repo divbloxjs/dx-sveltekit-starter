@@ -10,7 +10,7 @@
 </script>
 
 <ModeWatcher />
-<Toaster richColors closeButton />
+<Toaster richColors />
 
 <div class="flex h-full w-full flex-col">
     <slot />

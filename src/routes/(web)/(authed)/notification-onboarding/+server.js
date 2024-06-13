@@ -6,7 +6,6 @@ import { createHash } from "node:crypto";
 export const POST = async ({ request, locals }) => {
     const body = await request.json();
     const pushSubscriptionDetails = body?.pushSubscriptionDetails;
-    console.log("pushSubscriptionDetails", pushSubscriptionDetails);
 
     if (
         !pushSubscriptionDetails ||
@@ -19,19 +18,15 @@ export const POST = async ({ request, locals }) => {
     }
 
     const uniqueIdentifier = await createPushSubscriptionUniqueIdentifier(pushSubscriptionDetails);
-    console.log("uniqueIdentifier", uniqueIdentifier);
     if (!uniqueIdentifier) return json({});
 
     const existingPushSubscription = await prisma.pushSubscription.findFirst({ where: { uniqueIdentifier: uniqueIdentifier } });
-    console.log("existingPushSubscription", existingPushSubscription);
 
     if (existingPushSubscription) return json({});
 
     const result = await prisma.pushSubscription.create({
         data: { uniqueIdentifier, pushSubscriptionDetails, userAccountId: locals?.user?.id }
     });
-
-    console.log("result", result);
 
     return json({});
 };

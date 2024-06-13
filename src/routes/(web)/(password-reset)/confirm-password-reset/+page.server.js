@@ -54,13 +54,9 @@ export const load = async (event) => {
 /** @type {import('./$types').Actions} */
 export const actions = {
     confirmPasswordReset: async (event) => {
-        console.log("HERE");
-        await sleep(1000);
         const form = await superValidate(event, zod(confirmPasswordResetSchema));
-        console.log("form", form);
         if (!form.valid) return fail(400, { form });
 
-        console.log("form", form.data);
         try {
             const oneTimeToken = await prisma.oneTimeToken.findUnique({ where: { tokenValue: form.data.tokenValue } });
             if (!oneTimeToken) return message(form, "No one time token found");
@@ -70,8 +66,6 @@ export const actions = {
                 where: { expiresAt: { lt: new Date() }, tokenValue: form.data.tokenValue }
             });
 
-            console.log("form.data.tokenValue", form.data.tokenValue);
-            console.log("form.data.password", form.data.password);
             await prisma.userAccount.update({
                 where: { id: oneTimeToken.linkedEntityId },
                 data: { hashedPassword: await argon2d.hash(form.data.password) }

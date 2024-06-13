@@ -1,34 +1,24 @@
 {
-	"lastName": {
-		"displayName": "Last name",
-		"type": "text",
-		"column": 1
-	},
-	"username": {
-		"displayName": "Username",
-		"type": "text",
-		"column": 2
-	},
-	"firstName": {
-		"displayName": "First name",
-		"type": "text",
-		"column": 3
-	},
-	"emailAddress": {
-		"displayName": "Email address",
-		"type": "text",
-		"column": 4
-	},
-	"hashedPassword": {
-		"displayName": "Hashed password",
-		"type": "text",
-		"column": 5
-	},
-	"userRole": {
-		"roleName": {
-			"displayName": "Role name",
-			"type": "text",
-			"column": 6
-		}
-	}
+    "firstName": {
+        "displayName": "First name",
+        "type": "text",
+        "column": 1
+    },
+    "lastName": {
+        "displayName": "Last name",
+        "type": "text",
+        "column": 2
+    },
+    "emailAddress": {
+        "displayName": "Email address",
+        "type": "text",
+        "column": 3
+    },
+    "userRole": {
+        "roleName": {
+            "displayName": "Role name",
+            "type": "text",
+            "column": 4
+        }
+    }
 }

@@ -21,7 +21,6 @@
     const form = superForm(data.form, {
         validators: zodClient(confirmPasswordResetSchema),
         onResult: async ({ result }) => {
-            console.log("result", result);
             if (result.type === "success") {
                 toast.success("Password updated");
                 await goto("/login");

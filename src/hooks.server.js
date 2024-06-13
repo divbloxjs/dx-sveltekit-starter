@@ -21,7 +21,8 @@ export const handle = async ({ event, resolve }) => {
         }
     }
 
-    return await resolve(event);
+    const response = await resolve(event);
+    return response;
 };
 
 /** @type {import('@sveltejs/kit').HandleServerError} */

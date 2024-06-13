@@ -1,10 +1,10 @@
 import { fail } from "@sveltejs/kit";
 import { writeFileSync } from "fs";
 
+/** @type {import('./$types').Actions} */
 export const actions = {
     default: async ({ request }) => {
         const formData = Object.fromEntries(await request.formData());
-        console.log(formData);
         if (!formData.fileToUpload.name || formData.fileToUpload.name === "undefined") {
             return fail(400, {
                 error: true,

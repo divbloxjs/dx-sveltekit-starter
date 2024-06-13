@@ -13,6 +13,8 @@
     import { ExternalLink } from "lucide-svelte";
 
     import DivbloxLogo from "$lib/components/app-images/app-icon.svelte";
+
+    export let data;
 </script>
 
 <div class="@container flex h-full w-full flex-col items-center overflow-y-auto">
@@ -21,7 +23,6 @@
         <p>This starter project is built with the core technologies below.</p>
         <p>It already provides for database integration and an ORM as well as certain core functionalities such as User Authentication.</p>
     </div>
-    <!-- <div class="@xl:columns-2 @5xl:columns-3 @md:gap-8 @md:space-y-8 @md:p-8 columns-1 gap-4 space-y-4 p-4 child:break-inside-avoid-column"> -->
     <div class="mt-8 flex max-w-5xl flex-row flex-wrap justify-center gap-5 p-5 child:w-full child:sm:w-72">
         <Card.Root>
             <Card.Header>

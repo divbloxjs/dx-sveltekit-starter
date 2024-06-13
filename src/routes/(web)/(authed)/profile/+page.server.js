@@ -35,8 +35,6 @@ export const load = async (event) => {
 /** @type {import('./$types').Actions} */
 export const actions = {
     updateUser: async (event) => {
-        console.log("UPDATING");
-        await sleep(1000);
         const form = await superValidate(event, zod(userAccountSchema));
 
         if (!form.valid) {
@@ -49,7 +47,6 @@ export const actions = {
         return { form, message: "Updated successfully!" };
     },
     deleteUser: async (event) => {
-        await sleep(1000);
         const form = await superValidate(event, zod(userAccountSchema));
 
         if (!form.data?.id) {
@@ -79,10 +76,6 @@ export const actions = {
         const data = await event.request.formData();
         const displayName = data.get("displayName");
         const fileId = data.get("id");
-
-        console.log("displayName", displayName);
-        console.log("fileId", fileId);
-        console.log("userAccountId", event.locals.user?.id);
 
         await prisma.file.update({
             where: { id: fileId, linkedEntity: "userAccount", linkedEntityId: event.locals.user?.id, category: "profilePicture" },

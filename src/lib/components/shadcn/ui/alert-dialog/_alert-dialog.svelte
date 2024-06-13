@@ -27,7 +27,6 @@
                 <AlertDialog.Cancel
                     class={buttonVariants({ variant: "outline" })}
                     on:click={() => {
-                        console.log("Cancel");
                         dispatch("cancel");
                     }}>
                     Cancel
@@ -39,7 +38,6 @@
                     on:click={() => {
                         dispatch("action");
                         formToSubmit?.requestSubmit();
-                        console.log("action");
                     }}>Delete</AlertDialog.Action>
             {/if}
         </AlertDialog.Footer>

@@ -4,7 +4,7 @@
     export let value = undefined;
     export { className as class };
     export let readonly = undefined;
-    export let inputEl;
+    export let inputEl = undefined;
 </script>
 
 <input

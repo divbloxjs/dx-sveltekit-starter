@@ -120,12 +120,9 @@ export async function PUT({ request, url, locals }) {
 export async function GET({ request, url, locals }) {
     locals.auth.isAuthenticated();
 
-    console.log(" locals.user.id", locals?.user?.id);
-    // TODO Auth on who you are and what files you can update
     try {
         const linkedEntityId = url.searchParams.get("id") ?? locals?.user?.id;
 
-        console.log("linkedEntityId", linkedEntityId);
         const category = url.searchParams.get("category") ?? "";
         const files = await prisma.file.findMany({ where: { linkedEntity: LINKED_ENTITY, linkedEntityId, category } });
 

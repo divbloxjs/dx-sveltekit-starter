@@ -43,7 +43,6 @@
         const result = await response.json();
 
         preloadedFiles = result?.files ?? [];
-        console.log("preloadedFiles", preloadedFiles);
     };
 
     const handleChange = (event: Event) => {
@@ -63,7 +62,6 @@
 
             for (let i = 0; i < target.files.length; i++) {
                 let file = target.files[i];
-                console.log("file.size", file.size);
 
                 totalSize = totalSize + file.size;
                 sizes.push(file.size);
