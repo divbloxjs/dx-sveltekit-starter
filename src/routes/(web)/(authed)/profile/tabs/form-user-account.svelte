@@ -18,10 +18,9 @@
         validators: zodClient(userAccountSchema),
         invalidateAll: "force",
         resetForm: true,
-        onResult: (event) => {
+        onUpdated: (event) => {
             handleFormActionToast(event.result);
         },
-        onUpdated: superFormOnUpdated
     });
 
     const { form: formData, enhance: submitEnhance, message, errors, formId, submitting, capture } = form;

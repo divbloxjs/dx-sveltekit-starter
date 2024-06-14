@@ -10,7 +10,7 @@
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
         "lint": "prettier --check .",
         "format": "prettier --write .",
-        "seedUserRoles": "npx run-func ./src/lib/server/boot.js seedUserRoles"
+        "seedUsers": "npx run-func ./src/lib/server/boot.js seedUsers"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.2.1",

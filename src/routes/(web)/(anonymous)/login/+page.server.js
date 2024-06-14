@@ -8,6 +8,7 @@ import { getGuid } from "$lib/server/helpers";
 import argon2 from "argon2";
 import { deleteAllExpiredUserSessions } from "$lib/server/auth";
 import { SESSION_LENGTH_IN_MINS } from "$env/static/private";
+import { DEFAULT_ROUTE } from "$constants/constants";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async ({ cookies }) => {
@@ -32,10 +33,12 @@ export const load = async ({ cookies }) => {
 export const actions = {
     login: async (event) => {
         const { request, cookies } = event;
+
         const form = await superValidate(event, zod(loginSchema));
+
         if (!form.valid) return fail(400, { form });
 
-        const existingUser = await prisma.userAccount.findFirst({ where: { userName: form.data.userName } });
+        const existingUser = await prisma.userAccount.findFirst({ where: { username: form.data.emailAddress } });
         if (!existingUser) return message(form, "Invalid credentials. Please try again");
 
         let isVerified = false;
@@ -70,6 +73,6 @@ export const actions = {
         // Clear up expired tokens from DB
         await deleteAllExpiredUserSessions();
 
-        redirect(301, "/dashboard");
+        redirect(300, DEFAULT_ROUTE);
     }
 };

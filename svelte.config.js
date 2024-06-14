@@ -10,7 +10,10 @@ const config = {
         adapter: adapter(),
         alias: {
             divblox: "divblox",
-            datamodel: "divblox/configs/datamodel.json"
+            datamodel: "divblox/configs/datamodel.json",
+            $constants: "src/lib/constants",
+            $components: "src/lib/components",
+            $ui: "src/lib/components/shadcn/ui"
         }
     },
 

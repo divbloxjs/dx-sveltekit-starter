@@ -1,6 +1,6 @@
 <script>
-    import DataListUserRole from "$lib/components/shadcn/data-model/user-role/user-role-data-list.svelte";
-    import DataTableUserRole from "$lib/components/shadcn/data-model/user-role/user-role-data-table.svelte";
+    import DataListUserRole from "$lib/components/data-model/user-role/user-role-data-list.svelte";
+    import DataTableUserRole from "$lib/components/data-model/user-role/user-role-data-table.svelte";
 
     export let data;
     export let form;

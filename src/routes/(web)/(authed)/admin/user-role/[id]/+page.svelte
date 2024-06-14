@@ -1,6 +1,6 @@
 <script>
-    import FormCreateUserRole from "$lib/components/shadcn/data-model/user-role/user-role-form-create.svelte";
-    import FormUpdateUserRole from "$lib/components/shadcn/data-model/user-role/user-role-form-update.svelte";
+    import FormCreateUserRole from "$lib/components/data-model/user-role/user-role-form-create.svelte";
+    import FormUpdateUserRole from "$lib/components/data-model/user-role/user-role-form-update.svelte";
 
     import { page } from "$app/stores";
 

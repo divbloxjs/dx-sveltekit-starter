@@ -1,4 +1,4 @@
-import { DEFAULT_ROUTE } from "$env/static/private";
+import { DEFAULT_ROUTE } from "$constants/constants";
 import { AuthorisationManager, authenticateUser } from "$lib/server/auth";
 import { redirect } from "@sveltejs/kit";
 
@@ -10,7 +10,7 @@ export const handle = async ({ event, resolve }) => {
     // If in the (authed) route group, check sessionId for current user
     if (event.route.id?.includes("/(authed)")) {
         if (!event.locals.user) {
-            throw redirect(303, "/login");
+            throw redirect(303, "/login?session-expired=true");
         }
     }
 
@@ -22,6 +22,7 @@ export const handle = async ({ event, resolve }) => {
     }
 
     const response = await resolve(event);
+    // DX-NOTE: Can mutate the response for all requests here
     return response;
 };
 
