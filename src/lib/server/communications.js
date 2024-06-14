@@ -1,12 +1,12 @@
-import { SMTP_EMAIL_ADDRESS, SMTP_EMAIL_PASSWORD, SMTP_HOST, SMTP_PORT } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 import { createTransport } from "nodemailer";
 
 const transporter = createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
+    host: env.SMTP_HOST,
+    port: env.SMTP_PORT,
     auth: {
-        user: SMTP_EMAIL_ADDRESS,
-        pass: SMTP_EMAIL_PASSWORD
+        user: env.SMTP_EMAIL_ADDRESS,
+        pass: env.SMTP_EMAIL_PASSWORD
     }
 });
 
@@ -18,7 +18,7 @@ export const sendPasswordResetEmail = async (userAccount, oneTimeTokenValue) => 
     <a href="http://localhost:5173/confirm-password-reset?token=${oneTimeTokenValue}">Reset Password</a>`;
 
     const mailOptions = {
-        from: SMTP_EMAIL_ADDRESS,
+        from: env.SMTP_EMAIL_ADDRESS,
         to: userAccount.emailAddress,
         subject: `Password Reset Requested`,
         html: formatted

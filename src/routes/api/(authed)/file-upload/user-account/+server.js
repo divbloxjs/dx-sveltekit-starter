@@ -3,7 +3,7 @@ import { error, fail, json } from "@sveltejs/kit";
 import { prisma } from "$lib/server/prisma-instance";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
 import { FileController } from "$lib/components/file-uploader/server/upload.server";
-import { AWS_PRIVATE_BUCKET_NAME, AWS_PUBLIC_BUCKET_NAME } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 import { FILE_CATEGORY } from "$lib/constants/constants";
 
 const LINKED_ENTITY = "userAccount";
@@ -175,10 +175,10 @@ export async function DELETE({ request }) {
 
         for (let sizeType of file?.sizesSaved ?? []) {
             let finalObjectIdentifier = `${sizeType}_${file.objectIdentifier}`;
-            let containerIdentifier = AWS_PRIVATE_BUCKET_NAME;
+            let containerIdentifier = env.AWS_PRIVATE_BUCKET_NAME;
             if (file?.cloudIsPubliclyAvailable) {
                 finalObjectIdentifier = `public/${finalObjectIdentifier}`;
-                containerIdentifier = AWS_PUBLIC_BUCKET_NAME;
+                containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
             }
 
             await fileController.deleteFile({ objectIdentifier: finalObjectIdentifier, containerIdentifier });
@@ -199,10 +199,10 @@ const deleteFiles = async (files) => {
 
             for (let sizeType of file?.sizesSaved ?? []) {
                 let finalObjectIdentifier = `${sizeType}_${file.objectIdentifier}`;
-                let containerIdentifier = AWS_PRIVATE_BUCKET_NAME;
+                let containerIdentifier = env.AWS_PRIVATE_BUCKET_NAME;
                 if (file?.cloudIsPubliclyAvailable) {
                     finalObjectIdentifier = `public/${finalObjectIdentifier}`;
-                    containerIdentifier = AWS_PUBLIC_BUCKET_NAME;
+                    containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
                 }
 
                 await fileController.deleteFile({ objectIdentifier: finalObjectIdentifier, containerIdentifier });

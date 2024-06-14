@@ -1,4 +1,4 @@
-import { AWS_PRIVATE_BUCKET_NAME, AWS_PUBLIC_BUCKET_NAME, AWS_KEY, AWS_SECRET } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 import {
     CreateBucketCommand,
     DeleteObjectCommand,
@@ -20,11 +20,11 @@ export class S3Controller {
         this.#region = "af-south-1";
         this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes;
 
-        this.bucketName = AWS_PRIVATE_BUCKET_NAME;
+        this.bucketName = env.AWS_PRIVATE_BUCKET_NAME;
         if (bucketName) this.bucketName = bucketName;
         this.#s3Client = new S3Client({
             region: this.#region,
-            credentials: { accessKeyId: AWS_KEY, secretAccessKey: AWS_SECRET }
+            credentials: { accessKeyId: env.AWS_KEY, secretAccessKey: env.AWS_SECRET }
         });
     }
 
@@ -44,7 +44,7 @@ export class S3Controller {
 
     async uploadFile({ file, objectIdentifier, containerIdentifier = undefined, isPublic = undefined }) {
         if (containerIdentifier) this.bucketName = containerIdentifier;
-        if (isPublic) this.bucketName = AWS_PUBLIC_BUCKET_NAME;
+        if (isPublic) this.bucketName = env.AWS_PUBLIC_BUCKET_NAME;
 
         let fileBuffer = file;
         if (file instanceof File) {

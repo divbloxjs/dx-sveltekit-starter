@@ -9,7 +9,7 @@
     import AppLogo from "$lib/components/app-images/app-logo.svelte";
 
     import * as Card from "$lib/components/shadcn/ui/card";
-    import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
+    import { env } from "$env/dynamic/public";
 
     export let data;
 
@@ -23,7 +23,7 @@
     <Card.Root class="w-fit bg-card shadow-2xl">
         <Card.Header class="mb-2 p-0 text-center">
             <AppLogo class="w-56 self-center py-8" />
-            <Card.Title>Create your {PUBLIC_APP_DISPLAY_NAME} account</Card.Title>
+            <Card.Title>Create your {env.PUBLIC_APP_DISPLAY_NAME} account</Card.Title>
         </Card.Header>
         <Card.Content class="flex flex-col">
             <form action="?/register" method="POST" class="min-w-72" use:enhance>

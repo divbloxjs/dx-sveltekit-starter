@@ -11,7 +11,7 @@
     import AppLogo from "$lib/components/app-images/app-logo.svelte";
 
     import * as Card from "$lib/components/shadcn/ui/card";
-    import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
+    import { env } from "$env/dynamic/public";
 
     /** @type {import('./$types').PageData} */
     export let data;
@@ -33,7 +33,7 @@
         <Card.Header class="mb-2 p-0 text-center">
             <AppLogo class="w-56 self-center py-8" />
             <Card.Title>
-                Reset your {PUBLIC_APP_DISPLAY_NAME} password
+                Reset your {env.PUBLIC_APP_DISPLAY_NAME} password
             </Card.Title>
             {#if $page.url.searchParams.get("submitted")}
                 <Card.Description class="py-4">

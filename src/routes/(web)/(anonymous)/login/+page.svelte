@@ -10,9 +10,9 @@
     import AppLogo from "$lib/components/app-images/app-logo.svelte";
 
     import * as Card from "$lib/components/shadcn/ui/card";
-    import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
     import { page } from "$app/stores";
     import { onMount } from "svelte";
+    import { env } from "$env/dynamic/public";
 
     export let data;
 
@@ -71,7 +71,7 @@
 
                 <div class="mt-4 flex justify-center">
                     <div class="flex flex-col justify-center">
-                        <p class="mb-2 text-center">New to {PUBLIC_APP_DISPLAY_NAME}?</p>
+                        <p class="mb-2 text-center">New to {env.PUBLIC_APP_DISPLAY_NAME}?</p>
                         <a href="/register" class={buttonVariants({ variant: "outline" })}>Create your account now</a>
                     </div>
                 </div>
