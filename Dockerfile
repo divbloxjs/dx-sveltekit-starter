@@ -7,6 +7,6 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-CMD ["node", "build"]
+CMD npx divblox -s accept-all skip-pull && node build
 
 EXPOSE 3000
