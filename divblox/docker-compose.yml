@@ -1,4 +1,4 @@
-version: 1'
+# This creates a database server for your dev environment
 services:
     sql:
         container_name: dx-sveltekit-starter
@@ -11,6 +11,6 @@ services:
         volumes:
             - dx-sveltekit-starter-data:/var/lib/mysql
         ports:
-            - 3308:3306
+            - 3308:3306 # We set this to the non standard port 3308 instead of 3306 to speed up the process of getting started. Feel free to change.
 volumes:
     dx-sveltekit-starter-data: {}
