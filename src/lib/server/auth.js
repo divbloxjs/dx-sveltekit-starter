@@ -1,4 +1,4 @@
-import { error, redirect } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 import { prisma } from "./prisma-instance";
 import { addMinutes, isBefore } from "date-fns";
 import { goto } from "$app/navigation";

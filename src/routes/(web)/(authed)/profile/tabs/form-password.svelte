@@ -9,24 +9,20 @@
     import { Input } from "$lib/components/shadcn/ui/input/index.js";
     import { toast } from "svelte-sonner";
 
+    import { handleFormActionToast } from "$lib";
+
     export let data;
 
     export let basePath = "/admin/user-account";
 
     const form = superForm(data.passwordForm, {
         validators: zodClient(passwordSchema),
-        onSubmit: (event) => {
-            console.log("onSubmit event", event);
-        },
-        onError: (event) => {
-            console.log("error event", event);
-        },
+        invalidateAll: "force",
+        resetForm: true,
         onResult: (event) => {
-            if (event?.result?.type === "success") {
-                toast.success("Password updated");
-            }
-            console.log("onResult event", event);
-        }
+            console.log("event", event);
+            handleFormActionToast(event.result);
+        },
     });
 
     const { form: formData, enhance, message, errors } = form;

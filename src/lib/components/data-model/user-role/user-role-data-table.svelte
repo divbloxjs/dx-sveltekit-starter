@@ -5,20 +5,15 @@
 
     import { parse, stringify } from "qs";
 
-    import dataTableConfig from "./data-series/user-account-data-table.config.json";
+    import dataTableConfig from "./data-series/user-role-data-table.config.json";
 
-    import { buildAttributeMap, flattenRowObject } from "$lib/components/shadcn/data-model/_helpers/helpers";
+    import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
     import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Input } from "$lib/components/shadcn/ui/input";
-    import Bell from "lucide-svelte/icons/bell";
     import Pencil from "lucide-svelte/icons/pencil";
     import RotateCcw from "lucide-svelte/icons/rotate-ccw";
     import X from "lucide-svelte/icons/x";
     import { Label } from "$lib/components/shadcn/ui/label";
-    import { handleFormActionToast } from "$lib";
-    import * as Tooltip from "$lib/components/shadcn/ui/tooltip";
-    import Dialog from "../../ui/dialog/_dialog.svelte";
-    import Textarea from "../../ui/textarea/textarea.svelte";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
     if (!limit) limit = 20;
@@ -33,7 +28,7 @@
     export let allowDelete = true;
     export let allowCreate = true;
 
-    export let basePath = "/user-account";
+    export let basePath = "/user-role";
 
     export let data;
 
@@ -43,29 +38,12 @@
     let flatRows = [];
     $: (() => {
         flatRows = [];
-        for (const nestedRow of data.userAccountArray) {
+        for (const nestedRow of data.userRoleArray) {
             flatRows.push(flattenRowObject(nestedRow, attributeMap));
         }
     })();
 
     let filters = {};
-
-    let testNotificationDialogOpen = false;
-    let testPushNotificationFormEl;
-    let submittingTest = false;
-    /**
-     *  @type {import('./$types').SubmitFunction}
-     */
-    const submitTest = async ({ formData, cancel }) => {
-        submittingTest = true;
-        return async ({ result, update }) => {
-            submittingTest = false;
-            testNotificationDialogOpen = false;
-            update();
-
-            handleFormActionToast(result);
-        };
-    };
 </script>
 
 <div class="flex flex-row justify-between p-2">
@@ -163,60 +141,19 @@
             {/each}
         </tr>
         {#each flatRows as flatRow, index}
-            <tr class="odd:bg-background-100 hover:bg-background-200 child:p-2">
+            <tr class="odd:bg-gray-100 hover:bg-gray-200 child:p-2">
                 {#each Object.values(flatRow) as { value, type }}
                     <td class="min-w-48 max-w-56 truncate border-r">{value}</td>
                 {/each}
                 {#if allowEdit || allowDelete}
                     <td class="flex items-center justify-center text-center">
-                        <Tooltip.Root>
-                            <Tooltip.Trigger>
-                                <Button
-                                    variant="secondary-outline"
-                                    class="border-none"
-                                    size="inline-icon"
-                                    disabled={submittingTest}
-                                    loading={submittingTest}
-                                    on:click={() => (testNotificationDialogOpen = !testNotificationDialogOpen)}>
-                                    <Bell class="h-4"></Bell>
-                                </Button>
-                            </Tooltip.Trigger>
-                            <Tooltip.Content>
-                                <p>Send a test notification to this user's <br /> registered devices</p>
-                            </Tooltip.Content>
-                        </Tooltip.Root>
-
-                        <Dialog
-                            bind:open={testNotificationDialogOpen}
-                            title="Send test notification?"
-                            description="This will send a push notification to all devices registered for this user">
-                            <form
-                                action="?/testPushNotification"
-                                method="POST"
-                                bind:this={testPushNotificationFormEl}
-                                use:enhance={submitTest}
-                                class="flex flex-col gap-4 py-4">
-                                <input type="hidden" name="id" value={data?.userAccountArray[index]?.id} />
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <Label for="title" class="text-right">Title</Label>
-                                    <Input name="title" placeholder="New message" class="col-span-3" />
-                                </div>
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <Label for="body" class="text-right">Body</Label>
-                                    <Textarea name="body" placeholder="More details..." class="col-span-3" />
-                                </div>
-
-                                <Button type="submit" class="w-fit self-end">Send notification</Button>
-                            </form>
-                        </Dialog>
-
                         <a
-                            href={`${basePath}/${data?.userAccountArray[index]?.id}`}
-                            class="bg-tranparent border border-none border-tertiary text-tertiary">
+                            href={`${basePath}/${data?.userRoleArray[index]?.id}`}
+                            class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
                             <Pencil class="h-4 w-4" /></a>
 
-                        <form action={`${basePath}/${data?.userAccountArray[index]?.id}?/delete`} use:enhance method="POST">
-                            <input type="hidden" bind:value={data.userAccountArray[index].id} />
+                        <form action={`${basePath}/${data?.userRoleArray[index]?.id}?/delete`} use:enhance method="POST">
+                            <input type="hidden" bind:value={data.userRoleArray[index].id} />
                             <Button type="submit" class="border-none" variant="destructive-outline" size="inline-icon">
                                 <X class="h-4 w-4" /></Button>
                         </form>

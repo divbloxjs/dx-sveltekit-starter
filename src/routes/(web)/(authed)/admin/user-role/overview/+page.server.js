@@ -1,6 +1,6 @@
 // export const ssr = false;
 
-import { loadUserRoleArray } from "$lib/components/shadcn/data-model/user-role/user-role.server";
+import { loadUserRoleArray } from "$components/data-model/user-role/user-role.server";
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
 

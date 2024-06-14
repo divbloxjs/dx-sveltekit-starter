@@ -7,11 +7,11 @@
 
     import dataTableConfig from "./data-series/__entityNameKebabCase__-data-table.config.json";
 
-    import { buildAttributeMap, flattenRowObject } from "__componentsPathAlias__/data-model/_helpers/helpers";
-    import { Button, buttonVariants } from "__componentsPathAlias__/ui/button";
-    import { Input } from "__componentsPathAlias__/ui/input";
+    import { buildAttributeMap, flattenRowObject } from "__dataModelComponentsPathAlias__/_helpers/helpers";
+    import { Button, buttonVariants } from "__uiComponentsPathAlias__/ui/button";
+    import { Input } from "__uiComponentsPathAlias__/ui/input";
     import { Pencil, RotateCcw, X } from "lucide-svelte";
-    import { Label } from "__componentsPathAlias__/ui/label";
+    import { Label } from "__uiComponentsPathAlias__/ui/label";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
     if (!limit) limit = 20;
@@ -139,7 +139,7 @@
             {/each}
         </tr>
         {#each flatRows as flatRow, index}
-            <tr class="odd:bg-gray-100 hover:bg-gray-200 child:p-2">
+            <tr class="odd:bg-background-100 hover:bg-background-200 child:p-2">
                 {#each Object.values(flatRow) as { value, type }}
                     <td class="min-w-48 max-w-56 truncate border-r">{value}</td>
                 {/each}
@@ -147,7 +147,7 @@
                     <td class="flex items-center justify-center text-center">
                         <a
                         href={`${basePath}/${data?.__entityName__Array[index]?.id}`}
-                            class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
+                            class="bg-tranparent border-tertiary text-tertiary border border-none">
                             <Pencil class="h-4 w-4" /></a>
 
                     <form action={`${basePath}/${data?.__entityName__Array[index]?.id}?/delete`} use:enhance method="POST">

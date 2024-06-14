@@ -1,12 +1,16 @@
+import argon2 from "argon2";
+
 import { fail, redirect } from "@sveltejs/kit";
+
 import { superValidate, setError } from "sveltekit-superforms";
 import { registerSchema } from "./register.schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { prisma } from "$lib/server/prisma-instance";
 import { addMinutes } from "date-fns";
 import { getGuid } from "$lib/server/helpers";
-import argon2 from "argon2";
+
 import { SESSION_LENGTH_IN_MINS } from "$env/static/private";
+import { DEFAULT_ROUTE } from "$constants/constants";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async () => {
@@ -19,14 +23,12 @@ export const load = async () => {
 export const actions = {
     register: async (event) => {
         const { request, cookies } = event;
-        const form = await superValidate(event, zod(registerSchema));
-        if (!form.valid) {
-            return fail(400, {
-                form
-            });
-        }
-        const existingUser = await prisma.userAccount.findFirst({ where: { username: form.data.emailAddress } });
 
+        const form = await superValidate(event, zod(registerSchema));
+
+        if (!form.valid) return fail(400, { form });
+
+        const existingUser = await prisma.userAccount.findFirst({ where: { username: form.data.emailAddress } });
         if (existingUser) return setError(form, "emailAddress", "E-mail already exists");
 
         const userData = {
@@ -55,6 +57,6 @@ export const actions = {
             expires: newSession.expiryDateTime
         });
 
-        redirect(300, "/dashboard");
+        redirect(300, DEFAULT_ROUTE);
     }
 };

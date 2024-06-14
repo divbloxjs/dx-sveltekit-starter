@@ -1,5 +1,5 @@
 import { goto } from "$app/navigation";
-import { DEFAULT_ROUTE } from "$env/static/private";
+import { DEFAULT_ROUTE } from "$constants/constants";
 import { redirect } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */

@@ -1,6 +1,6 @@
 // export const ssr = false;
 
-import { loadUserAccountArray } from "$lib/components/shadcn/data-model/user-account/user-account.server";
+import { loadUserAccountArray } from "$components/data-model/user-account/user-account.server";
 import { deliverPushNotificationToAllSubscriptionsForUserAccount } from "$lib/server/web-push";
 import { fail } from "@sveltejs/kit";
 import { isNumeric, isValidObject } from "dx-utilities";

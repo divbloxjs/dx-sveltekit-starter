@@ -11,17 +11,26 @@
 
     import * as Card from "$lib/components/shadcn/ui/card";
     import { PUBLIC_APP_DISPLAY_NAME } from "$env/static/public";
+    import { page } from "$app/stores";
+    import { onMount } from "svelte";
 
     export let data;
 
+    onMount(() => {
+        handleRedirectNotification();
+    });
+
     const form = superForm(data.loginForm, {
-        validators: zodClient(loginSchema),
-        onError(event) {
-            console.log("event", event);
-        }
+        validators: zodClient(loginSchema)
     });
 
     const { form: formData, enhance, message, submitting } = form;
+
+    const handleRedirectNotification = () => {
+        if ($page.url.searchParams.get("session-expired")?.toLowerCase() === "true") {
+            toast("Session expired", { description: "Due to inactivity you have been logged out." });
+        }
+    };
 </script>
 
 <div class="flex h-full w-full flex-col items-center justify-center">

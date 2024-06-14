@@ -1,13 +1,13 @@
 import { prisma } from "$lib/server/prisma-instance";
 import { isNumeric } from "dx-utilities";
-import { getIntId, normalizeDatabaseArray } from "../_helpers/helpers";
-import { getEntitiesRelatedTo, getRelatedEntities } from "../_helpers/helpers.server";
+import { getIntId, normalizeDatabaseArray } from "$components/data-model/_helpers/helpers";
+import { getEntitiesRelatedTo, getRelatedEntities } from "$components/data-model/_helpers/helpers.server";
 import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/prisma.helpers";
 
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
 const searchConfig = {
-    attributes: ["last_name", "username", "first_name", "email_address", "hashed_password"]
+    attributes: ["lastName", "username", "firstName", "emailAddress", "hashedPassword"]
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
@@ -23,23 +23,13 @@ export const loadUserAccountArray = async (constraints = {}) => {
         ...prismaConditions
     });
 
-    try {
-        normalizeDatabaseArray(userAccountArray);
-    } catch (err) {
-        console.error(err);
-    }
+    normalizeDatabaseArray(userAccountArray);
 
     return { userAccountArray };
 };
 
 export const createUserAccount = async (data) => {
-    try {
-        await prisma.userAccount.create({ data });
-        return true;
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
+    await prisma.userAccount.create({ data });
 };
 
 export const updateUserAccount = async (data) => {
@@ -60,26 +50,16 @@ export const updateUserAccount = async (data) => {
         }
     });
 
-    try {
-        const result = await prisma.userAccount.update({
-            data,
-            where: { id: data.id }
-        });
-        return true;
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
+    await prisma.userAccount.update({
+        data,
+        where: { id: data.id }
+    });
 };
 
 export const deleteUserAccount = async (id = -1) => {
-    try {
-        await prisma.userAccount.delete({ where: { id } });
-        return true;
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
+    await prisma.userSession.deleteMany({ where: { userAccountId: id } });
+    await prisma.file.deleteMany({ where: { linkedEntity: 'userAccount',  linkedEntityId: id } });
+    await prisma.userAccount.delete({ where: { id } });
 };
 
 export const loadUserAccount = async (id = -1, relationshipOptions = true) => {

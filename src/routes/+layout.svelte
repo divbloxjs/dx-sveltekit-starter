@@ -4,8 +4,8 @@
     import { Toaster } from "$lib/components/shadcn/ui/sonner";
 
     BigInt.prototype.toJSON = function () {
-        const int = Number.parseInt(this.toString());
-        return int ?? this.toString();
+        const int = Number.parseInt(this?.toString());
+        return int ?? this?.toString();
     };
 </script>
 

@@ -1,11 +1,12 @@
 import { FILE_CATEGORY } from "$lib/constants/constants";
 import { userAccountSchema } from "./schemas/user-account.schema";
 import { passwordSchema } from "./schemas/password.schema";
-import { deleteUserAccount, loadUserAccount, updateUserAccount } from "$lib/components/shadcn/data-model/user-account/user-account.server";
+import { deleteUserAccount, loadUserAccount, updateUserAccount } from "$components/data-model/user-account/user-account.server";
 import { prisma } from "$lib/server/prisma-instance";
 import { fail, message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import argon2 from "argon2";
+import { error } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
@@ -36,24 +37,22 @@ export const actions = {
     updateUser: async (event) => {
         const form = await superValidate(event, zod(userAccountSchema));
 
-        if (!form.valid) {
-            return fail(400, { form });
-        }
+        if (!form.valid) return fail(400, { form });
 
-        const result = await updateUserAccount(form.data);
-        if (!result) return message(form, "Could not update your details. Please Try again", { status: 400 });
+        await updateUserAccount(form.data);
 
-        return { form, message: "Updated successfully!" };
+        form.message = "Updated profile";
+
+        return { form };
     },
     deleteUser: async (event) => {
         const form = await superValidate(event, zod(userAccountSchema));
 
-        if (!form.data?.id) {
-            return fail(400, { form });
-        }
+        if (!form.data?.id) return fail(400, { form });
 
-        const result = await deleteUserAccount(form.data.id);
-        if (!result) return message(form, "Could not delete your account. Please Try again", { status: 400 });
+        await deleteUserAccount(form.data.id);
+
+        form.message = "Deleted user";
 
         return { form };
     },
@@ -63,11 +62,12 @@ export const actions = {
         if (!form.valid) return fail(400, { form });
 
         const hashedPassword = await argon2.hash(form.data.password);
-        const result = await updateUserAccount({ id: form.data.id, hashedPassword });
 
-        if (!result) return message(form, "Bad!");
+        await updateUserAccount({ id: form.data.id, hashedPassword });
 
-        return { form, message: "Updated successfully!" };
+        form.message = "Updated password";
+
+        return { form };
     },
     updateProfilePictureDisplayName: async (event) => {
         event.locals.auth.isAuthenticated();
