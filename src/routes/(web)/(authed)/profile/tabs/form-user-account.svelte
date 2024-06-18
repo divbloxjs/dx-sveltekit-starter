@@ -7,7 +7,7 @@
 
     import { Button } from "$lib/components/shadcn/ui/button/index.js";
     import { Input } from "$lib/components/shadcn/ui/input/index.js";
-    import { handleFormActionToast, superFormOnResult, superFormOnSubmit, superFormOnUpdated } from "$lib";
+    import { handleSuperFormUpdatedToast } from "$lib";
     import { enhance } from "$app/forms";
     import { buttonVariants } from "$lib/components/shadcn/ui/button";
     import { get } from "svelte/store";
