@@ -73,47 +73,11 @@
 			"default": ""
 		}
 	},
-	"place": {
-		"placeName": {
-			"type": "text",
-			"displayName": "Place name",
-			"placeholder": "placeName",
-			"default": ""
-		}
-	},
-	"customer": {
-		"customerName": {
-			"type": "text",
-			"displayName": "Customer name",
-			"placeholder": "customerName",
-			"default": ""
-		},
-		"emailAddress": {
-			"type": "text",
-			"displayName": "Email address",
-			"placeholder": "emailAddress",
-			"default": ""
-		},
-		"contactNumber": {
-			"type": "text",
-			"displayName": "Contact number",
-			"placeholder": "contactNumber",
-			"default": ""
-		}
-	},
 	"userRole": {
 		"roleName": {
 			"type": "text",
 			"displayName": "Role name",
 			"placeholder": "roleName",
-			"default": ""
-		}
-	},
-	"parentPlace": {
-		"placeName": {
-			"type": "text",
-			"displayName": "Place name",
-			"placeholder": "placeName",
 			"default": ""
 		}
 	},
@@ -150,6 +114,12 @@
 		}
 	},
 	"userSession": {
+		"expiresAt": {
+			"type": "datetime-local",
+			"displayName": "Expires at",
+			"placeholder": "expiresAt",
+			"default": ""
+		},
 		"sessionId": {
 			"type": "text",
 			"displayName": "Session id",
@@ -168,28 +138,16 @@
 			"placeholder": "sessionData",
 			"default": ""
 		},
-		"expiryDateTime": {
-			"type": "datetime",
-			"displayName": "Expiry date time",
-			"placeholder": "expiryDateTime",
-			"default": ""
-		},
 		"durationInMinutes": {
 			"type": "number",
 			"displayName": "Duration in minutes",
 			"placeholder": "durationInMinutes",
 			"default": ""
-		},
-		"expiresAt": {
-			"type": "datetime",
-			"displayName": "Expires at",
-			"placeholder": "expiresAt",
-			"default": ""
 		}
 	},
 	"oneTimeToken": {
 		"expiresAt": {
-			"type": "datetime",
+			"type": "datetime-local",
 			"displayName": "Expires at",
 			"placeholder": "expiresAt",
 			"default": ""
@@ -225,38 +183,6 @@
 			"default": ""
 		}
 	},
-	"organisation": {
-		"effort": {
-			"type": "text",
-			"displayName": "Effort",
-			"placeholder": "effort",
-			"default": ""
-		},
-		"details": {
-			"type": "textarea",
-			"displayName": "Details",
-			"placeholder": "details",
-			"default": ""
-		},
-		"isDefault": {
-			"type": "checkbox",
-			"displayName": "Is default",
-			"placeholder": "isDefault",
-			"default": ""
-		},
-		"description": {
-			"type": "text",
-			"displayName": "Description",
-			"placeholder": "description",
-			"default": ""
-		},
-		"organisationName": {
-			"type": "text",
-			"displayName": "Organisation name",
-			"placeholder": "organisationName",
-			"default": ""
-		}
-	},
 	"pushSubscription": {
 		"isActive": {
 			"type": "checkbox",
@@ -280,58 +206,6 @@
 			"type": "textarea",
 			"displayName": "Push subscription details",
 			"placeholder": "pushSubscriptionDetails",
-			"default": ""
-		}
-	},
-	"parentOrganisation": {
-		"effort": {
-			"type": "number",
-			"displayName": "Effort",
-			"placeholder": "effort",
-			"default": ""
-		},
-		"isDefault": {
-			"type": "checkbox",
-			"displayName": "Is default",
-			"placeholder": "isDefault",
-			"default": ""
-		},
-		"description": {
-			"type": "textarea",
-			"displayName": "Description",
-			"placeholder": "description",
-			"default": ""
-		},
-		"organisationName": {
-			"type": "textarea",
-			"displayName": "Organisation name",
-			"placeholder": "organisationName",
-			"default": ""
-		}
-	},
-	"grandParentOrganisation": {
-		"effort": {
-			"type": "textarea",
-			"displayName": "Effort",
-			"placeholder": "effort",
-			"default": ""
-		},
-		"isDefault": {
-			"type": "checkbox",
-			"displayName": "Is default",
-			"placeholder": "isDefault",
-			"default": ""
-		},
-		"description": {
-			"type": "textarea",
-			"displayName": "Description",
-			"placeholder": "description",
-			"default": ""
-		},
-		"organisationName": {
-			"type": "textarea",
-			"displayName": "Organisation name",
-			"placeholder": "organisationName",
 			"default": ""
 		}
 	}

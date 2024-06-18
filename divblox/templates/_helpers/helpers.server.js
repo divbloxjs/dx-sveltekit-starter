@@ -9,7 +9,9 @@ export const getRequestBody = async (data, entityName) => {
 
     for (const [relatedEntityName, relationshipNames] of Object.entries(getRelatedEntities(entityName))) {
         requestData[`${relatedEntityName}Id`] =
-            requestData[`${relatedEntityName}Id`] === "undefined" ? null : parseInt(requestData[`${relatedEntityName}Id`]);
+            requestData[`${relatedEntityName}Id`] === "undefined"
+                ? null
+                : parseInt(requestData[`${relatedEntityName}Id`]);
     }
 
     // Comment info
