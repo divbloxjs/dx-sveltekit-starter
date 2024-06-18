@@ -12,7 +12,8 @@ import { DEFAULT_ROUTE } from "$constants/constants";
 import { env } from "$env/dynamic/private";
 
 /** @type {import('./$types').PageServerLoad} */
-export const load = async () => {
+export const load = async ({ cookies, locals }) => {
+    if (cookies.get("sessionId") && locals.user) redirect(303, DEFAULT_ROUTE);
     return {
         registerForm: await superValidate(zod(registerSchema))
     };

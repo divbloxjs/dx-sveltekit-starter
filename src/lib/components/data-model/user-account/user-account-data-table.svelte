@@ -19,6 +19,8 @@
     import * as Tooltip from "$lib/components/shadcn/ui/tooltip";
     import Dialog from "$components/shadcn/ui/dialog/_dialog.svelte";
     import Textarea from "$components/shadcn/ui/textarea/textarea.svelte";
+    import NotificationTest from "./_notification-test.svelte";
+    import { env } from "$env/dynamic/public";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
     if (!limit) limit = 20;
@@ -43,31 +45,12 @@
     let flatRows = [];
     $: (() => {
         flatRows = [];
-        console.log("attributeMap", attributeMap);
-        console.log("data.userAccountArray", data.userAccountArray);
         for (const nestedRow of data.userAccountArray) {
             flatRows.push(flattenRowObject(nestedRow, attributeMap));
         }
-        console.log("flatRows", flatRows);
     })();
 
     let filters = {};
-
-    let testNotificationDialogOpen = false;
-    let submittingTest = false;
-    /**
-     *  @type {import('./$types').SubmitFunction}
-     */
-    const submitTest = async ({ formData, cancel }) => {
-        submittingTest = true;
-        return async ({ result, update }) => {
-            submittingTest = false;
-            testNotificationDialogOpen = false;
-            update();
-
-            handleFormActionToast(result);
-        };
-    };
 </script>
 
 <div class="flex flex-row justify-between p-2">
@@ -171,42 +154,10 @@
                 {/each}
                 {#if allowEdit || allowDelete}
                     <td class="flex items-center justify-center text-center">
-                        <Tooltip.Root>
-                            <Tooltip.Trigger>
-                                <Button
-                                    variant="secondary-outline"
-                                    class="border-none"
-                                    size="inline-icon"
-                                    disabled={submittingTest}
-                                    loading={submittingTest}
-                                    on:click={() => (testNotificationDialogOpen = !testNotificationDialogOpen)}>
-                                    <Bell class="h-4"></Bell>
-                                </Button>
-                            </Tooltip.Trigger>
-                            <Tooltip.Content>
-                                <p>Send a test notification to this user's <br /> registered devices</p>
-                            </Tooltip.Content>
-                        </Tooltip.Root>
-
-                        <Dialog
-                            bind:open={testNotificationDialogOpen}
-                            title="Send test notification?"
-                            description="This will send a push notification to all devices registered for this user">
-                            <form action="?/testPushNotification" method="POST" use:enhance={submitTest} class="flex flex-col gap-4 py-4">
-                                <input type="hidden" name="id" value={data?.userAccountArray[index]?.id} />
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <Label for="title" class="text-right">Title</Label>
-                                    <Input name="title" placeholder="New message" class="col-span-3" />
-                                </div>
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <Label for="body" class="text-right">Body</Label>
-                                    <Textarea name="body" placeholder="More details..." class="col-span-3" />
-                                </div>
-
-                                <Button type="submit" class="w-fit self-end">Send notification</Button>
-                            </form>
-                        </Dialog>
-
+                        {env.PUBLIC_ENABLE_WEB_PUSH}
+                        {#if env.PUBLIC_ENABLE_WEB_PUSH.toLowerCase() === "true"}
+                            <NotificationTest />
+                        {/if}
                         <a
                             href={`${basePath}/${data?.userAccountArray[index]?.id}`}
                             class="bg-tranparent border border-none border-tertiary text-tertiary">
