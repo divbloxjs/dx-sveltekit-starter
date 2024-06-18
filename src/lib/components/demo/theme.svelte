@@ -14,7 +14,7 @@
     let alertDialogOpen = false;
 </script>
 
-<div class="flex h-full w-full flex-col flex-wrap gap-5">
+<div class="flex h-full w-full flex-col gap-5">
     <div class="text-xl font-bold">
         Colour Palette <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild let:builder>
@@ -32,28 +32,32 @@
         </DropdownMenu.Root>
     </div>
 
+    <div class="flex w-full justify-center px-5 text-center">
+        This page can be used as a guideline to customize your project's theme. To modify your theme, simply update the values in
+        /src/app.pcss
+    </div>
     <div class="flex flex-col">
-        <div class="flex w-full">
-            <div class="flex h-24 w-full items-center justify-center bg-primary text-primary-foreground">Primary</div>
-            <div class="flex h-24 w-full items-center justify-center bg-secondary text-secondary-foreground">Secondary</div>
-            <div class="flex h-24 w-full items-center justify-center bg-tertiary text-tertiary-foreground">Tertiary</div>
-            <div class="flex h-24 w-full items-center justify-center bg-accent text-accent-foreground">Accent</div>
-            <div class="flex h-24 w-full items-center justify-center bg-success text-success-foreground">Success</div>
-            <div class="flex h-24 w-full items-center justify-center bg-warning text-warning-foreground">Warning</div>
-            <div class="flex h-24 w-full items-center justify-center bg-destructive text-destructive-foreground">Destructive</div>
+        <div class="flex w-full flex-wrap">
+            <div class="flex h-24 flex-grow items-center justify-center bg-primary px-5 text-primary-foreground">Primary</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-secondary px-5 text-secondary-foreground">Secondary</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-tertiary px-5 text-tertiary-foreground">Tertiary</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-accent px-5 text-accent-foreground">Accent</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-success px-5 text-success-foreground">Success</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-warning px-5 text-warning-foreground">Warning</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-destructive px-5 text-destructive-foreground">Destructive</div>
         </div>
 
-        <div class="flex w-full">
-            <div class="flex h-24 w-full items-center justify-center bg-background text-foreground">Background</div>
-            <div class="flex h-24 w-full items-center justify-center bg-background-100 text-foreground">Background 100</div>
-            <div class="flex h-24 w-full items-center justify-center bg-background-200 text-foreground">Background 200</div>
-            <div class="flex h-24 w-full items-center justify-center bg-background-300 text-foreground">Background 300</div>
-            <div class="flex h-24 w-full items-center justify-center bg-muted text-muted-foreground">Muted</div>
+        <div class="flex w-full flex-wrap">
+            <div class="flex h-24 flex-grow items-center justify-center bg-background px-5 text-foreground">Background</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-background-100 px-5 text-foreground">Background 100</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-background-200 px-5 text-foreground">Background 200</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-background-300 px-5 text-foreground">Background 300</div>
+            <div class="flex h-24 flex-grow items-center justify-center bg-muted px-5 text-muted-foreground">Muted</div>
         </div>
     </div>
 
     <div class="flex w-full text-xl font-bold">Buttons</div>
-    <div class="flex w-full justify-start gap-1">
+    <div class="flex w-full flex-wrap justify-start gap-1 px-5">
         <Button>Default</Button>
         <Button variant="secondary">secondary</Button>
         <Button variant="tertiary">tertiary</Button>
@@ -63,7 +67,7 @@
         <Button variant="link">link</Button>
     </div>
 
-    <div class="flex w-full justify-start gap-1">
+    <div class="flex w-full flex-wrap justify-start gap-1 px-5">
         <Button variant="outline">Outline</Button>
         <Button variant="secondary-outline">Outline</Button>
         <Button variant="tertiary-outline">Outline</Button>
@@ -72,12 +76,13 @@
         <Button variant="destructive-outline">Outline</Button>
     </div>
 
-    <div class="w-full">
+    <div class="flex w-full flex-wrap">
         <span class="text-xl font-bold">Components</span>
         <a href="https://shadcn-svelte.com/docs" target="_blank" class={`${buttonVariants({ variant: "link", size: "xs" })}`}>
             Shadcn Docs <ExternalLink class="ml-2 h-4"></ExternalLink>
         </a>
-        <Alert.Root>
+
+        <Alert.Root class="m-5">
             <!-- <Terminal class="h-4 w-4" /> -->
             <Alert.Title>Heads up!</Alert.Title>
             <Alert.Description
@@ -85,7 +90,7 @@
         </Alert.Root>
     </div>
 
-    <div class="flex w-full flex-row gap-5">
+    <div class="flex w-full flex-row flex-wrap gap-5 px-5">
         <Card.Root class="w-56">
             <Card.Header>
                 <Card.Title>Card Title</Card.Title>
