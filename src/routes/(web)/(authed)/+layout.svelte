@@ -17,7 +17,7 @@
     setContext("currentUser", currentUser);
 </script>
 
-{#if $currentUser?.userRole?.roleName === "Admin"}
+{#if $currentUser?.user_role?.role_name === "Admin"}
     <TopNavAdmin />
 {:else}
     <TopNavUser />

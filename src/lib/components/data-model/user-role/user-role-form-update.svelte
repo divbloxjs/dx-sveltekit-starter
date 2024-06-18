@@ -35,13 +35,11 @@
     const { form: formData, enhance: formEnhance, message, errors, submitting } = form;
 </script>
 
-<form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="@container w-full p-1">
-    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
-    <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
+<form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="w-full p-1 @container">
+    <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
+        <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
 
-	<FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
-
-
+        <FormInput {form} name="role_name" label="Role name" type="text" bind:value={$formData.role_name} />
     </div>
 
     {#if $message}
