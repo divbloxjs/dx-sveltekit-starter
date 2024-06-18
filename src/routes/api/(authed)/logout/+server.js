@@ -3,11 +3,11 @@ import { redirect } from "@sveltejs/kit";
 
 /** @type {import('./$types').RequestHandler} */
 export const POST = async ({ cookies }) => {
-    const sessionId = cookies.get("sessionId");
+    const session_id = cookies.get("sessionId");
 
-    if (!sessionId) throw redirect(301, "/login");
+    if (!session_id) throw redirect(301, "/login");
 
-    await prisma.userSession.delete({ where: { sessionId } });
+    await prisma.user_session.delete({ where: { session_id } });
     cookies.delete("sessionId", { path: "/" });
     throw redirect(301, "/login");
 };

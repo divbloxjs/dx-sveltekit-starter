@@ -1,5 +1,25 @@
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
+import { convertLowerCaseToCamelCase, convertLowerCaseToPascalCase, getCamelCaseSplittedToLowerCase } from "dx-utilities";
+import dxConfig from "../../../../../dx.config";
+
+export const DB_IMPLEMENTATION_TYPES = { SNAKE_CASE: "snakecase", PASCAL_CASE: "pascalcase", CAMEL_CASE: "camelcase" };
+
+export const getSqlCase = (inputString = "", databaseCaseImplementation = dxConfig.databaseCaseImplementation) => {
+    let preparedString = inputString;
+    switch (databaseCaseImplementation.toLowerCase()) {
+        case DB_IMPLEMENTATION_TYPES.SNAKE_CASE:
+            return getCamelCaseSplittedToLowerCase(inputString, "_");
+        case DB_IMPLEMENTATION_TYPES.PASCAL_CASE:
+            preparedString = getCamelCaseSplittedToLowerCase(inputString, "_");
+            return convertLowerCaseToPascalCase(preparedString, "_");
+        case DB_IMPLEMENTATION_TYPES.CAMEL_CASE:
+            preparedString = getCamelCaseSplittedToLowerCase(inputString, "_");
+            return convertLowerCaseToCamelCase(preparedString, "_");
+        default:
+            return getCamelCaseSplittedToLowerCase(inputString, "_");
+    }
+};
 
 export const normalizeDatabaseArray = (array = [], removeLastUpdated = true, makeIdInteger = true) => {
     if (!Array.isArray(array)) throw new Error(`${array} is not a valid array`);
@@ -30,14 +50,6 @@ export const normalizeDatabaseObject = (object = {}, removeLastUpdated = true, m
             object[keyName] = parseInt(object[keyName]);
         }
     });
-};
-
-export const getRefererFromRequest = (request, defaultRedirectTo = "/") => {
-    const referer = request.headers.get("referer");
-
-    if (!referer) return defaultRedirectTo;
-    const url = new URL(referer);
-    return url.searchParams.get("redirectTo") ? url.searchParams.get("redirectTo") ?? "" : url.pathname;
 };
 
 export const getIntId = (id) => {
@@ -143,22 +155,21 @@ export const buildAttributeMap = (tableConfig = {}, orderedAttributeMap = {}, re
 
     Object.keys(tableConfig).forEach((keyName) => {
         const isNestedRelationship =
-            isValidObject(tableConfig[keyName]) &&
-            Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
+            isValidObject(tableConfig[keyName]) && Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
 
         if (isNestedRelationship) {
             const innerRelationshipStack = JSON.parse(JSON.stringify(relationshipStack));
-            innerRelationshipStack.push(keyName);
+            innerRelationshipStack.push(getSqlCase(keyName));
 
             buildAttributeMap(tableConfig[keyName], orderedAttributeMap, innerRelationshipStack);
             return;
         }
 
         orderedAttributeMap[tableConfig[keyName].column] = {
-            attributeName: keyName,
+            attributeName: getSqlCase(keyName),
             type: tableConfig[keyName]?.type ?? "text",
-            stack: [...relationshipStack, keyName],
-            displayName: tableConfig[keyName].displayName ?? keyName,
+            stack: [...relationshipStack, getSqlCase(keyName)],
+            displayName: tableConfig[keyName].displayName ?? keyName
         };
     });
 };
@@ -179,7 +190,7 @@ export const flattenRowObject = (nestedRowData = {}, attributeMap = {}) => {
     Object.values(attributeMap).forEach((attributeDef) => {
         row.push({
             value: getDeepValue(nestedRowData, [...attributeDef.stack]),
-            type: attributeDef.type,
+            type: attributeDef.type
         });
     });
 

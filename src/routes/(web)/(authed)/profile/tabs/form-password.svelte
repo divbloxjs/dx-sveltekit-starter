@@ -9,7 +9,7 @@
     import { Input } from "$lib/components/shadcn/ui/input/index.js";
     import { toast } from "svelte-sonner";
 
-    import { handleFormActionToast } from "$lib";
+    import { handleFormActionToast, handleSuperFormUpdatedToast } from "$lib";
 
     export let data;
 
@@ -19,10 +19,9 @@
         validators: zodClient(passwordSchema),
         invalidateAll: "force",
         resetForm: true,
-        onResult: (event) => {
-            console.log("event", event);
-            handleFormActionToast(event.result);
-        },
+        onUpdated: (event) => {
+            handleSuperFormUpdatedToast(event?.form);
+        }
     });
 
     const { form: formData, enhance, message, errors } = form;
@@ -38,17 +37,13 @@
         </Form.Control>
         <Form.FieldErrors class="relative" />
     </Form.Field>
-    <Form.Field {form} name="confirmPassword">
+    <Form.Field {form} name="confirm_password">
         <Form.Control let:attrs>
             <Form.Label>Confirm Password</Form.Label>
-            <Input {...attrs} type="password" bind:value={$formData.confirmPassword} />
+            <Input {...attrs} type="password" bind:value={$formData.confirm_password} />
         </Form.Control>
         <Form.FieldErrors class="relative" />
     </Form.Field>
-
-    {#if $message}
-        {$message}
-    {/if}
 
     <div class="mt-2 flex flex-row justify-end">
         <Button type="submit">Update Password</Button>

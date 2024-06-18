@@ -7,16 +7,13 @@ export const getPrismaSelectAllFromEntity = (entityName, select = {}) => {
 
     // Add all attributes
     Object.keys(dataModel[entityName].attributes).forEach((attributeName) => {
-        select[getCaseNormalizedString(attributeName, dxConfig.databaseCaseImplementation)] = true;
+        select[getSqlCase(attributeName)] = true;
     });
 
     // Nested add all relationships
     Object.keys(dataModel[entityName].relationships).forEach((relationshipName) => {
-        select[getCaseNormalizedString(relationshipName, dxConfig.databaseCaseImplementation)] = { select: {} };
-        getPrismaSelectAllFromEntity(
-            relationshipName,
-            select[getCaseNormalizedString(relationshipName, dxConfig.databaseCaseImplementation)].select
-        );
+        select[getSqlCase(relationshipName)] = { select: {} };
+        getPrismaSelectAllFromEntity(relationshipName, select[getSqlCase(relationshipName)].select);
     });
 
     return select;
@@ -102,7 +99,7 @@ const getObjectDepth = (objectToCheck) => {
     return Object(objectToCheck) === objectToCheck ? 1 + Math.max(-1, ...Object.values(objectToCheck).map(getObjectDepth)) : 0;
 };
 
-export const getCaseNormalizedString = (inputString = "", databaseCaseImplementation = DB_IMPLEMENTATION_TYPES.SNAKE_CASE) => {
+export const getSqlCase = (inputString = "", databaseCaseImplementation = dxConfig.databaseCaseImplementation) => {
     let preparedString = inputString;
     switch (databaseCaseImplementation.toLowerCase()) {
         case DB_IMPLEMENTATION_TYPES.SNAKE_CASE:

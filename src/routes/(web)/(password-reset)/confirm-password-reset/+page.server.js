@@ -17,26 +17,26 @@ export const load = async (event) => {
     if (!token) return { form, error: true, message: "No token provided" };
 
     // DX-NOTE: Clean up of ANY expired tokens in system
-    await prisma.oneTimeToken.deleteMany({
-        where: { expiresAt: { lt: new Date() } }
+    await prisma.one_time_token.deleteMany({
+        where: { expires_at: { lt: new Date() } }
     });
 
     // DX-NOTE: How to join on non-fk relations in prisma...? Hm...
     const oneTimeTokens = await prisma.$queryRaw`
     SELECT
-        userAccount.id as userAccountId,
-        userAccount.username,
-        userAccount.emailAddress,
-        oneTimeToken.id,
-        oneTimeToken.tokenValue,
-        oneTimeToken.timeToLiveInMinutes,
-        oneTimeToken.expiresAt
-    FROM userAccount
-    INNER JOIN oneTimeToken ON
-        oneTimeToken.linkedEntityId = userAccount.id AND
-        oneTimeToken.linkedEntityName = 'userAccount'
-    WHERE oneTimeToken.tokenValue = ${token}
-        AND oneTimeToken.expiresAt >= NOW()
+        user_account.id as user_account_id,
+        user_account.username,
+        user_account.email_address,
+        one_time_token.id,
+        one_time_token.token_value,
+        one_time_token.time_to_live_in_minutes,
+        one_time_token.expires_at
+    FROM user_account
+    INNER JOIN one_time_token ON
+        one_time_token.linked_entity_id = user_account.id AND
+        one_time_token.linked_entity_name = 'userAccount'
+    WHERE one_time_token.token_value = ${token}
+        AND one_time_token.expires_at >= NOW()
     LIMIT 1;`;
 
     if (!oneTimeTokens) return { form, error: true };
@@ -58,17 +58,17 @@ export const actions = {
         if (!form.valid) return fail(400, { form });
 
         try {
-            const oneTimeToken = await prisma.oneTimeToken.findUnique({ where: { tokenValue: form.data.tokenValue } });
+            const oneTimeToken = await prisma.one_time_token.findUnique({ where: { token_value: form.data.token_value } });
             if (!oneTimeToken) return message(form, "No one time token found");
 
             // DX-NOTE: Clean up of ANY expired tokens in system + currently consumed one
-            await prisma.oneTimeToken.deleteMany({
-                where: { expiresAt: { lt: new Date() }, tokenValue: form.data.tokenValue }
+            await prisma.one_time_token.deleteMany({
+                where: { expires_at: { lt: new Date() }, token_value: form.data.token_value }
             });
 
-            await prisma.userAccount.update({
-                where: { id: oneTimeToken.linkedEntityId },
-                data: { hashedPassword: await argon2d.hash(form.data.password) }
+            await prisma.user_account.update({
+                where: { id: oneTimeToken.linked_entity_id },
+                data: { hashed_password: await argon2d.hash(form.data.password) }
             });
         } catch (error) {
             console.error(error);

@@ -4,12 +4,12 @@ import { AuthorisationManager } from "$lib/server/auth";
 
 export type UserInfo = {
     id: number;
-    emailAddress: string;
-    firstName: string;
-    lastName: string;
-    userRole?: {
+    email_address: string;
+    first_name: string;
+    last_name: string;
+    user_role?: {
         id: int;
-        roleName: string;
+        role_name: string;
     };
 };
 

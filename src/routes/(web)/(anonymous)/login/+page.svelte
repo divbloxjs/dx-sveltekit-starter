@@ -41,10 +41,10 @@
         </Card.Header>
         <Card.Content class="flex flex-col">
             <form action="?/login" method="POST" class="min-w-72" use:enhance>
-                <Form.Field {form} name="emailAddress">
+                <Form.Field {form} name="email_address">
                     <Form.Control let:attrs>
                         <Form.Label>Email Address</Form.Label>
-                        <Input {...attrs} bind:value={$formData.emailAddress} />
+                        <Input {...attrs} bind:value={$formData.email_address} />
                     </Form.Control>
                     <Form.FieldErrors />
                 </Form.Field>

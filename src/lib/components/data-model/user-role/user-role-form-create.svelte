@@ -33,7 +33,7 @@
 
 <form method="POST" action={`${basePath}/new?/create`} use:enhance class="@container w-full p-1">
     <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
-	<FormInput {form} name="roleName" label="Role name" type="text" bind:value={$formData.roleName} />
+	<FormInput {form} name="role_name" label="Role name" type="text" bind:value={$formData.role_name} />
 
 
     </div>

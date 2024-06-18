@@ -10,6 +10,7 @@ import { error } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
+    console.log("event?.locals?", event?.locals);
     const userAccountData = await loadUserAccount(event?.locals?.user?.id);
     const userAccount = userAccountData.userAccount;
 
@@ -20,13 +21,12 @@ export const load = async (event) => {
     passwordForm.data.id = userAccount?.id;
 
     userForm.data.id = userAccount?.id;
-    userForm.data.firstName = userAccount?.firstName;
-    userForm.data.lastName = userAccount?.lastName;
-    userForm.data.username = userAccount?.username;
-    userForm.data.emailAddress = userAccount?.emailAddress;
+    userForm.data.first_name = userAccount?.first_name;
+    userForm.data.last_name = userAccount?.last_name;
+    userForm.data.email_address = userAccount?.email_address;
 
     const profilePicture = await prisma.file.findFirst({
-        where: { linkedEntity: "userAccount", linkedEntityId: event?.locals?.user?.id, category: FILE_CATEGORY.PROFILE_PICTURE }
+        where: { linked_entity: "userAccount", linked_entity_id: event?.locals?.user?.id, category: FILE_CATEGORY.PROFILE_PICTURE }
     });
 
     return { userForm, passwordForm, profilePicture };
@@ -39,7 +39,12 @@ export const actions = {
 
         if (!form.valid) return fail(400, { form });
 
-        await updateUserAccount(form.data);
+        try {
+            await updateUserAccount(form.data);
+        } catch (error) {
+            console.error(error);
+            return fail(400, { form });
+        }
 
         form.message = "Updated profile";
 
@@ -61,9 +66,9 @@ export const actions = {
 
         if (!form.valid) return fail(400, { form });
 
-        const hashedPassword = await argon2.hash(form.data.password);
+        const hashed_password = await argon2.hash(form.data.password);
 
-        await updateUserAccount({ id: form.data.id, hashedPassword });
+        await updateUserAccount({ id: form.data.id, hashed_password });
 
         form.message = "Updated password";
 

@@ -27,10 +27,10 @@
         </Card.Header>
         <Card.Content class="flex flex-col">
             <form action="?/register" method="POST" class="min-w-72" use:enhance>
-                <Form.Field {form} name="emailAddress">
+                <Form.Field {form} name="email_address">
                     <Form.Control let:attrs>
                         <Form.Label>Email Address</Form.Label>
-                        <Input {...attrs} bind:value={$formData.emailAddress} />
+                        <Input {...attrs} bind:value={$formData.email_address} />
                     </Form.Control>
                     <Form.FieldErrors />
                 </Form.Field>
@@ -41,10 +41,10 @@
                     </Form.Control>
                     <Form.FieldErrors />
                 </Form.Field>
-                <Form.Field {form} name="confirmPassword">
+                <Form.Field {form} name="confirm_password">
                     <Form.Control let:attrs>
                         <Form.Label>Confirm Password</Form.Label>
-                        <Input type="password" {...attrs} bind:value={$formData.confirmPassword} />
+                        <Input type="password" {...attrs} bind:value={$formData.confirm_password} />
                     </Form.Control>
                     <Form.FieldErrors class="relative" />
                 </Form.Field>

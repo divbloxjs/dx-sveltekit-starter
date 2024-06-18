@@ -31,30 +31,24 @@
     const { form: formData, enhance, message, errors } = form;
 </script>
 
-<form method="POST" action={`${basePath}/new?/create`} use:enhance class="@container w-full p-1">
-    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
-	<FormInput {form} name="lastName" label="Last name" type="text" bind:value={$formData.lastName} />
+<form method="POST" action={`${basePath}/new?/create`} use:enhance class="w-full p-1 @container">
+    <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
+        <FormInput {form} name="first_name" label="First name" type="text" bind:value={$formData.first_name} />
+        <FormInput {form} name="last_name" label="Last name" type="text" bind:value={$formData.last_name} />
+        <FormInput {form} name="email_address" label="Email address" type="text" bind:value={$formData.email_address} />
+        <FormInput {form} name="password" label="password" type="text" bind:value={$formData.password} />
 
-	<FormInput {form} name="username" label="Username" type="text" bind:value={$formData.username} />
-
-	<FormInput {form} name="firstName" label="First name" type="text" bind:value={$formData.firstName} />
-
-	<FormInput {form} name="emailAddress" label="Email address" type="text" bind:value={$formData.emailAddress} />
-
-	<FormInput {form} name="hashedPassword" label="Hashed password" type="text" bind:value={$formData.hashedPassword} />
-
-<FormSelect
-    {form}
-    name="userRoleId"
-    label="User role"
-    bind:selectedValue={$formData.userRoleId}
-    options={data?.userRoleOptions?.map((option) => {
-        return {
-            label: option.id,
-            value: option.id
-        };
-})} />
-	
+        <FormSelect
+            {form}
+            name="user_role_id"
+            label="User role"
+            bind:selectedValue={$formData.user_role_id}
+            options={data?.userRoleOptions?.map((option) => {
+                return {
+                    label: option.role_name,
+                    value: option.id
+                };
+            })} />
     </div>
 
     {#if $message}

@@ -43,15 +43,17 @@
     let flatRows = [];
     $: (() => {
         flatRows = [];
+        console.log("attributeMap", attributeMap);
+        console.log("data.userAccountArray", data.userAccountArray);
         for (const nestedRow of data.userAccountArray) {
             flatRows.push(flattenRowObject(nestedRow, attributeMap));
         }
+        console.log("flatRows", flatRows);
     })();
 
     let filters = {};
 
     let testNotificationDialogOpen = false;
-    let testPushNotificationFormEl;
     let submittingTest = false;
     /**
      *  @type {import('./$types').SubmitFunction}
@@ -190,12 +192,7 @@
                             bind:open={testNotificationDialogOpen}
                             title="Send test notification?"
                             description="This will send a push notification to all devices registered for this user">
-                            <form
-                                action="?/testPushNotification"
-                                method="POST"
-                                bind:this={testPushNotificationFormEl}
-                                use:enhance={submitTest}
-                                class="flex flex-col gap-4 py-4">
+                            <form action="?/testPushNotification" method="POST" use:enhance={submitTest} class="flex flex-col gap-4 py-4">
                                 <input type="hidden" name="id" value={data?.userAccountArray[index]?.id} />
                                 <div class="grid grid-cols-4 items-center gap-4">
                                     <Label for="title" class="text-right">Title</Label>

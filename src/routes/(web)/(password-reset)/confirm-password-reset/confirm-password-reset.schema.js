@@ -11,10 +11,10 @@ export const confirmPasswordResetSchema = z
             .regex(/^(?=.*[a-z])/, "Must contain a small letter")
             .regex(/^(?=.*[0-9])/, "Must contain a number")
             .regex(/^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹])/, "Must contain a special character"),
-        confirmPassword: z.string().trim(),
-        tokenValue: z.string().length(32)
+        confirm_password: z.string().trim(),
+        token_value: z.string().length(32)
     })
-    .refine((data) => data.password === data.confirmPassword, {
+    .refine((data) => data.password === data.confirm_password, {
         message: "Passwords don't match",
-        path: ["confirmPassword"] // Path of error
+        path: ["confirm_password"] // Path of error
     });

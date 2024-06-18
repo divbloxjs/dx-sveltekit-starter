@@ -6,7 +6,7 @@ export default defineConfig({
     server: {
         port: 5174,
         fs: {
-            allow: ["uploads"]
+            allow: ["uploads", "dx.config.js"]
         }
     }
 });

@@ -20,11 +20,11 @@ export const POST = async ({ request, locals }) => {
     const uniqueIdentifier = await createPushSubscriptionUniqueIdentifier(pushSubscriptionDetails);
     if (!uniqueIdentifier) return json({});
 
-    const existingPushSubscription = await prisma.pushSubscription.findFirst({ where: { uniqueIdentifier: uniqueIdentifier } });
+    const existingPushSubscription = await prisma.push_subscription.findFirst({ where: { uniqueIdentifier: uniqueIdentifier } });
 
     if (existingPushSubscription) return json({});
 
-    const result = await prisma.pushSubscription.create({
+    const result = await prisma.push_subscription.create({
         data: { uniqueIdentifier, pushSubscriptionDetails, userAccountId: locals?.user?.id }
     });
 

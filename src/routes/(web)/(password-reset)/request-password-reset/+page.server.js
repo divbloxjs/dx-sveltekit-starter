@@ -22,29 +22,29 @@ export const actions = {
         if (!form.valid) return fail(400, { form });
 
         try {
-            const userAccount = await prisma.userAccount.findUnique({ where: { username: form.data.emailAddress } });
+            const userAccount = await prisma.user_account.findUnique({ where: { username: form.data.emailAddress } });
             if (!userAccount) return message(form, "No user account found");
 
             // DX-NOTE: Clean up of ANY expired tokens in system
-            await prisma.oneTimeToken.deleteMany({
-                where: { expiresAt: { lt: new Date() } }
+            await prisma.one_time_token.deleteMany({
+                where: { expires_at: { lt: new Date() } }
             });
 
-            const tokenValue = getGuid();
+            const token_value = getGuid();
 
-            await prisma.oneTimeToken.create({
+            await prisma.one_time_token.create({
                 data: {
-                    tokenValue,
-                    timeToLiveInMinutes: 10,
-                    expiresAt: addMinutes(new Date(), 10),
-                    linkedEntityId: userAccount.id,
-                    linkedEntityName: "userAccount",
-                    tokenType: "passwordReset"
+                    token_value,
+                    time_to_live_in_minutes: 10,
+                    expires_at: addMinutes(new Date(), 10),
+                    linked_entity_id: userAccount.id,
+                    linked_entity_name: "userAccount",
+                    token_type: "passwordReset"
                 }
             });
             // Send email to user with oneTimeToken
 
-            await sendPasswordResetEmail(userAccount, tokenValue);
+            await sendPasswordResetEmail(userAccount, token_value);
         } catch (error) {
             console.error(error);
             return message(form, "Something went wrong. Please try again");

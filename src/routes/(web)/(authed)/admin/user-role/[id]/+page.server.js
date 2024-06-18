@@ -38,7 +38,7 @@ export const actions = {
         if (!form.valid) return fail(400, { form });
 
         try {
-            await prisma.userRole.create({ data: form.data });
+            await prisma.user_role.create({ data: form.data });
         } catch (error) {
             console.error(error);
             return message(form, "Something went wrong. Please try again");
@@ -59,6 +59,6 @@ export const actions = {
     delete: async (event) => {
         event.locals.auth.isAdmin();
 
-        await prisma.userRole.delete({ where: { id: event.params?.id } });
+        await prisma.user_role.delete({ where: { id: event.params?.id } });
     }
 };
