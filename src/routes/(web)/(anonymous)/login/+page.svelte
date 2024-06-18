@@ -13,6 +13,7 @@
     import { page } from "$app/stores";
     import { onMount } from "svelte";
     import { env } from "$env/dynamic/public";
+    import ExternalLink from "lucide-svelte/icons/external-link";
 
     export let data;
 
@@ -78,4 +79,8 @@
             </form>
         </Card.Content>
     </Card.Root>
+    <div class="mt-10">
+        <a class="underline" target="_blank" href="/theme-demo"
+            >Theme setup <ExternalLink class="mx-0 -mt-1 inline-flex h-4 w-4"></ExternalLink></a>
+    </div>
 </div>

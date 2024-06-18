@@ -10,20 +10,20 @@
     import PrismaLogo from "$lib/assets/dashboard-images/prisma-logo.svg";
 
     import { buttonVariants } from "$lib/components/shadcn/ui/button";
-    import  ExternalLink  from "lucide-svelte/icons/external-link";
+    import ExternalLink from "lucide-svelte/icons/external-link";
 
     import DivbloxLogo from "$lib/components/app-images/app-icon.svelte";
 
     export let data;
 </script>
 
-<div class="@container flex h-full w-full flex-col items-center overflow-y-auto">
+<div class="flex h-full w-full flex-col items-center overflow-y-auto @container">
     <div class="flex w-full flex-col gap-2 px-2 pt-4 text-center">
         <span class="text-3xl font-bold">Welcome!</span>
         <p>This starter project is built with the core technologies below.</p>
         <p>It already provides for database integration and an ORM as well as certain core functionalities such as User Authentication.</p>
     </div>
-    <div class="mt-8 flex max-w-5xl flex-row flex-wrap justify-center gap-5 p-5 child:w-full child:sm:w-72">
+    <div class=" flex max-w-5xl flex-row flex-wrap justify-center gap-5 p-5 child:w-full child:sm:w-72">
         <Card.Root>
             <Card.Header>
                 <Card.Title class="flex h-8 flex-row items-center gap-2">
