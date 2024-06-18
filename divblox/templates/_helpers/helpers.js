@@ -32,14 +32,6 @@ export const normalizeDatabaseObject = (object = {}, removeLastUpdated = true, m
     });
 };
 
-export const getRefererFromRequest = (request, defaultRedirectTo = "/") => {
-    const referer = request.headers.get("referer");
-
-    if (!referer) return defaultRedirectTo;
-    const url = new URL(referer);
-    return url.searchParams.get("redirectTo") ? url.searchParams.get("redirectTo") ?? "" : url.pathname;
-};
-
 export const getIntId = (id) => {
     if (!id || id === -1 || id === "-1") {
         return null;
@@ -143,8 +135,7 @@ export const buildAttributeMap = (tableConfig = {}, orderedAttributeMap = {}, re
 
     Object.keys(tableConfig).forEach((keyName) => {
         const isNestedRelationship =
-            isValidObject(tableConfig[keyName]) &&
-            Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
+            isValidObject(tableConfig[keyName]) && Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
 
         if (isNestedRelationship) {
             const innerRelationshipStack = JSON.parse(JSON.stringify(relationshipStack));
@@ -158,7 +149,7 @@ export const buildAttributeMap = (tableConfig = {}, orderedAttributeMap = {}, re
             attributeName: keyName,
             type: tableConfig[keyName]?.type ?? "text",
             stack: [...relationshipStack, keyName],
-            displayName: tableConfig[keyName].displayName ?? keyName,
+            displayName: tableConfig[keyName].displayName ?? keyName
         };
     });
 };
@@ -179,7 +170,7 @@ export const flattenRowObject = (nestedRowData = {}, attributeMap = {}) => {
     Object.values(attributeMap).forEach((attributeDef) => {
         row.push({
             value: getDeepValue(nestedRowData, [...attributeDef.stack]),
-            type: attributeDef.type,
+            type: attributeDef.type
         });
     });
 
