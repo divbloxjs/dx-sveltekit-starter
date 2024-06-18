@@ -17,7 +17,7 @@ export const loadUserRoleArray = async (constraints = {}) => {
     const selectClause = getPrismaSelectAllFromEntity("userRole");
     const prismaConditions = getPrismaConditions("userRole", searchConfig, constraints);
 
-    const userRoleArray = await prisma.userRole.findMany({
+    const userRoleArray = await prisma.user_role.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
         ...prismaConditions
@@ -33,13 +33,7 @@ export const loadUserRoleArray = async (constraints = {}) => {
 };
 
 export const createUserRole = async (data) => {
-    try {
-        await prisma.userRole.create({ data });
-        return true;
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
+    await prisma.user_role.create({ data });
 };
 
 export const updateUserRole = async (data) => {
@@ -60,30 +54,18 @@ export const updateUserRole = async (data) => {
         }
     });
 
-    try {
-        const result = await prisma.userRole.update({
-            data,
-            where: { id: data.id }
-        });
-        return true;
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
+    const result = await prisma.user_role.update({
+        data,
+        where: { id: data.id }
+    });
 };
 
 export const deleteUserRole = async (id = -1) => {
-    try {
-        await prisma.userRole.delete({ where: { id } });
-        return true;
-    } catch (err) {
-        console.error(err);
-        return false;
-    }
+    await prisma.user_role.delete({ where: { id } });
 };
 
 export const loadUserRole = async (id = -1, relationshipOptions = true) => {
-    const userRole = await prisma.userRole.findUnique({
+    const userRole = await prisma.user_role.findUnique({
         where: { id: id }
     });
 
@@ -128,8 +110,8 @@ export const getUserRoleAssociatedData = async (userRoleId) => {
 //#region RelatedEntity / AssociatedEntity Helpers
 
 const getAssociatedUserAccountArray = async (userRoleId) => {
-    const userAccountArray = await prisma.userAccount.findMany({
-        where: { userRoleId: userRoleId },
+    const userAccountArray = await prisma.user_account.findMany({
+        where: { user_role_id: userRoleId },
         take: RELATIONSHIP_LOAD_LIMIT
     });
 

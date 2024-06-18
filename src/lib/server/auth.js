@@ -8,21 +8,21 @@ export const authenticateUser = async ({ route, cookies, request }) => {
     const sessionId = cookies.get("sessionId");
     if (!sessionId) return null;
 
-    const userSession = await prisma.userSession.findFirst({
-        where: { sessionId: sessionId },
+    const userSession = await prisma.user_session.findFirst({
+        where: { session_id: sessionId },
         select: {
             id: true,
-            sessionId: true,
-            sessionData: true,
-            expiryDateTime: true,
-            durationInMinutes: true,
-            userAccount: {
+            session_id: true,
+            session_data: true,
+            expires_at: true,
+            duration_in_minutes: true,
+            user_account: {
                 select: {
                     id: true,
-                    firstName: true,
-                    lastName: true,
-                    emailAddress: true,
-                    userRole: { select: { id: true, roleName: true } }
+                    first_name: true,
+                    last_name: true,
+                    email_address: true,
+                    user_role: { select: { id: true, role_name: true } }
                 }
             }
         }
@@ -30,17 +30,17 @@ export const authenticateUser = async ({ route, cookies, request }) => {
 
     if (!userSession) return null;
 
-    if (isBefore(userSession.expiryDateTime, new Date())) {
-        await prisma.userSession.delete({ where: { id: userSession.id } });
+    if (isBefore(userSession.expires_at, new Date())) {
+        await prisma.user_session.delete({ where: { id: userSession.id } });
         return null;
     }
 
     // Update session expiry date
 
     // DX-NOTE: You can update logic here to handle standalone applications differently
-    await prisma.userSession.update({
+    await prisma.user_session.update({
         where: { id: userSession.id },
-        data: { expiryDateTime: addMinutes(new Date(), 20) }
+        data: { expires_at: addMinutes(new Date(), 20) }
     });
 
     // Match cookie expiry date and max age to new session data
@@ -48,7 +48,7 @@ export const authenticateUser = async ({ route, cookies, request }) => {
         path: "/",
         httpOnly: true,
         maxAge: 60 * userSession.durationInMinutes,
-        expires: userSession.expiryDateTime
+        expires: userSession.expires_at
     });
 
     /**
@@ -56,16 +56,16 @@ export const authenticateUser = async ({ route, cookies, request }) => {
      */
     let userInfo = {
         id: userSession.userAccount?.id,
-        firstName: userSession.userAccount?.firstName,
-        lastName: userSession.userAccount?.lastName,
-        emailAddress: userSession.userAccount?.emailAddress,
-        userRole: null
+        first_name: userSession.userAccount?.firstName,
+        last_name: userSession.userAccount?.lastName,
+        email_address: userSession.userAccount?.emailAddress,
+        user_role: null
     };
 
     if (userSession.userAccount?.userRole) {
         userInfo.userRole = {
             id: userSession.userAccount?.userRole?.id,
-            roleName: userSession.userAccount?.userRole?.roleName
+            role_name: userSession.userAccount?.userRole?.roleName
         };
     }
 
@@ -79,7 +79,7 @@ export const logoutUser = async ({ cookies }) => {
 };
 
 export const deleteAllExpiredUserSessions = async () => {
-    await prisma.userSession.deleteMany({ where: { expiryDateTime: { lte: new Date() } } });
+    await prisma.user_session.deleteMany({ where: { expires_at: { lte: new Date() } } });
 };
 
 export class AuthorisationManager {

@@ -22,17 +22,17 @@ export const actions = {
         if (!form.valid) return fail(400, { form });
 
         try {
-            const userAccount = await prisma.userAccount.findUnique({ where: { username: form.data.emailAddress } });
+            const userAccount = await prisma.user_account.findUnique({ where: { username: form.data.emailAddress } });
             if (!userAccount) return message(form, "No user account found");
 
             // DX-NOTE: Clean up of ANY expired tokens in system
-            await prisma.oneTimeToken.deleteMany({
+            await prisma.one_time_token.deleteMany({
                 where: { expiresAt: { lt: new Date() } }
             });
 
             const tokenValue = getGuid();
 
-            await prisma.oneTimeToken.create({
+            await prisma.one_time_token.create({
                 data: {
                     tokenValue,
                     timeToLiveInMinutes: 10,

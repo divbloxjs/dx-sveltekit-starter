@@ -19,9 +19,9 @@ export const load = async ({ cookies }) => {
     const sessionId = cookies.get("sessionId");
     if (!sessionId) return returnData;
 
-    const userSession = await prisma.userSession.findFirst({
-        where: { sessionId, expiryDateTime: { lte: new Date() } },
-        select: { id: true, userAccount: true }
+    const userSession = await prisma.user_session.findFirst({
+        where: { sessionId, expiry_date_time: { lte: new Date() } },
+        select: { id: true, user_account: true }
     });
 
     if (!userSession) return { ...returnData, message: "No session ID set" };
@@ -38,7 +38,7 @@ export const actions = {
 
         if (!form.valid) return fail(400, { form });
 
-        const existingUser = await prisma.userAccount.findFirst({ where: { username: form.data.emailAddress } });
+        const existingUser = await prisma.user_account.findFirst({ where: { username: form.data.emailAddress } });
         if (!existingUser) return message(form, "Invalid credentials. Please try again");
 
         let isVerified = false;
@@ -52,12 +52,12 @@ export const actions = {
 
         if (!isVerified) return message(form, "Invalid credentials. Please try again");
 
-        const newSession = await prisma.userSession.create({
+        const newSession = await prisma.user_session.create({
             data: {
-                durationInMinutes: parseInt(env.SESSION_LENGTH_IN_MINS ?? 20),
-                expiryDateTime: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
-                sessionData: {},
-                sessionId: getGuid(),
+                duration_in_minutes: parseInt(env.SESSION_LENGTH_IN_MINS ?? 20),
+                expiry_date_time: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
+                session_data: {},
+                session_id: getGuid(),
                 userAgent: request.headers.get("user-agent"),
                 userAccountId: existingUser.id
             }
@@ -67,7 +67,7 @@ export const actions = {
             path: "/",
             httpOnly: true,
             maxAge: 60 * newSession.durationInMinutes,
-            expires: newSession.expiryDateTime
+            expires: newSession.expires_at
         });
 
         // Clear up expired tokens from DB

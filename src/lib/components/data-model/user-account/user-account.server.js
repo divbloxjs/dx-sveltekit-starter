@@ -2,7 +2,7 @@ import { prisma } from "$lib/server/prisma-instance";
 import { isNumeric } from "dx-utilities";
 import { getIntId, normalizeDatabaseArray } from "$components/data-model/_helpers/helpers";
 import { getEntitiesRelatedTo, getRelatedEntities } from "$components/data-model/_helpers/helpers.server";
-import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/prisma.helpers";
+import { getPrismaSelectAllFromEntity, getPrismaConditions, getSqlCase } from "$lib/server/prisma.helpers";
 
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
@@ -17,7 +17,7 @@ export const loadUserAccountArray = async (constraints = {}) => {
     const selectClause = getPrismaSelectAllFromEntity("userAccount");
     const prismaConditions = getPrismaConditions("userAccount", searchConfig, constraints);
 
-    const userAccountArray = await prisma.userAccount.findMany({
+    const userAccountArray = await prisma.user_account.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
         ...prismaConditions
@@ -29,47 +29,49 @@ export const loadUserAccountArray = async (constraints = {}) => {
 };
 
 export const createUserAccount = async (data) => {
-    await prisma.userAccount.create({ data });
+    await prisma.user_account.create({ data });
 };
 
 export const updateUserAccount = async (data) => {
     const relationships = getRelatedEntities("userAccount");
 
     Object.values(relationships).forEach((relationshipName) => {
-        if (data.hasOwnProperty(relationshipName)) {
-            if (!isNumeric(data[relationshipName])) {
-                delete data[relationshipName];
-                console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
+        const sqlCasedRelationshipName = getSqlCase(relationshipName);
+        if (data.hasOwnProperty(sqlCasedRelationshipName)) {
+            if (!isNumeric(data[sqlCasedRelationshipName])) {
+                delete data[sqlCasedRelationshipName];
+                console.error(`Removed non-numeric relationship '${sqlCasedRelationshipName}' value: ${data[sqlCasedRelationshipName]}`);
             }
 
-            if (typeof data[relationshipName] === "string") {
-                data[relationshipName] = parseInt(data[relationshipName]);
+            if (typeof data[sqlCasedRelationshipName] === "string") {
+                data[sqlCasedRelationshipName] = parseInt(data[sqlCasedRelationshipName]);
             }
         } else {
-            data[relationshipName] = null;
+            data[sqlCasedRelationshipName] = null;
         }
     });
 
-    await prisma.userAccount.update({
+    await prisma.user_account.update({
         data,
         where: { id: data.id }
     });
 };
 
 export const deleteUserAccount = async (id = -1) => {
-    await prisma.userSession.deleteMany({ where: { userAccountId: id } });
-    await prisma.file.deleteMany({ where: { linkedEntity: 'userAccount',  linkedEntityId: id } });
-    await prisma.userAccount.delete({ where: { id } });
+    await prisma.user_session.deleteMany({ where: { user_account_id: id } });
+    await prisma.file.deleteMany({ where: { linked_entity: "userAccount", linked_entity_id: id } });
+    await prisma.user_account.delete({ where: { id } });
 };
 
 export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
-    const userAccount = await prisma.userAccount.findUnique({
+    const userAccount = await prisma.user_account.findUnique({
         where: { id: id }
     });
 
     userAccount.id = userAccount.id.toString();
     Object.keys(getRelatedEntities("userAccount")).forEach((relationshipName) => {
-        userAccount[`${relationshipName}Id`] = userAccount[`${relationshipName}Id`]?.toString();
+        const sqlCasedRelationshipName = getSqlCase(`${relationshipName}Id`);
+        userAccount[sqlCasedRelationshipName] = userAccount[sqlCasedRelationshipName]?.toString();
     });
 
     let returnObject = { userAccount };
@@ -110,7 +112,7 @@ export const getUserAccountAssociatedData = async (userAccountId) => {
 //#region RelatedEntity / AssociatedEntity Helpers
 
 const getUserRoleOptions = async () => {
-    const userRoleArray = await prisma.userRole.findMany({
+    const userRoleArray = await prisma.user_role.findMany({
         take: RELATIONSHIP_LOAD_LIMIT
     });
 
@@ -122,16 +124,16 @@ const getUserRoleOptions = async () => {
     return userRoleOptions;
 };
 const getAssociatedUserSessionArray = async (userAccountId) => {
-    const userSessionArray = await prisma.userSession.findMany({
-        where: { userAccountId: userAccountId },
+    const userSessionArray = await prisma.user_session.findMany({
+        where: { user_account_id: userAccountId },
         take: RELATIONSHIP_LOAD_LIMIT
     });
 
     return userSessionArray;
 };
 const getAssociatedPushSubscriptionArray = async (userAccountId) => {
-    const pushSubscriptionArray = await prisma.pushSubscription.findMany({
-        where: { userAccountId: userAccountId },
+    const pushSubscriptionArray = await prisma.push_subscription.findMany({
+        where: { user_account_id: userAccountId },
         take: RELATIONSHIP_LOAD_LIMIT
     });
 

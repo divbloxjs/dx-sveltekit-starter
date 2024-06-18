@@ -27,23 +27,23 @@ export const actions = {
 
         if (!form.valid) return fail(400, { form });
 
-        const existingUser = await prisma.userAccount.findFirst({ where: { username: form.data.emailAddress } });
+        const existingUser = await prisma.user_account.findFirst({ where: { username: form.data.emailAddress } });
         if (existingUser) return setError(form, "emailAddress", "E-mail already exists");
 
         const userData = {
-            emailAddress: form.data.emailAddress,
+            email_address: form.data.emailAddress,
             username: form.data.emailAddress,
             hashedPassword: await argon2.hash(form.data.password)
         };
 
-        const newUser = await prisma.userAccount.create({ data: userData });
+        const newUser = await prisma.user_account.create({ data: userData });
 
-        const newSession = await prisma.userSession.create({
+        const newSession = await prisma.user_session.create({
             data: {
-                durationInMinutes: parseInt(env.SESSION_LENGTH_IN_MINS ?? 20),
-                expiryDateTime: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
-                sessionData: {},
-                sessionId: getGuid(),
+                duration_in_minutes: parseInt(env.SESSION_LENGTH_IN_MINS ?? 20),
+                expiry_date_time: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
+                session_data: {},
+                session_id: getGuid(),
                 userAgent: request.headers.get("user-agent"),
                 userAccountId: newUser.id
             }
@@ -53,7 +53,7 @@ export const actions = {
             path: "/",
             httpOnly: true,
             maxAge: 60 * newSession.durationInMinutes, // In seconds
-            expires: newSession.expiryDateTime
+            expires: newSession.expires_at
         });
 
         redirect(300, DEFAULT_ROUTE);

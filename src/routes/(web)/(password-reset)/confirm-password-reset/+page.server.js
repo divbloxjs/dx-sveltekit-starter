@@ -17,7 +17,7 @@ export const load = async (event) => {
     if (!token) return { form, error: true, message: "No token provided" };
 
     // DX-NOTE: Clean up of ANY expired tokens in system
-    await prisma.oneTimeToken.deleteMany({
+    await prisma.one_time_token.deleteMany({
         where: { expiresAt: { lt: new Date() } }
     });
 
@@ -58,15 +58,15 @@ export const actions = {
         if (!form.valid) return fail(400, { form });
 
         try {
-            const oneTimeToken = await prisma.oneTimeToken.findUnique({ where: { tokenValue: form.data.tokenValue } });
+            const oneTimeToken = await prisma.one_time_token.findUnique({ where: { tokenValue: form.data.tokenValue } });
             if (!oneTimeToken) return message(form, "No one time token found");
 
             // DX-NOTE: Clean up of ANY expired tokens in system + currently consumed one
-            await prisma.oneTimeToken.deleteMany({
+            await prisma.one_time_token.deleteMany({
                 where: { expiresAt: { lt: new Date() }, tokenValue: form.data.tokenValue }
             });
 
-            await prisma.userAccount.update({
+            await prisma.user_account.update({
                 where: { id: oneTimeToken.linkedEntityId },
                 data: { hashedPassword: await argon2d.hash(form.data.password) }
             });

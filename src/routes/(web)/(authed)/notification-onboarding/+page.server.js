@@ -32,13 +32,13 @@ export const actions = {
             uniqueIdentifier = newUniqueIdentifier;
         }
 
-        const existingPushSubscription = await prisma.pushSubscription.findFirst({
+        const existingPushSubscription = await prisma.push_subscription.findFirst({
             where: { uniqueIdentifier }
         });
 
         if (existingPushSubscription) {
             if (!existingPushSubscription.isActive) {
-                await prisma.pushSubscription.update({
+                await prisma.push_subscription.update({
                     where: { uniqueIdentifier },
                     data: { isActive: true }
                 });
@@ -47,7 +47,7 @@ export const actions = {
             return { message: "Using existing subscription", pushSubscription: existingPushSubscription };
         }
 
-        const newPushSubscription = await prisma.pushSubscription.create({
+        const newPushSubscription = await prisma.push_subscription.create({
             data: { uniqueIdentifier, pushSubscriptionDetails, userAccountId: locals?.user?.id }
         });
 
@@ -60,7 +60,7 @@ export const actions = {
         if (!existingUniqueIdentifier) return { message: "No push subscription unique identifier provided" };
 
         try {
-            await prisma.pushSubscription.update({
+            await prisma.push_subscription.update({
                 where: { uniqueIdentifier: existingUniqueIdentifier },
                 data: { isActive: false }
             });

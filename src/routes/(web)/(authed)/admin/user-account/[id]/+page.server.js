@@ -47,7 +47,7 @@ export const actions = {
         form.data.username = form.data.emailAddress;
         form.data.hashedPassword = "password";
         try {
-            await prisma.userAccount.create({ data: form.data });
+            await prisma.user_account.create({ data: form.data });
         } catch (error) {
             console.error(error);
             // https://www.prisma.io/docs/orm/reference/error-reference#p2002
@@ -73,7 +73,7 @@ export const actions = {
     delete: async (event) => {
         event.locals.auth.isAdmin();
 
-        await prisma.userAccount.delete({ where: { id: event.params?.id } });
+        await prisma.user_account.delete({ where: { id: event.params?.id } });
     },
     testNotification: async ({ request, locals, params }) => {
         locals.auth.isAdmin();

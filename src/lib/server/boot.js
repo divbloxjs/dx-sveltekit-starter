@@ -2,13 +2,13 @@ import argon2 from "argon2";
 import { prisma } from "./prisma-instance.js";
 
 export const seedUserRoles = async () => {
-    const userRoles = await prisma.userRole.findMany();
+    const userRoles = await prisma.user_role.findMany();
 
-    const defaultUserRoles = [{ roleName: "Admin" }, { roleName: "User" }].filter(
+    const defaultUserRoles = [{ role_name: "Admin" }, { role_name: "User" }].filter(
         (defaultUserRole) => !userRoles.map((userRole) => userRole.roleName).includes(defaultUserRole.roleName)
     );
 
-    const result = await prisma.userRole.createMany({ data: defaultUserRoles });
+    const result = await prisma.user_role.createMany({ data: defaultUserRoles });
 
     console.log(`Successfully created ${result.count} user roles`);
 };
@@ -16,28 +16,28 @@ export const seedUserRoles = async () => {
 export const seedUsers = async () => {
     await seedUserRoles();
 
-    const actualUserRoles = await prisma.userRole.findMany({ where: { roleName: { in: ["Admin", "User"] } } });
+    const actualUserRoles = await prisma.user_role.findMany({ where: { role_name: { in: ["Admin", "User"] } } });
 
-    const userAccounts = await prisma.userAccount.findMany();
+    const userAccounts = await prisma.user_account.findMany();
 
     const defaultUserAccounts = [
         {
-            firstName: "Admin",
-            emailAddress: "admin@example.com",
+            first_name: "Admin",
+            email_address: "admin@example.com",
             username: "admin@example.com",
             hashedPassword: await argon2.hash("password"),
             userRoleId: actualUserRoles.filter((role) => role.roleName === "Admin")[0].id
         },
         {
-            firstName: "User",
-            emailAddress: "user@example.com",
+            first_name: "User",
+            email_address: "user@example.com",
             username: "user@example.com",
             hashedPassword: await argon2.hash("password"),
             userRoleId: actualUserRoles.filter((role) => role.roleName === "User")[0].id
         }
     ].filter((defaultUserAccount) => !userAccounts.map((userAccount) => userAccount.username).includes(defaultUserAccount.username));
 
-    const result = await prisma.userAccount.createMany({
+    const result = await prisma.user_account.createMany({
         data: defaultUserAccounts
     });
 

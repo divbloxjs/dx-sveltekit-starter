@@ -16,12 +16,12 @@ export const deliverPushNotificationToUniqueSubscription = async ({
     notificationContent = { title: "Push Notification", body: "More info...", data: {} },
     mustSetAsUnseen = false
 }) => {
-    const pushSubscription = await prisma.pushSubscription.findFirst({ where: { uniqueIdentifier } });
+    const pushSubscription = await prisma.push_subscription.findFirst({ where: { uniqueIdentifier } });
 
     if (!pushSubscription) return false;
 
     if (mustSetAsUnseen) {
-        await prisma.pushSubscription.update({ where: { uniqueIdentifier }, data: { hasUnseenNotification: true } });
+        await prisma.push_subscription.update({ where: { uniqueIdentifier }, data: { hasUnseenNotification: true } });
     }
 
     try {
@@ -29,7 +29,7 @@ export const deliverPushNotificationToUniqueSubscription = async ({
     } catch (error) {
         console.error("error", error);
         if (error?.statusCode === 410) {
-            await prisma.pushSubscription.delete({ where: { uniqueIdentifier } });
+            await prisma.push_subscription.delete({ where: { uniqueIdentifier } });
             // return true;
         }
 
@@ -49,10 +49,10 @@ export const deliverPushNotificationToAllSubscriptionsForUserAccount = async ({
     notificationContent = { title: "Push Notification", body: "More info...", data: {} },
     mustSetAsUnseen = false
 }) => {
-    const pushSubscriptions = await prisma.pushSubscription.findMany({ where: { userAccountId, isActive: true } });
+    const pushSubscriptions = await prisma.push_subscription.findMany({ where: { userAccountId, isActive: true } });
 
     if (mustSetAsUnseen) {
-        await prisma.pushSubscription.updateMany({ where: { userAccountId }, data: { hasUnseenNotification: true } });
+        await prisma.push_subscription.updateMany({ where: { userAccountId }, data: { hasUnseenNotification: true } });
     }
 
     const errors = [];
@@ -62,7 +62,7 @@ export const deliverPushNotificationToAllSubscriptionsForUserAccount = async ({
         } catch (error) {
             console.error("error", error);
             if (error?.statusCode === 410) {
-                await prisma.pushSubscription.delete({ where: { id: pushSubscription.id } });
+                await prisma.push_subscription.delete({ where: { id: pushSubscription.id } });
             }
 
             errors.push({ statusCode: error?.statusCode, message: error?.body ?? error?.message ?? "No message provided" });
