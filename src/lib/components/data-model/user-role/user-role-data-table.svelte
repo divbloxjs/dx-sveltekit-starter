@@ -10,9 +10,7 @@
     import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
     import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Input } from "$lib/components/shadcn/ui/input";
-    import Pencil from "lucide-svelte/icons/pencil";
-    import RotateCcw from "lucide-svelte/icons/rotate-ccw";
-    import X from "lucide-svelte/icons/x";
+    import { Pencil, RotateCcw, X } from "lucide-svelte";
     import { Label } from "$lib/components/shadcn/ui/label";
 
     let limit = parseInt($page.url.searchParams.get("limit") ?? "20");
@@ -44,6 +42,75 @@
     })();
 
     let filters = {};
+
+    const handleSearchChange = () => {
+        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
+        newSearchParams.set("search", search);
+        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
+            keepFocus: true
+        });
+    }
+
+    const handleSearchClear = () => {
+        search = "";
+
+        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
+        newSearchParams.delete("search");
+        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
+            keepFocus: true
+        });
+    }
+
+    const handleFilterChange = (displayName, attributeName) => {
+        const originalParams = parse($page.url.search, { ignoreQueryPrefix: true });
+
+        if (!originalParams.filter) originalParams.filter = {};
+
+        if (!originalParams.filter[attributeName]) {
+            originalParams.filter[attributeName] = { like: filters[displayName] };
+        }
+
+        const newParams = stringify(originalParams, { encodeValuesOnly: true });
+
+        goto(`${basePath}/overview?${newParams}`, {
+            keepFocus: true
+        });
+    }
+    const handleFilterClear = (displayName, attributeName) => {
+        filters[displayName] = "";
+        const originalParams = parse($page.url.search, { ignoreQueryPrefix: true });
+
+        delete originalParams.filter?.[attributeName];
+        const newParams = stringify(originalParams, { encodeValuesOnly: true });
+        goto(`${basePath}/overview?${newParams}`, {
+            invalidateAll: true
+        });
+    }
+
+    const handleLimitChange = () => {
+        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
+        newSearchParams.set("limit", limit.toString());
+        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
+            invalidateAll: true
+        });
+    }
+
+    const handlePaginationPrev = () => {
+        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
+        offset = offset - limit <= 0 ? 0 : offset - limit;
+        newSearchParams.set("offset", offset.toString());
+        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
+            invalidateAll: true
+        });
+    }
+    const handlePaginationNext = () => {
+        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
+        offset = offset + limit;
+        newSearchParams.set("offset", offset.toString());
+        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
+            invalidateAll: true
+        });
+    }
 </script>
 
 <div class="flex flex-row justify-between p-2">
@@ -54,27 +121,13 @@
                 bind:value={search}
                 name="search"
                 placeholder="Search..."
-                on:change={() => {
-                    let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-                    newSearchParams.set("search", search);
-                    goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-                        keepFocus: true
-                    });
-                }}>
+                on:change={handleSearchChange}>
             </Input>
             <Button
                 variant="link"
                 size="sm"
                 class="px-0"
-                on:click={() => {
-                    search = "";
-
-                    let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-                    newSearchParams.delete("search");
-                    goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-                        keepFocus: true
-                    });
-                }}>
+                on:click={handleSearchClear}>
                 <X></X>
             </Button>
         </div>
@@ -105,35 +158,12 @@
                             name={displayName}
                             placeholder="Filter..."
                             bind:value={filters[displayName]}
-                            on:change={() => {
-                                const originalParams = parse($page.url.search, { ignoreQueryPrefix: true });
-
-                                if (!originalParams.filter) originalParams.filter = {};
-
-                                if (!originalParams.filter[attributeName]) {
-                                    originalParams.filter[attributeName] = { like: filters[displayName] };
-                                }
-
-                                const newParams = stringify(originalParams, { encodeValuesOnly: true });
-
-                                goto(`${basePath}/overview?${newParams}`, {
-                                    keepFocus: true
-                                });
-                            }} />
+                            on:change={() => handleFilterChange(displayName, attributeName)} />
                         <Button
                             variant="link"
                             size="inline-icon"
                             class="ml-2 h-4 w-4"
-                            on:click={() => {
-                                filters[displayName] = "";
-                                const originalParams = parse($page.url.search, { ignoreQueryPrefix: true });
-
-                                delete originalParams.filter?.[attributeName];
-                                const newParams = stringify(originalParams, { encodeValuesOnly: true });
-                                goto(`${basePath}/overview?${newParams}`, {
-                                    invalidateAll: true
-                                });
-                            }}>
+                            on:click={() => handleFilterClear(displayName, attributeName)}>
                             <RotateCcw></RotateCcw>
                         </Button>
                     </div>
@@ -141,19 +171,19 @@
             {/each}
         </tr>
         {#each flatRows as flatRow, index}
-            <tr class="odd:bg-gray-100 hover:bg-gray-200 child:p-2">
+            <tr class="odd:bg-background-100 hover:bg-background-200 child:p-2">
                 {#each Object.values(flatRow) as { value, type }}
                     <td class="min-w-48 max-w-56 truncate border-r">{value}</td>
                 {/each}
                 {#if allowEdit || allowDelete}
                     <td class="flex items-center justify-center text-center">
                         <a
-                            href={`${basePath}/${data?.userRoleArray[index]?.id}`}
-                            class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600">
+                        href={`${basePath}/${data?.userRoleArray[index]?.id}`}
+                            class="bg-tranparent border-tertiary text-tertiary border border-none">
                             <Pencil class="h-4 w-4" /></a>
 
-                        <form action={`${basePath}/${data?.userRoleArray[index]?.id}?/delete`} use:enhance method="POST">
-                            <input type="hidden" bind:value={data.userRoleArray[index].id} />
+                    <form action={`${basePath}/${data?.userRoleArray[index]?.id}?/delete`} use:enhance method="POST">
+                        <input type="hidden" bind:value={data.userRoleArray[index].id} />
                             <Button type="submit" class="border-none" variant="destructive-outline" size="inline-icon">
                                 <X class="h-4 w-4" /></Button>
                         </form>
@@ -173,37 +203,11 @@
                 name="limit"
                 placeholder="Items per Page"
                 bind:value={limit}
-                on:change={() => {
-                    let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-                    newSearchParams.set("limit", limit.toString());
-                    goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-                        invalidateAll: true
-                    });
-                }} />
+                on:change={handleLimitChange} />
 
             <div class="flex gap-2">
-                <Button
-                    on:click={() => {
-                        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-                        offset = offset - limit <= 0 ? 0 : offset - limit;
-                        newSearchParams.set("offset", offset.toString());
-                        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-                            invalidateAll: true
-                        });
-                    }}>
-                    Prev
-                </Button>
-                <Button
-                    on:click={() => {
-                        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-                        offset = offset + limit;
-                        newSearchParams.set("offset", offset.toString());
-                        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-                            invalidateAll: true
-                        });
-                    }}>
-                    Next
-                </Button>
+                <Button on:click={handlePaginationPrev}>Prev</Button>
+                <Button on:click={handlePaginationNext}>Prev</Button>
             </div>
         </div>
     </div>

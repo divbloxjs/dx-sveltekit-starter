@@ -15,6 +15,8 @@ const searchConfig = {
 
 export const loadUserAccountArray = async (constraints = {}) => {
     const selectClause = getPrismaSelectAllFromEntity("userAccount");
+
+    delete selectClause.hashed_password;
     const prismaConditions = getPrismaConditions("userAccount", searchConfig, constraints);
 
     const userAccountArray = await prisma.user_account.findMany({
