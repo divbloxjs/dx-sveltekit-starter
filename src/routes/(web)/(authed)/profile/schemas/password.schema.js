@@ -12,9 +12,9 @@ export const passwordSchema = z
             .regex(/^(?=.*[a-z])/, "Must contain a small letter")
             .regex(/^(?=.*[0-9])/, "Must contain a number")
             .regex(/^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹])/, "Must contain a special character"),
-        confirmPassword: z.string().trim()
+        confirm_password: z.string().trim()
     })
-    .refine((data) => data.password === data.confirmPassword, {
+    .refine((data) => data.password === data.confirm_password, {
         message: "Passwords don't match",
-        path: ["confirmPassword"] // Path of error
+        path: ["confirm_password"] // Path of error
     });

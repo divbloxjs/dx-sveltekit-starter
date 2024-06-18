@@ -60,11 +60,11 @@
                             <Form.FieldErrors class="relative" />
                         </Form.Control>
                     </Form.Field>
-                    <Form.Field {form} name="confirmPassword">
+                    <Form.Field {form} name="confirm_password">
                         <Form.Control let:attrs>
                             <Form.Label>Confirm Password</Form.Label>
                             <Form.FieldErrors />
-                            <Input {...attrs} type="password" bind:value={$formData.confirmPassword} />
+                            <Input {...attrs} type="password" bind:value={$formData.confirm_password} />
                         </Form.Control>
                     </Form.Field>
 
@@ -106,11 +106,11 @@
                         <Form.FieldErrors class="relative" />
                     </Form.Control>
                 </Form.Field>
-                <Form.Field {form} name="confirmPassword">
+                <Form.Field {form} name="confirm_password">
                     <Form.Control let:attrs>
                         <Form.Label>Confirm Password</Form.Label>
                         <Form.FieldErrors />
-                        <Input {...attrs} type="password" bind:value={$formData.confirmPassword} />
+                        <Input {...attrs} type="password" bind:value={$formData.confirm_password} />
                     </Form.Control>
                 </Form.Field>
 
