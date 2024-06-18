@@ -5,11 +5,11 @@ import { goto } from "$app/navigation";
 
 /** @param {import('@sveltejs/kit').RequestEvent} event */
 export const authenticateUser = async ({ route, cookies, request }) => {
-    const sessionId = cookies.get("sessionId");
-    if (!sessionId) return null;
+    const session_id = cookies.get("sessionId");
+    if (!session_id) return null;
 
     const userSession = await prisma.user_session.findFirst({
-        where: { session_id: sessionId },
+        where: { session_id: session_id },
         select: {
             id: true,
             session_id: true,
@@ -44,10 +44,10 @@ export const authenticateUser = async ({ route, cookies, request }) => {
     });
 
     // Match cookie expiry date and max age to new session data
-    cookies.set("sessionId", userSession.sessionId, {
+    cookies.set("sessionId", userSession.session_id, {
         path: "/",
         httpOnly: true,
-        maxAge: 60 * userSession.durationInMinutes,
+        maxAge: 60 * userSession.duration_in_minutes,
         expires: userSession.expires_at
     });
 
@@ -55,17 +55,17 @@ export const authenticateUser = async ({ route, cookies, request }) => {
      * @type {import("../../app").UserInfo}
      */
     let userInfo = {
-        id: userSession.userAccount?.id,
-        first_name: userSession.userAccount?.firstName,
-        last_name: userSession.userAccount?.lastName,
-        email_address: userSession.userAccount?.emailAddress,
+        id: userSession.user_account?.id,
+        first_name: userSession.user_account?.first_name,
+        last_name: userSession.user_account?.last_name,
+        email_address: userSession.user_account?.email_address,
         user_role: null
     };
 
-    if (userSession.userAccount?.userRole) {
-        userInfo.userRole = {
-            id: userSession.userAccount?.userRole?.id,
-            role_name: userSession.userAccount?.userRole?.roleName
+    if (userSession.user_account?.user_role) {
+        userInfo.user_role = {
+            id: userSession.user_account?.user_role?.id,
+            role_name: userSession.user_account?.user_role?.role_name
         };
     }
 
@@ -98,7 +98,7 @@ export class AuthorisationManager {
     }
 
     isAdmin() {
-        if (this.user?.userRole?.roleName !== userRoles.admin.name) {
+        if (this.user?.user_role?.role_name !== userRoles.admin.name) {
             error(403, "Unauthorized");
         }
 
@@ -106,7 +106,7 @@ export class AuthorisationManager {
     }
 
     hasRole(roleName) {
-        if (this.user?.userRole?.roleName !== roleName) error(403, `Missing role: ${roleName}`);
+        if (this.user?.user_role?.role_name !== roleName) error(403, `Missing role: ${roleName}`);
 
         return this;
     }

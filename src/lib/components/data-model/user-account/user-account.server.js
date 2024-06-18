@@ -34,21 +34,24 @@ export const createUserAccount = async (data) => {
 
 export const updateUserAccount = async (data) => {
     const relationships = getRelatedEntities("userAccount");
+    Object.values(relationships).forEach((relationshipNames) => {
+        relationshipNames.forEach((relationshipName) => {
+            const sqlCasedRelationshipName = getSqlCase(relationshipName);
+            if (data.hasOwnProperty(sqlCasedRelationshipName)) {
+                if (!isNumeric(data[sqlCasedRelationshipName])) {
+                    delete data[sqlCasedRelationshipName];
+                    console.error(
+                        `Removed non-numeric relationship '${sqlCasedRelationshipName}' value: ${data[sqlCasedRelationshipName]}`
+                    );
+                }
 
-    Object.values(relationships).forEach((relationshipName) => {
-        const sqlCasedRelationshipName = getSqlCase(relationshipName);
-        if (data.hasOwnProperty(sqlCasedRelationshipName)) {
-            if (!isNumeric(data[sqlCasedRelationshipName])) {
-                delete data[sqlCasedRelationshipName];
-                console.error(`Removed non-numeric relationship '${sqlCasedRelationshipName}' value: ${data[sqlCasedRelationshipName]}`);
+                if (typeof data[sqlCasedRelationshipName] === "string") {
+                    data[sqlCasedRelationshipName] = parseInt(data[sqlCasedRelationshipName]);
+                }
+            } else {
+                data[sqlCasedRelationshipName] = null;
             }
-
-            if (typeof data[sqlCasedRelationshipName] === "string") {
-                data[sqlCasedRelationshipName] = parseInt(data[sqlCasedRelationshipName]);
-            }
-        } else {
-            data[sqlCasedRelationshipName] = null;
-        }
+        });
     });
 
     await prisma.user_account.update({

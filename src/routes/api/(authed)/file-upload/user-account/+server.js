@@ -16,7 +16,7 @@ const GENERATE_SMALLER_IMAGES = true;
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request, url, locals }) {
     // TODO Auth on who you are and what files you can update
-    const linkedEntityId = url.searchParams.get("id") ?? locals.user.id;
+    const linked_entity_id = url.searchParams.get("id") ?? locals.user.id;
 
     let createThumbnailAndWebImages = GENERATE_SMALLER_IMAGES;
     if (url.searchParams.get("createThumbnailAndWebImages")) {
@@ -35,7 +35,7 @@ export async function POST({ request, url, locals }) {
 
     if (replaceExistingFiles) {
         const files = await prisma.file.findMany({
-            where: { linkedEntityId, linkedEntity: "userAccount", category: FILE_CATEGORY.PROFILE_PICTURE }
+            where: { linked_entity_id, linked_entity: "userAccount", category: FILE_CATEGORY.PROFILE_PICTURE }
         });
         await deleteFiles(files);
     }
@@ -53,8 +53,8 @@ export async function POST({ request, url, locals }) {
         const fileController = new FileController();
         const filesToCreate = await fileController.uploadFiles({
             files: filesToUpload,
-            linkedEntityId,
-            linkedEntity: LINKED_ENTITY,
+            linked_entity_id,
+            linked_entity: LINKED_ENTITY,
             category: UPLOAD_TYPE,
             createThumbnailAndWebImages: createThumbnailAndWebImages,
             cloudIsPubliclyAvailable: isPublic
@@ -64,15 +64,17 @@ export async function POST({ request, url, locals }) {
 
         await prisma.file.createMany({ data: filesToCreate });
 
-        const createdFiles = await prisma.file.findMany({ where: { linkedEntity: LINKED_ENTITY, linkedEntityId, category: UPLOAD_TYPE } });
+        const createdFiles = await prisma.file.findMany({
+            where: { linked_entity: LINKED_ENTITY, linked_entity_id, category: UPLOAD_TYPE }
+        });
 
         const filesDataToReturn = [];
         for (let createdFile of createdFiles) {
             const urls = {};
-            for (let sizeType of createdFile.sizesSaved) {
+            for (let sizeType of createdFile.sizes_saved) {
                 urls[sizeType] = await fileController.getUrlForDownload({
                     containerIdentifier: createdFile.cloudContainerIdentifier,
-                    objectIdentifier: `${sizeType}_${createdFile.objectIdentifier}`,
+                    object_identifier: `${sizeType}_${createdFile.object_identifier}`,
                     isPublic: createdFile.cloudIsPubliclyAvailable
                 });
             }
@@ -80,10 +82,10 @@ export async function POST({ request, url, locals }) {
             const file = {
                 id: createdFile.id.toString(),
                 urls,
-                objectIdentifier: createdFile.objectIdentifier,
-                sizesSaved: createdFile.sizesSaved,
-                linkedEntity: createdFile.linkedEntity,
-                linkedEntityId: createdFile.linkedEntityId?.toString(),
+                object_identifier: createdFile.object_identifier,
+                sizes_saved: createdFile.sizes_saved,
+                linked_entity: createdFile.linked_entity,
+                linked_entity_id: createdFile.linked_entity_id?.toString(),
                 mimeType: createdFile.mimeType,
                 originalSizeInBytes: createdFile.originalSizeInBytes,
                 uploadedFileExtension: getFileExtension(createdFile.displayName),
@@ -106,8 +108,8 @@ export async function POST({ request, url, locals }) {
 /** @type {import('./$types').RequestHandler} */
 export async function PUT({ request, url, locals }) {
     // TODO Auth on who you are and what files you can update
-    const linkedEntityId = url.searchParams.get("id") ?? locals.user.id;
-    const linkedEntity = "userAccount";
+    const linked_entity_id = url.searchParams.get("id") ?? locals.user.id;
+    const linked_entity = "userAccount";
 
     prisma.file.update({ where: { id: fileId } });
 
@@ -124,20 +126,20 @@ export async function GET({ request, url, locals }) {
     locals.auth.isAuthenticated();
 
     try {
-        const linkedEntityId = url.searchParams.get("id") ?? locals?.user?.id;
+        const linked_entity_id = url.searchParams.get("id") ?? locals?.user?.id;
 
         const category = url.searchParams.get("category") ?? "";
-        const files = await prisma.file.findMany({ where: { linkedEntity: LINKED_ENTITY, linkedEntityId, category } });
+        const files = await prisma.file.findMany({ where: { linked_entity: LINKED_ENTITY, linked_entity_id, category } });
 
         const fileController = new FileController();
         const filesToReturn = [];
         for (let i = 0; i < files.length; i++) {
             const urls = {};
 
-            for (let sizeType of files[i].sizesSaved) {
+            for (let sizeType of files[i].sizes_saved) {
                 urls[sizeType] = await fileController.getUrlForDownload({
                     containerIdentifier: files[i].cloudContainerIdentifier,
-                    objectIdentifier: `${sizeType}_${files[i].objectIdentifier}`,
+                    object_identifier: `${sizeType}_${files[i].object_identifier}`,
                     cloudIsPubliclyAvailable: files[i].cloudIsPubliclyAvailable
                 });
             }
@@ -145,10 +147,10 @@ export async function GET({ request, url, locals }) {
             filesToReturn.push({
                 id: files[i].id.toString(),
                 urls,
-                objectIdentifier: files[i].objectIdentifier,
-                sizesSaved: files[i].sizesSaved,
-                linkedEntity: files[i].linkedEntity,
-                linkedEntityId: files[i].linkedEntityId?.toString(),
+                object_identifier: files[i].object_identifier,
+                sizes_saved: files[i].sizes_saved,
+                linked_entity: files[i].linked_entity,
+                linked_entity_id: files[i].linked_entity_id?.toString(),
                 mimeType: files[i].mimeType,
                 originalSizeInBytes: files[i].originalSizeInBytes,
                 uploadedFileExtension: getFileExtension(files[i].displayName),
@@ -173,15 +175,15 @@ export async function DELETE({ request }) {
         const file = await prisma.file.findFirst({ where: { id: body.id } });
         const fileController = new FileController();
 
-        for (let sizeType of file?.sizesSaved ?? []) {
-            let finalObjectIdentifier = `${sizeType}_${file.objectIdentifier}`;
+        for (let sizeType of file?.sizes_saved ?? []) {
+            let finalObjectIdentifier = `${sizeType}_${file.object_identifier}`;
             let containerIdentifier = env.AWS_PRIVATE_BUCKET_NAME;
             if (file?.cloudIsPubliclyAvailable) {
                 finalObjectIdentifier = `public/${finalObjectIdentifier}`;
                 containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
             }
 
-            await fileController.deleteFile({ objectIdentifier: finalObjectIdentifier, containerIdentifier });
+            await fileController.deleteFile({ object_identifier: finalObjectIdentifier, containerIdentifier });
         }
 
         await prisma.file.delete({ where: { id: body.id } });
@@ -197,15 +199,15 @@ const deleteFiles = async (files) => {
         for (const file of files) {
             const fileController = new FileController();
 
-            for (let sizeType of file?.sizesSaved ?? []) {
-                let finalObjectIdentifier = `${sizeType}_${file.objectIdentifier}`;
+            for (let sizeType of file?.sizes_saved ?? []) {
+                let finalObjectIdentifier = `${sizeType}_${file.object_identifier}`;
                 let containerIdentifier = env.AWS_PRIVATE_BUCKET_NAME;
                 if (file?.cloudIsPubliclyAvailable) {
                     finalObjectIdentifier = `public/${finalObjectIdentifier}`;
                     containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
                 }
 
-                await fileController.deleteFile({ objectIdentifier: finalObjectIdentifier, containerIdentifier });
+                await fileController.deleteFile({ object_identifier: finalObjectIdentifier, containerIdentifier });
             }
         }
     } catch (err) {

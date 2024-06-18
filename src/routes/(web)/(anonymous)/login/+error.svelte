@@ -3,4 +3,3 @@
 </script>
 
 <h1>{$page.error.message}</h1>
-and other stuff too

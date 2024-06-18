@@ -12,7 +12,7 @@ export const confirmPasswordResetSchema = z
             .regex(/^(?=.*[0-9])/, "Must contain a number")
             .regex(/^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹])/, "Must contain a special character"),
         confirm_password: z.string().trim(),
-        tokenValue: z.string().length(32)
+        token_value: z.string().length(32)
     })
     .refine((data) => data.password === data.confirm_password, {
         message: "Passwords don't match",

@@ -5,7 +5,7 @@ export const seedUserRoles = async () => {
     const userRoles = await prisma.user_role.findMany();
 
     const defaultUserRoles = [{ role_name: "Admin" }, { role_name: "User" }].filter(
-        (defaultUserRole) => !userRoles.map((userRole) => userRole.roleName).includes(defaultUserRole.roleName)
+        (defaultUserRole) => !userRoles.map((userRole) => userRole.role_name).includes(defaultUserRole.role_name)
     );
 
     const result = await prisma.user_role.createMany({ data: defaultUserRoles });
@@ -25,15 +25,15 @@ export const seedUsers = async () => {
             first_name: "Admin",
             email_address: "admin@example.com",
             username: "admin@example.com",
-            hashedPassword: await argon2.hash("password"),
-            userRoleId: actualUserRoles.filter((role) => role.roleName === "Admin")[0].id
+            hashed_password: await argon2.hash("password"),
+            user_role_id: actualUserRoles.filter((role) => role.role_name === "Admin")[0].id
         },
         {
             first_name: "User",
             email_address: "user@example.com",
             username: "user@example.com",
-            hashedPassword: await argon2.hash("password"),
-            userRoleId: actualUserRoles.filter((role) => role.roleName === "User")[0].id
+            hashed_password: await argon2.hash("password"),
+            user_role_id: actualUserRoles.filter((role) => role.role_name === "User")[0].id
         }
     ].filter((defaultUserAccount) => !userAccounts.map((userAccount) => userAccount.username).includes(defaultUserAccount.username));
 

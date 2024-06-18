@@ -27,13 +27,13 @@ export const actions = {
 
         if (!form.valid) return fail(400, { form });
 
-        const existingUser = await prisma.user_account.findFirst({ where: { username: form.data.emailAddress } });
-        if (existingUser) return setError(form, "emailAddress", "E-mail already exists");
+        const existingUser = await prisma.user_account.findFirst({ where: { username: form.data.email_address } });
+        if (existingUser) return setError(form, "email_address", "E-mail already exists");
 
         const userData = {
-            email_address: form.data.emailAddress,
-            username: form.data.emailAddress,
-            hashedPassword: await argon2.hash(form.data.password)
+            email_address: form.data.email_address,
+            username: form.data.email_address,
+            hashed_password: await argon2.hash(form.data.password)
         };
 
         const newUser = await prisma.user_account.create({ data: userData });
@@ -41,18 +41,18 @@ export const actions = {
         const newSession = await prisma.user_session.create({
             data: {
                 duration_in_minutes: parseInt(env.SESSION_LENGTH_IN_MINS ?? 20),
-                expiry_date_time: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
+                expires_at: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
                 session_data: {},
                 session_id: getGuid(),
-                userAgent: request.headers.get("user-agent"),
-                userAccountId: newUser.id
+                user_agent: request.headers.get("user-agent"),
+                user_account_id: newUser.id
             }
         });
 
-        cookies.set("sessionId", newSession.sessionId, {
+        cookies.set("sessionId", newSession.session_id, {
             path: "/",
             httpOnly: true,
-            maxAge: 60 * newSession.durationInMinutes, // In seconds
+            maxAge: 60 * newSession.duration_in_minutes, // In seconds
             expires: newSession.expires_at
         });
 

@@ -16,11 +16,11 @@ export const load = async ({ cookies }) => {
         loginForm: await superValidate(zod(loginSchema))
     };
 
-    const sessionId = cookies.get("sessionId");
-    if (!sessionId) return returnData;
+    const session_id = cookies.get("sessionId");
+    if (!session_id) return returnData;
 
     const userSession = await prisma.user_session.findFirst({
-        where: { sessionId, expiry_date_time: { lte: new Date() } },
+        where: { session_id, expires_at: { lte: new Date() } },
         select: { id: true, user_account: true }
     });
 
@@ -38,12 +38,12 @@ export const actions = {
 
         if (!form.valid) return fail(400, { form });
 
-        const existingUser = await prisma.user_account.findFirst({ where: { username: form.data.emailAddress } });
+        const existingUser = await prisma.user_account.findFirst({ where: { username: form.data.email_address } });
         if (!existingUser) return message(form, "Invalid credentials. Please try again");
 
         let isVerified = false;
         try {
-            if (await argon2.verify(existingUser.hashedPassword, form.data.password)) {
+            if (await argon2.verify(existingUser.hashed_password, form.data.password)) {
                 isVerified = true;
             }
         } catch (err) {
@@ -55,18 +55,18 @@ export const actions = {
         const newSession = await prisma.user_session.create({
             data: {
                 duration_in_minutes: parseInt(env.SESSION_LENGTH_IN_MINS ?? 20),
-                expiry_date_time: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
+                expires_at: addMinutes(new Date(), parseInt(env.SESSION_LENGTH_IN_MINS ?? 20)),
                 session_data: {},
                 session_id: getGuid(),
-                userAgent: request.headers.get("user-agent"),
-                userAccountId: existingUser.id
+                user_agent: request.headers.get("user-agent"),
+                user_account_id: existingUser.id
             }
         });
 
-        cookies.set("sessionId", newSession.sessionId, {
+        cookies.set("sessionId", newSession.session_id, {
             path: "/",
             httpOnly: true,
-            maxAge: 60 * newSession.durationInMinutes,
+            maxAge: 60 * newSession.duration_in_minutes,
             expires: newSession.expires_at
         });
 

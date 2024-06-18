@@ -83,6 +83,34 @@ export const handleFormActionToast = (result) => {
 };
 
 /**
+ * Helper function that deals with showing toasts based on the form action's response
+ * @returns {boolean}
+ */
+export const handleSuperFormUpdatedToast = (form) => {
+    const message = form?.message;
+    if (!form.valid) {
+        toast.error(form?.message ?? "Something went wrong. Please try again");
+        return false;
+    }
+
+    // If no message, no toast shown
+    if (!message) return true;
+
+    const type = form.valid ? "success" : "error";
+
+    switch (type) {
+        case "error":
+            toast.error(message);
+            break;
+        case "success":
+            toast.success(message);
+            break;
+    }
+
+    return true;
+};
+
+/**
  * @param {{form: import("sveltekit-superforms").SuperValidated<any, any, any>}} event
  */
 export const superFormOnUpdated = ({ form }) => {

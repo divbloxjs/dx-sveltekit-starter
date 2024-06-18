@@ -12,24 +12,24 @@ webPush.setVapidDetails(`mailto:${publicEnv.PUBLIC_WEB_PUSH_CONTACT_EMAIL_ADDRES
  * @returns {Promise<boolean>} False if anything went wrong
  */
 export const deliverPushNotificationToUniqueSubscription = async ({
-    uniqueIdentifier = "",
+    unique_identifier = "",
     notificationContent = { title: "Push Notification", body: "More info...", data: {} },
     mustSetAsUnseen = false
 }) => {
-    const pushSubscription = await prisma.push_subscription.findFirst({ where: { uniqueIdentifier } });
+    const pushSubscription = await prisma.push_subscription.findFirst({ where: { unique_identifier } });
 
     if (!pushSubscription) return false;
 
     if (mustSetAsUnseen) {
-        await prisma.push_subscription.update({ where: { uniqueIdentifier }, data: { hasUnseenNotification: true } });
+        await prisma.push_subscription.update({ where: { unique_identifier }, data: { has_unseen_notification: true } });
     }
 
     try {
-        await webPush.sendNotification(pushSubscription.pushSubscriptionDetails, JSON.stringify({ notification: notificationContent }));
+        await webPush.sendNotification(pushSubscription.push_subscription_details, JSON.stringify({ notification: notificationContent }));
     } catch (error) {
         console.error("error", error);
         if (error?.statusCode === 410) {
-            await prisma.push_subscription.delete({ where: { uniqueIdentifier } });
+            await prisma.push_subscription.delete({ where: { unique_identifier } });
             // return true;
         }
 
@@ -41,24 +41,27 @@ export const deliverPushNotificationToUniqueSubscription = async ({
 
 /**
  *
- * @param {{userAccountId: number, notificationContent: {title:string, body: string, data:Object}, mustSetAsUnseen:boolean}} param0
+ * @param {{user_account_id: number, notificationContent: {title:string, body: string, data:Object}, mustSetAsUnseen:boolean}} param0
  * @returns
  */
 export const deliverPushNotificationToAllSubscriptionsForUserAccount = async ({
-    userAccountId,
+    user_account_id,
     notificationContent = { title: "Push Notification", body: "More info...", data: {} },
     mustSetAsUnseen = false
 }) => {
-    const pushSubscriptions = await prisma.push_subscription.findMany({ where: { userAccountId, isActive: true } });
+    const pushSubscriptions = await prisma.push_subscription.findMany({ where: { user_account_id, is_active: true } });
 
     if (mustSetAsUnseen) {
-        await prisma.push_subscription.updateMany({ where: { userAccountId }, data: { hasUnseenNotification: true } });
+        await prisma.push_subscription.updateMany({ where: { user_account_id }, data: { has_unseen_notification: true } });
     }
 
     const errors = [];
     for (const pushSubscription of pushSubscriptions) {
         try {
-            await webPush.sendNotification(pushSubscription.pushSubscriptionDetails, JSON.stringify({ notification: notificationContent }));
+            await webPush.sendNotification(
+                pushSubscription.push_subscription_details,
+                JSON.stringify({ notification: notificationContent })
+            );
         } catch (error) {
             console.error("error", error);
             if (error?.statusCode === 410) {
