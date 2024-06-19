@@ -13,6 +13,8 @@
      */
     let logoutForm;
 
+    export let pageTitle = "";
+
     const doLogout = () => {
         logoutForm.submit();
     };
@@ -21,9 +23,12 @@
 <form bind:this={logoutForm} action="/api/logout" method="POST"></form>
 
 <div
-    class="bg-background-200 fixed top-0 z-50 flex h-[calc(env(safe-area-inset-top)+3rem)] w-full items-end justify-between px-2 pb-1 pt-[env(safe-area-inset-top)] shadow-sm">
+    class="fixed top-0 z-50 flex h-[calc(env(safe-area-inset-top)+3rem)] w-full items-end justify-between bg-background-200 px-2 pb-1 pt-[env(safe-area-inset-top)] shadow-sm">
     <div class="flex items-center justify-start">
         <a href="/dashboard"><AppIcon class="max-h-10" /></a>
+        {#if pageTitle.length > 0}
+            <div class="mx-2 font-bold">{pageTitle}</div>
+        {/if}
     </div>
     <div class="hidden items-center justify-end sm:visible sm:flex">
         <Button

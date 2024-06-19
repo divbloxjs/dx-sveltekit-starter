@@ -15,16 +15,19 @@
     $: data.user, (() => currentUser.set(data.user))();
 
     setContext("currentUser", currentUser);
+
+    const pageTitle = writable("");
+    setContext("pageTitle", pageTitle);
 </script>
 
 {#if $currentUser?.user_role?.role_name === "Admin"}
-    <TopNavAdmin />
+    <TopNavAdmin pageTitle={$pageTitle} />
 {:else}
     <TopNavUser />
 {/if}
 
 <div
-    class="mb-[calc(env(safe-area-inset-bottom)+3.5rem)] mt-[calc(env(safe-area-inset-top)+3rem)] flex h-full w-full flex-col overflow-auto">
+    class="mb-[calc(env(safe-area-inset-bottom)+3.5rem)] mt-[calc(env(safe-area-inset-top)+3rem)] flex h-full w-full flex-col overflow-auto px-5">
     <slot />
 </div>
 <BottomNavUser />

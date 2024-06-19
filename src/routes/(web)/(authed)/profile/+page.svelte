@@ -9,6 +9,9 @@
     import * as Card from "$lib/components/shadcn/ui/card/index.js";
     import { FILE_CATEGORY } from "$lib/constants/constants";
 
+    const pageTitle = getContext("pageTitle");
+    $pageTitle = "Profile";
+
     export let data;
 
     /**
