@@ -1,6 +1,10 @@
 <script>
     import DataListUserAccount from "$lib/components/data-model/user-account/user-account-data-list.svelte";
     import DataTableUserAccount from "$lib/components/data-model/user-account/user-account-data-table.svelte";
+    import { getContext } from "svelte";
+
+    const pageTitle = getContext("pageTitle");
+    $pageTitle = "Manage Users";
 
     export let data;
     export let form;

@@ -69,6 +69,11 @@ export const actions = {
 
         if (!form.valid) return fail(400, { form });
 
+        if (form.data.password) {
+            form.data.hashed_password = await argon2.hash(form.data.password);
+            delete form.data.password;
+        }
+
         try {
             await updateUserAccount(form.data);
         } catch (error) {

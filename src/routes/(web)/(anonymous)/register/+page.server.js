@@ -37,6 +37,11 @@ export const actions = {
             hashed_password: await argon2.hash(form.data.password)
         };
 
+        const defaultRole = await prisma.user_role.findFirst({ where: { role_name: "User" } });
+        if (defaultRole) {
+            userData.user_role_id = defaultRole.id;
+        }
+
         const newUser = await prisma.user_account.create({ data: userData });
 
         const newSession = await prisma.user_session.create({
