@@ -5,8 +5,8 @@ export const taskCreateSchema = z.object({
 	due_date: z.string().trim().min(1, 'Required'),
 	task_name: z.string().trim().min(1, 'Required'),
 	description: z.string().trim().min(1, 'Required'),
-	category_id: z.string().trim(),
-	user_account_id: z.string().trim(),
+	task_category: z.string().trim().nullable(),
+	task_user: z.string().trim().nullable(),
 });
 
 export const taskUpdateSchema = z.object({
@@ -15,6 +15,6 @@ export const taskUpdateSchema = z.object({
 	due_date: z.string().trim().min(1, 'Required'),
 	task_name: z.string().trim().min(1, 'Required'),
 	description: z.string().trim().min(1, 'Required'),
-	category_id: z.string().trim(),
-	user_account_id: z.string().trim(),
+	task_category: z.string().trim().nullable(),
+	task_user: z.string().trim().nullable(),
 });

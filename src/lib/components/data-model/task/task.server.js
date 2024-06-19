@@ -135,8 +135,8 @@ export const loadTask = async (id = -1, relationshipOptions = true) => {
 export const getTaskRelationshipData = async () => {
     const relationshipData = {};
 
-    relationshipData.categoryOptions = await getCategoryOptions();
-relationshipData.userAccountOptions = await getUserAccountOptions();
+    relationshipData.taskCategoryOptions = await getTaskCategoryOptions();
+relationshipData.taskUserOptions = await getTaskUserOptions();
 ;
 
     return relationshipData;
@@ -152,29 +152,29 @@ export const getTaskAssociatedData = async (taskId) => {
 
 //#region RelatedEntity / AssociatedEntity Helpers
 
-const getCategoryOptions = async () => {
-    const categoryArray = await prisma.category.findMany({
+const getTaskCategoryOptions = async () => {
+    const taskCategoryArray = await prisma.category.findMany({
         take: RELATIONSHIP_LOAD_LIMIT,
     });
 
-    const categoryOptions = categoryArray.map((category) => {
-        category.id = category.id.toString();
-        return category;
+    const taskCategoryOptions = taskCategoryArray.map((task_category) => {
+        task_category.id = task_category.id.toString();
+        return task_category;
     });
 
-    return categoryOptions;
+    return taskCategoryOptions;
 };
-const getUserAccountOptions = async () => {
-    const userAccountArray = await prisma.user_account.findMany({
+const getTaskUserOptions = async () => {
+    const taskUserArray = await prisma.user_account.findMany({
         take: RELATIONSHIP_LOAD_LIMIT,
     });
 
-    const userAccountOptions = userAccountArray.map((userAccount) => {
-        userAccount.id = userAccount.id.toString();
-        return userAccount;
+    const taskUserOptions = taskUserArray.map((task_user) => {
+        task_user.id = task_user.id.toString();
+        return task_user;
     });
 
-    return userAccountOptions;
+    return taskUserOptions;
 };
 ;
 ;

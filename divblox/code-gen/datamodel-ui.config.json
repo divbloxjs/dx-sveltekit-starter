@@ -211,7 +211,7 @@
 	},
 	"task": {
 		"status": {
-			"type": "select",
+			"type": "select-enum",
 			"displayName": "Status",
 			"placeholder": "status",
 			"default": ""

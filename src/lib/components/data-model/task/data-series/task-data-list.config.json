@@ -1,7 +1,7 @@
 {
 	"status": {
 		"displayName": "Status",
-		"type": "select",
+		"type": "select-enum",
 		"column": 1
 	},
 	"dueDate": {

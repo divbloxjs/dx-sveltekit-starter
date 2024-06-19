@@ -38,12 +38,7 @@
     name="status"
     label="Status"
     bind:selectedValue={$formData.status}
-    options={data?.statusOptions?.map((option) => {
-        return {
-            label: option.id,
-            value: option.id
-        };
-})} />
+    options={[{"label":"New","value":"New"},{"label":"In Progress","value":"In Progress"},{"label":"Completed","value":"Completed"}]} />
 
 	<FormInput {form} name="due_date" label="Due date" type="date" bind:value={$formData.due_date} />
 
@@ -53,10 +48,10 @@
 
 <FormSelect
     {form}
-    name="category_id"
-    label="Category"
-    bind:selectedValue={$formData.category_id}
-    options={data?.categoryIdOptions?.map((option) => {
+    name="task_category"
+    label="Task category"
+    bind:selectedValue={$formData.task_category}
+    options={data?.taskCategoryOptions?.map((option) => {
         return {
             label: option.id,
             value: option.id
@@ -64,10 +59,10 @@
 })} />
 	<FormSelect
     {form}
-    name="user_account_id"
-    label="User account"
-    bind:selectedValue={$formData.user_account_id}
-    options={data?.userAccountIdOptions?.map((option) => {
+    name="task_user"
+    label="Task user"
+    bind:selectedValue={$formData.task_user}
+    options={data?.taskUserOptions?.map((option) => {
         return {
             label: option.id,
             value: option.id
