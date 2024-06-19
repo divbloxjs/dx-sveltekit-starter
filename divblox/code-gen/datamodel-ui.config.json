@@ -208,5 +208,39 @@
 			"placeholder": "pushSubscriptionDetails",
 			"default": ""
 		}
+	},
+	"task": {
+		"status": {
+			"type": "select",
+			"displayName": "Status",
+			"placeholder": "status",
+			"default": ""
+		},
+		"dueDate": {
+			"type": "date",
+			"displayName": "Due date",
+			"placeholder": "dueDate",
+			"default": ""
+		},
+		"taskName": {
+			"type": "text",
+			"displayName": "Task name",
+			"placeholder": "taskName",
+			"default": ""
+		},
+		"description": {
+			"type": "textarea",
+			"displayName": "Description",
+			"placeholder": "description",
+			"default": ""
+		}
+	},
+	"category": {
+		"categoryName": {
+			"type": "text",
+			"displayName": "Category name",
+			"placeholder": "categoryName",
+			"default": ""
+		}
 	}
 }

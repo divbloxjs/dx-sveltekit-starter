@@ -57,6 +57,7 @@ model user_account {
   last_updated      DateTime            @default(now()) @db.DateTime(0)
   user_role_id      BigInt?
   push_subscription push_subscription[]
+  task              task[]
   user_role         user_role?          @relation(fields: [user_role_id], references: [id], map: "423b4e4321253537640cf95f33c36b61")
   user_session      user_session[]
 
@@ -78,8 +79,37 @@ model user_session {
   duration_in_minutes Int
   last_updated        DateTime      @default(now()) @db.DateTime(0)
   user_account_id     BigInt?
-  expires_at          DateTime      @db.DateTime(0)
+  expires_at          DateTime?     @db.DateTime(0)
   user_account        user_account? @relation(fields: [user_account_id], references: [id], map: "f298f8a9edb939a04c156fac7189a080")
 
   @@index([user_account_id], map: "f298f8a9edb939a04c156fac7189a080")
+}
+
+model category {
+  id            BigInt   @id @default(autoincrement())
+  category_name String   @db.VarChar(100)
+  last_updated  DateTime @default(now()) @db.DateTime(0)
+  task          task[]
+}
+
+model task {
+  id            BigInt        @id @default(autoincrement())
+  status        task_status   @default(New)
+  due_date      DateTime      @db.Date
+  task_name     String        @db.VarChar(250)
+  description   String        @db.Text
+  last_updated  DateTime      @default(now()) @db.DateTime(0)
+  task_category BigInt?
+  task_user     BigInt?
+  user_account  user_account? @relation(fields: [task_user], references: [id], map: "785ff9ec6c2b64dc1075a305510093b1")
+  category      category?     @relation(fields: [task_category], references: [id], map: "9ff056361fdfe76adfb6c873e332884e")
+
+  @@index([task_user], map: "785ff9ec6c2b64dc1075a305510093b1")
+  @@index([task_category], map: "9ff056361fdfe76adfb6c873e332884e")
+}
+
+enum task_status {
+  New
+  In_Progress @map("In Progress")
+  Completed
 }

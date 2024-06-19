@@ -7,30 +7,30 @@ import { getPrismaSelectAllFromEntity, getPrismaConditions, getSqlCase } from "$
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
 const searchConfig = {
-    attributes: ["__allAttributesString__"],
+    attributes: ["status", "dueDate", "taskName", "description"],
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
 };
 
-export const load__entityNamePascalCase__Array = async (constraints = {}) => {
-    const selectClause = getPrismaSelectAllFromEntity("__entityName__");
-    const prismaConditions = getPrismaConditions("__entityName__", searchConfig, constraints);
+export const loadTaskArray = async (constraints = {}) => {
+    const selectClause = getPrismaSelectAllFromEntity("task");
+    const prismaConditions = getPrismaConditions("task", searchConfig, constraints);
 
-    const __entityName__Array = await prisma.__entityNameSqlCase__.findMany({
+    const taskArray = await prisma.task.findMany({
         // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
         ...prismaConditions,
     });
 
-    normalizeDatabaseArray(__entityName__Array);
+    normalizeDatabaseArray(taskArray);
 
-    return { __entityName__Array };
+    return { taskArray };
 };
 
-export const create__entityNamePascalCase__ = async (data) => {
-    const relationships = getRelatedEntities("__entityName__");
-    const attributeNameTypeMap = getEntityAttributeUiTypes("__entityName__");
+export const createTask = async (data) => {
+    const relationships = getRelatedEntities("task");
+    const attributeNameTypeMap = getEntityAttributeUiTypes("task");
 
     for (const [key, val] of Object.entries(data)) {
         if (attributeNameTypeMap[key] === "date" || attributeNameTypeMap[key] === "datetime-local") {
@@ -58,12 +58,12 @@ export const create__entityNamePascalCase__ = async (data) => {
         });
     });
 
-    await prisma.__entityNameSqlCase__.create({ data });
+    await prisma.task.create({ data });
 };
 
-export const update__entityNamePascalCase__ = async (data) => {
-    const relationships = getRelatedEntities("__entityName__");
-    const attributeNameTypeMap = getEntityAttributeUiTypes("__entityName__");
+export const updateTask = async (data) => {
+    const relationships = getRelatedEntities("task");
+    const attributeNameTypeMap = getEntityAttributeUiTypes("task");
 
     for (const [key, val] of Object.entries(data)) {
         if (attributeNameTypeMap[key] === "date" || attributeNameTypeMap[key] === "datetime-local") {
@@ -91,39 +91,39 @@ export const update__entityNamePascalCase__ = async (data) => {
         });
     });
 
-    await prisma.__entityNameSqlCase__.update({
+    await prisma.task.update({
         data,
         where: { id: data.id },
     });
 };
 
-export const delete__entityNamePascalCase__ = async (id = -1) => {
-    await prisma.__entityNameSqlCase__.delete({ where: { id } });
+export const deleteTask = async (id = -1) => {
+    await prisma.task.delete({ where: { id } });
 };
 
-export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions = true) => {
-    const __entityNameSqlCase__ = await prisma.__entityNameSqlCase__.findUnique({
+export const loadTask = async (id = -1, relationshipOptions = true) => {
+    const task = await prisma.task.findUnique({
         where: { id: id },
     });
 
-    __entityNameSqlCase__.id = __entityNameSqlCase__.id.toString();
-    Object.keys(getRelatedEntities("__entityName__")).forEach((relationshipName) => {
-        __entityNameSqlCase__[getSqlCase(`${relationshipName}Id`)] =
-            __entityName__[getSqlCase(`${relationshipName}Id`)]?.toString();
+    task.id = task.id.toString();
+    Object.keys(getRelatedEntities("task")).forEach((relationshipName) => {
+        task[getSqlCase(`${relationshipName}Id`)] =
+            task[getSqlCase(`${relationshipName}Id`)]?.toString();
     });
 
-    let returnObject = { __entityNameSqlCase__ };
+    let returnObject = { task };
     if (!relationshipOptions) return returnObject;
 
-    const relationshipData = await get__entityNamePascalCase__RelationshipData();
+    const relationshipData = await getTaskRelationshipData();
     returnObject = {
         ...returnObject,
         ...relationshipData,
     };
 
-    if (getEntitiesRelatedTo("__entityName__").length === 0) return returnObject;
+    if (getEntitiesRelatedTo("task").length === 0) return returnObject;
 
-    const associatedData = await get__entityNamePascalCase__AssociatedData(__entityName__?.id);
+    const associatedData = await getTaskAssociatedData(task?.id);
     returnObject = {
         ...returnObject,
         ...associatedData,
@@ -132,25 +132,51 @@ export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions 
     return returnObject;
 };
 
-export const get__entityNamePascalCase__RelationshipData = async () => {
+export const getTaskRelationshipData = async () => {
     const relationshipData = {};
 
-    __relationshipsOptionsAssignment__;
+    relationshipData.categoryOptions = await getCategoryOptions();
+relationshipData.userAccountOptions = await getUserAccountOptions();
+;
 
     return relationshipData;
 };
 
-export const get__entityNamePascalCase__AssociatedData = async (__entityName__Id) => {
+export const getTaskAssociatedData = async (taskId) => {
     const associatedData = {};
 
-    __associatedEntitiesAssignment__;
+    ;
 
     return associatedData;
 };
 
 //#region RelatedEntity / AssociatedEntity Helpers
 
-__getRelatedEntityOptionsFunctionDeclarations__;
-__getAssociatedEntityArrayFunctionDeclarations__;
+const getCategoryOptions = async () => {
+    const categoryArray = await prisma.category.findMany({
+        take: RELATIONSHIP_LOAD_LIMIT,
+    });
+
+    const categoryOptions = categoryArray.map((category) => {
+        category.id = category.id.toString();
+        return category;
+    });
+
+    return categoryOptions;
+};
+const getUserAccountOptions = async () => {
+    const userAccountArray = await prisma.user_account.findMany({
+        take: RELATIONSHIP_LOAD_LIMIT,
+    });
+
+    const userAccountOptions = userAccountArray.map((userAccount) => {
+        userAccount.id = userAccount.id.toString();
+        return userAccount;
+    });
+
+    return userAccountOptions;
+};
+;
+;
 
 //#endregion RelatedEntity / AssociatedEntity Helpers

@@ -1,6 +1,10 @@
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
-import { convertLowerCaseToCamelCase, convertLowerCaseToPascalCase, getCamelCaseSplittedToLowerCase } from "dx-utilities";
+import {
+    convertLowerCaseToCamelCase,
+    convertLowerCaseToPascalCase,
+    getCamelCaseSplittedToLowerCase,
+} from "dx-utilities";
 import dxConfig from "../../../../../dx.config";
 
 export const DB_IMPLEMENTATION_TYPES = { SNAKE_CASE: "snakecase", PASCAL_CASE: "pascalcase", CAMEL_CASE: "camelcase" };
@@ -155,7 +159,8 @@ export const buildAttributeMap = (tableConfig = {}, orderedAttributeMap = {}, re
 
     Object.keys(tableConfig).forEach((keyName) => {
         const isNestedRelationship =
-            isValidObject(tableConfig[keyName]) && Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
+            isValidObject(tableConfig[keyName]) &&
+            Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
 
         if (isNestedRelationship) {
             const innerRelationshipStack = JSON.parse(JSON.stringify(relationshipStack));
@@ -169,7 +174,7 @@ export const buildAttributeMap = (tableConfig = {}, orderedAttributeMap = {}, re
             attributeName: getSqlCase(keyName),
             type: tableConfig[keyName]?.type ?? "text",
             stack: [...relationshipStack, getSqlCase(keyName)],
-            displayName: tableConfig[keyName].displayName ?? keyName
+            displayName: tableConfig[keyName].displayName ?? keyName,
         };
     });
 };
@@ -190,7 +195,7 @@ export const flattenRowObject = (nestedRowData = {}, attributeMap = {}) => {
     Object.values(attributeMap).forEach((attributeDef) => {
         row.push({
             value: getDeepValue(nestedRowData, [...attributeDef.stack]),
-            type: attributeDef.type
+            type: attributeDef.type,
         });
     });
 

@@ -47,7 +47,7 @@ export const actions = {
         form.data.username = form.data.email_address;
 
         if (form.data.password) {
-            form.data.hashed_password = argon2.hash(form.data.password);
+            form.data.hashed_password = await argon2.hash(form.data.password);
             delete form.data.password;
         }
         try {

@@ -1,0 +1,56 @@
+{
+	"status": {
+		"displayName": "Status",
+		"type": "select",
+		"column": 1
+	},
+	"dueDate": {
+		"displayName": "Due date",
+		"type": "date",
+		"column": 2
+	},
+	"taskName": {
+		"displayName": "Task name",
+		"type": "text",
+		"column": 3
+	},
+	"description": {
+		"displayName": "Description",
+		"type": "textarea",
+		"column": 4
+	},
+	"category": {
+		"categoryName": {
+			"displayName": "Category name",
+			"type": "text",
+			"column": 5
+		}
+	},
+	"userAccount": {
+		"lastName": {
+			"displayName": "Last name",
+			"type": "text",
+			"column": 6
+		},
+		"username": {
+			"displayName": "Username",
+			"type": "text",
+			"column": 7
+		},
+		"firstName": {
+			"displayName": "First name",
+			"type": "text",
+			"column": 8
+		},
+		"emailAddress": {
+			"displayName": "Email address",
+			"type": "text",
+			"column": 9
+		},
+		"hashedPassword": {
+			"displayName": "Hashed password",
+			"type": "text",
+			"column": 10
+		}
+	}
+}

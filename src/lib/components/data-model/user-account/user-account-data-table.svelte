@@ -154,7 +154,6 @@
                 {/each}
                 {#if allowEdit || allowDelete}
                     <td class="flex items-center justify-center text-center">
-                        {env.PUBLIC_ENABLE_WEB_PUSH}
                         {#if env.PUBLIC_ENABLE_WEB_PUSH.toLowerCase() === "true"}
                             <NotificationTest />
                         {/if}
