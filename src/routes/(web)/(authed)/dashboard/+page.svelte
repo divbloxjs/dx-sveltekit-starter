@@ -13,6 +13,10 @@
     import ExternalLink from "lucide-svelte/icons/external-link";
 
     import DivbloxLogo from "$lib/components/app-images/app-icon.svelte";
+    import { getContext } from "svelte";
+
+    const pageTitle = getContext("pageTitle");
+    $pageTitle = "Dashboard";
 
     export let data;
 </script>

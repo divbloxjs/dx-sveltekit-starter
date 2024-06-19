@@ -19,6 +19,10 @@
 
     import * as Card from "$lib/components/shadcn/ui/card";
     import { env } from "$env/dynamic/public";
+    import { getContext } from "svelte";
+
+    const pageTitle = getContext("pageTitle");
+    $pageTitle = "";
 
     export let data;
 

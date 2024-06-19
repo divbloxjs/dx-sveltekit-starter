@@ -1,5 +1,9 @@
 <script>
     import Uploader from "$lib/components/file-uploader/uploader.svelte";
+    import { getContext } from "svelte";
+
+    const pageTitle = getContext("pageTitle");
+    $pageTitle = "";
 </script>
 
 <div class="flex h-full w-full items-center justify-center">
