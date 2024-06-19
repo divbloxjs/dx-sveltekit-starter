@@ -13,6 +13,6 @@ export const userAccountUpdateSchema = z.object({
     first_name: z.string().trim().min(1, "Required"),
     last_name: z.string().trim().min(1, "Required"),
     email_address: z.string().trim().min(1, "Required"),
-    password: z.string().trim(),
+    password: z.string().trim().optional(),
     user_role_id: z.string().trim()
 });

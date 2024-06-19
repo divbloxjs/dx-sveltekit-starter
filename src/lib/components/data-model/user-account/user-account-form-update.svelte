@@ -41,7 +41,7 @@
         <FormInput {form} name="first_name" label="First name" type="text" bind:value={$formData.first_name} />
         <FormInput {form} name="last_name" label="Last name" type="text" bind:value={$formData.last_name} />
         <FormInput {form} name="email_address" label="Email address" type="text" bind:value={$formData.email_address} />
-        <FormInput {form} name="password" label="Password" type="text" bind:value={$formData.password} />
+        <FormInput {form} name="password" label="Password" type="password" bind:value={$formData.password} />
 
         <FormSelect
             {form}
