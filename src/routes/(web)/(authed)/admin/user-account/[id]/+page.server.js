@@ -47,7 +47,7 @@ export const actions = {
         form.data.username = form.data.email_address;
 
         if (form.data.password) {
-            form.data.hashed_password = argon2.hash(form.data.password);
+            form.data.hashed_password = await argon2.hash(form.data.password);
             delete form.data.password;
         }
         try {
@@ -68,6 +68,11 @@ export const actions = {
         const form = await superValidate(event, zod(userAccountUpdateSchema));
 
         if (!form.valid) return fail(400, { form });
+
+        if (form.data.password) {
+            form.data.hashed_password = await argon2.hash(form.data.password);
+            delete form.data.password;
+        }
 
         try {
             await updateUserAccount(form.data);
