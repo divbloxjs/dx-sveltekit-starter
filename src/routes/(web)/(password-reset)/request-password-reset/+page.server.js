@@ -22,7 +22,7 @@ export const actions = {
         if (!form.valid) return fail(400, { form });
 
         try {
-            const userAccount = await prisma.user_account.findUnique({ where: { username: form.data.emailAddress } });
+            const userAccount = await prisma.user_account.findUnique({ where: { username: form.data.email_address } });
             if (!userAccount) return message(form, "No user account found");
 
             // DX-NOTE: Clean up of ANY expired tokens in system
@@ -47,7 +47,7 @@ export const actions = {
             await sendPasswordResetEmail(userAccount, token_value);
         } catch (error) {
             console.error(error);
-            return message(form, "Something went wrong. Please try again");
+            return message(form, "Something went wrong. Please try again", { status: 400 });
         }
     }
 };

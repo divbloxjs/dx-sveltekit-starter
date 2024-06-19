@@ -45,11 +45,11 @@
         <Card.Content class="flex w-80 flex-col">
             {#if !$page.url.searchParams.get("submitted")}
                 <form method="POST" action={`?/requestPasswordReset`} use:enhance class="flex flex-grow flex-col">
-                    <Form.Field {form} name="emailAddress">
+                    <Form.Field {form} name="email_address">
                         <Form.Control let:attrs>
                             <Form.Label>Email Address</Form.Label>
 
-                            <Input {...attrs} type="email" bind:value={$formData.emailAddress} />
+                            <Input {...attrs} type="email" bind:value={$formData.email_address} />
                             <Form.FieldErrors class="relative" />
                         </Form.Control>
                     </Form.Field>
