@@ -23,7 +23,7 @@
 {#if $currentUser?.user_role?.role_name === "Admin"}
     <TopNavAdmin pageTitle={$pageTitle} />
 {:else}
-    <TopNavUser />
+    <TopNavUser pageTitle={$pageTitle} />
 {/if}
 
 <div
