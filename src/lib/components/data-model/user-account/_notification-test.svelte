@@ -10,6 +10,8 @@
     import Dialog from "$components/shadcn/ui/dialog/_dialog.svelte";
     import Textarea from "$components/shadcn/ui/textarea/textarea.svelte";
 
+    export let data;
+
     let testNotificationDialogOpen = false;
     let submittingTest = false;
     /**
@@ -59,6 +61,6 @@
             <Textarea name="body" placeholder="More details..." class="col-span-3" />
         </div>
 
-        <Button type="submit" class="w-fit self-end">Send notification</Button>
+        <Button type="submit" class="w-fit self-end" loading={submittingTest} disabled={submittingTest}>Send notification</Button>
     </form>
 </Dialog>

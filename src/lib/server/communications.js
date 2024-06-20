@@ -11,15 +11,15 @@ const transporter = createTransport({
 });
 
 export const sendPasswordResetEmail = async (userAccount, oneTimeTokenValue) => {
-    let formatted = `Hi ${userAccount.firstName}! <br><br>
+    let formatted = `Hi ${userAccount.first_name}! <br><br>
     A request to reset your password has been received.<br>
     If this was not you, you can safely ignore this email.<br><br><br>
     
-    <a href="http://localhost:5173/confirm-password-reset?token=${oneTimeTokenValue}">Reset Password</a>`;
+    <a href="${env.PUBLIC_BASE_URL}/confirm-password-reset?token=${oneTimeTokenValue}">Reset Password</a>`;
 
     const mailOptions = {
         from: env.SMTP_EMAIL_ADDRESS,
-        to: userAccount.emailAddress,
+        to: userAccount.email_address,
         subject: `Password Reset Requested`,
         html: formatted
     };

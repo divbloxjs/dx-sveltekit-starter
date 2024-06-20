@@ -17,15 +17,15 @@ export const POST = async ({ request, locals }) => {
         return error(400, { message: "Invalid push subscription details provided" });
     }
 
-    const uniqueIdentifier = await createPushSubscriptionUniqueIdentifier(pushSubscriptionDetails);
-    if (!uniqueIdentifier) return json({});
+    const unique_identifier = await createPushSubscriptionUniqueIdentifier(pushSubscriptionDetails);
+    if (!unique_identifier) return json({});
 
-    const existingPushSubscription = await prisma.push_subscription.findFirst({ where: { uniqueIdentifier: uniqueIdentifier } });
+    const existingPushSubscription = await prisma.push_subscription.findFirst({ where: { unique_identifier: unique_identifier } });
 
     if (existingPushSubscription) return json({});
 
     const result = await prisma.push_subscription.create({
-        data: { uniqueIdentifier, pushSubscriptionDetails, userAccountId: locals?.user?.id }
+        data: { unique_identifier, push_subscription_details: pushSubscriptionDetails, user_account_id: locals?.user?.id }
     });
 
     return json({});
