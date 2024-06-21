@@ -24,6 +24,8 @@ export const load = async ({ cookies, locals }) => {
     const userSession = await prisma.user_session.findFirst({
         where: { session_id, expires_at: { lte: new Date() } },
         select: { id: true, user_account: true }
+
+
     });
 
     if (!userSession) return { ...returnData, message: "No session ID set" };
