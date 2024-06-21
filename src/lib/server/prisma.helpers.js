@@ -1,6 +1,7 @@
 import dataModel from "datamodel";
 import { isEmptyObject, getCamelCaseSplittedToLowerCase, convertLowerCaseToPascalCase, convertLowerCaseToCamelCase } from "dx-utilities";
 import dxConfig from "../../../dx.config";
+import { getEntityAttributes } from "$components/data-model/_helpers/helpers.server";
 
 export const getPrismaSelectAllFromEntity = (entityName, select = {}) => {
     if (isEmptyObject(select)) select.id = true;
@@ -44,15 +45,72 @@ export const getPrismaConditions = (entityName = "", searchConfig = {}, constrai
     if (constraints.search) {
         if (!prismaConditions.where) prismaConditions.where = {};
 
+        const attributes = getEntityAttributes(entityName);
         searchConfig.attributes.forEach((attributeName) => {
+            let searchValue = constraints.search;
+            if (!Object.keys(attributes).includes(attributeName)) {
+                console.error("Invalid search attribute provided: ", attributeName);
+                return;
+            }
+
             if (!prismaConditions.where.OR) prismaConditions.where.OR = [];
-            prismaConditions.where.OR.push({ [getSqlCase(attributeName)]: { contains: constraints.search } });
+
+            if (attributes[attributeName].type.toLowerCase() === "date" || attributes[attributeName].type.toLowerCase() === "datetime") {
+                console.error("Date/Datetime attributes are forcefully removed from search condition: ", attributeName);
+                return;
+            }
+
+            if (attributes[attributeName].type.toLowerCase() === "json") {
+                console.error("JSON attributes are forcefully removed from search condition: ", attributeName);
+                return;
+            }
+
+            let comparisonOperation = "contains"; // For string attributes
+            if (
+                attributes[attributeName].type.toLowerCase().includes("int") ||
+                attributes[attributeName].type.toLowerCase() === "double" ||
+                attributes[attributeName].type.toLowerCase() === "float"
+            ) {
+                // For numeric attributes
+                comparisonOperation = "equals";
+                searchValue = Number(constraints.search);
+            }
+
+            prismaConditions.where.OR.push({ [getSqlCase(attributeName)]: { [comparisonOperation]: searchValue } });
         });
 
         Object.keys(searchConfig.relationships ?? []).forEach((entityName) => {
+            const attributes = getEntityAttributes(entityName);
+
             if (!prismaConditions.where.OR) prismaConditions.where.OR = [];
+
             const relationshipConstraint = { [getSqlCase(entityName)]: {} };
+
             searchConfig.relationships[entityName].attributes.forEach((attributeName) => {
+                if (
+                    attributes[attributeName].type.toLowerCase() === "date" ||
+                    attributes[attributeName].type.toLowerCase() === "datetime"
+                ) {
+                    console.error("Date/Datetime attributes are forcefully removed from search condition: ", attributeName);
+                    return;
+                }
+
+                if (attributes[attributeName].type.toLowerCase() === "json") {
+                    console.error("JSON attributes are forcefully removed from search condition: ", attributeName);
+                    return;
+                }
+
+                let comparisonOperation = "contains"; // For string attributes
+                if (
+                    attributes[attributeName].type.toLowerCase().includes("int") ||
+                    attributes[attributeName].type.toLowerCase() === "double" ||
+                    attributes[attributeName].type.toLowerCase() === "float"
+                ) {
+                    // For numeric attributes
+                    comparisonOperation = "equals";
+                    searchValue = Number(constraints.search);
+                }
+
                 relationshipConstraint[getSqlCase(entityName)][getSqlCase(attributeName)] = { contains: constraints.search };
             });
 

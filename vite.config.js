@@ -6,7 +6,7 @@ export default defineConfig({
     server: {
         port: 5174,
         fs: {
-            allow: ["uploads", "dx.config.js"]
+            allow: ["uploads", "dx.config.js", "divblox/code-gen/datamodel-ui.config.json"]
         }
     }
 });

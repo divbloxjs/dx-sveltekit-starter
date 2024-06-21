@@ -25,14 +25,17 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
     const prismaConditions = getPrismaConditions("__entityName__", searchConfig, constraints);
 
     const __entityName__Array = await prisma.__entityNameSqlCase__.findMany({
-        // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
         ...prismaConditions,
     });
 
     normalizeDatabaseArray(__entityName__Array);
 
-    return { __entityName__Array };
+    const totalCountConstraints = { ...constraints.search, ...constraints.filter };
+    const totalCountPrismaConditions = getPrismaConditions("__entityName__", searchConfig, totalCountConstraints);
+    const __entityName__TotalCount = await prisma.__entityNameSqlCase__.count({ ...totalCountPrismaConditions });
+
+    return { __entityName__Array, __entityName__TotalCount };
 };
 
 export const create__entityNamePascalCase__ = async (data) => {

@@ -58,4 +58,3 @@
         <Button variant="link" size="sm" class="self-center" on:click={handleLoadMore}>Load More</Button>
     {/if}
 </div>
-

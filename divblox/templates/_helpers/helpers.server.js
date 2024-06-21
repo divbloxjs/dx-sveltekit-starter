@@ -4,26 +4,6 @@ import dataModelUiConfig from "datamodel-ui";
 import { parse } from "qs";
 import { getSqlCase } from "$lib/server/prisma.helpers";
 
-export const getRequestBody = async (data, entityName) => {
-    const { request, params } = data;
-
-    const requestData = Object.fromEntries(await request.formData());
-
-    for (const [relatedEntityName, relationshipNames] of Object.entries(getRelatedEntities(entityName))) {
-        requestData[`${relatedEntityName}Id`] =
-            requestData[`${relatedEntityName}Id`] === "undefined"
-                ? null
-                : parseInt(requestData[`${relatedEntityName}Id`]);
-    }
-
-    // Comment info
-    if (!(!params?.id || params?.id?.toLowerCase() === "new")) {
-        requestData.id = params?.id;
-    }
-
-    return requestData;
-};
-
 export const normalizeDatabaseArray = (array = [], removeLastUpdated = true, makeIdInteger = true) => {
     if (!Array.isArray(array)) throw new Error(`${array} is not a valid array`);
 
@@ -38,8 +18,8 @@ export const normalizeDatabaseObject = (object = {}, removeLastUpdated = true, m
 
     Object.keys(object).forEach((keyName) => {
         if (isValidObject(object[keyName])) {
-            if (object[`${keyName}Id`]) {
-                object[`${keyName}Id`] = parseInt(object[`${keyName}Id`]);
+            if (isNumeric(object[keyName])) {
+                object[keyName] = parseFloat(object[keyName]);
             }
 
             normalizeDatabaseObject(object[keyName]);
@@ -56,6 +36,11 @@ export const normalizeDatabaseObject = (object = {}, removeLastUpdated = true, m
 };
 
 export const getRelatedEntities = (entityName) => {
+    const relationships = dataModel?.[entityName]?.relationships;
+    return relationships;
+};
+
+export const getRelationships = (entityName) => {
     const relationships = dataModel?.[entityName]?.relationships;
     return relationships;
 };
@@ -79,6 +64,14 @@ export const getEntitiesRelatedTo = (entityName) => {
     });
 
     return entityNames;
+};
+
+export const getEntityAttributes = (entityName) => {
+    return dataModel[entityName].attributes;
+};
+
+export const getEntityRelationships = (entityName) => {
+    return dataModel[entityName].relationships;
 };
 
 export const getIntId = (id) => {
