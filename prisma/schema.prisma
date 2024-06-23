@@ -87,8 +87,8 @@ model user_session {
 
 model category {
   id            BigInt   @id @default(autoincrement())
-  category_name String   @db.VarChar(100)
   last_updated  DateTime @default(now()) @db.DateTime(0)
+  category_name String   @db.VarChar(100)
   task          task[]
 }
 
@@ -96,19 +96,73 @@ model task {
   id            BigInt        @id @default(autoincrement())
   status        task_status   @default(New)
   due_date      DateTime      @db.Date
-  task_name     String        @db.VarChar(250)
   description   String        @db.Text
   last_updated  DateTime      @default(now()) @db.DateTime(0)
+  task_name     String        @db.VarChar(250)
   task_category BigInt?
   task_user     BigInt?
   user_account  user_account? @relation(fields: [task_user], references: [id], map: "785ff9ec6c2b64dc1075a305510093b1")
   category      category?     @relation(fields: [task_category], references: [id], map: "9ff056361fdfe76adfb6c873e332884e")
 
-  @@index([task_user], map: "785ff9ec6c2b64dc1075a305510093b1")
-  @@index([task_category], map: "9ff056361fdfe76adfb6c873e332884e")
+  @@index([task_user], map: "6a2ec3545e0b3033139f5ca499ccb45f")
+  @@index([task_category], map: "b905bdf98d9cee79421fb4b774f410e4")
+}
+
+model grand_parent_organisation {
+  id                         BigInt                @id @default(autoincrement())
+  grand_parent_org_name      String?               @db.VarChar(150)
+  grand_parent_org_date      DateTime?             @db.Date
+  grand_parent_org_date_time DateTime?             @db.DateTime(0)
+  grand_parent_org_number    Int?
+  grand_parent_org_json      Json?
+  last_updated               DateTime              @default(now()) @db.DateTime(0)
+  parent_organisation        parent_organisation[]
+}
+
+model organisation {
+  id                     BigInt               @id @default(autoincrement())
+  org_name               String?              @db.VarChar(150)
+  org_date               DateTime?            @db.Date
+  org_date_time          DateTime?            @db.DateTime(0)
+  org_number             Int?
+  org_json               Json?
+  status                 organisation_status  @default(New)
+  last_updated           DateTime             @default(now()) @db.DateTime(0)
+  parent_organisation_id BigInt?
+  parent_organisation    parent_organisation? @relation(fields: [parent_organisation_id], references: [id], map: "a1c78e9bae0d701fac8a7de7ba507621")
+
+  @@index([parent_organisation_id], map: "a1c78e9bae0d701fac8a7de7ba507621")
+}
+
+model parent_organisation {
+  id                           BigInt                                @id @default(autoincrement())
+  parent_org_name              String?                               @db.VarChar(150)
+  parent_org_date              DateTime?                             @db.Date
+  parent_org_date_time         DateTime?                             @db.DateTime(0)
+  parent_org_number            Int?
+  parent_org_json              Json?
+  parent_org_status            parent_organisation_parent_org_status @default(New)
+  last_updated                 DateTime                              @default(now()) @db.DateTime(0)
+  grand_parent_organisation_id BigInt?
+  organisation                 organisation[]
+  grand_parent_organisation    grand_parent_organisation?            @relation(fields: [grand_parent_organisation_id], references: [id], map: "9ec03c8c90dd50a1f141fa75e4b3598b")
+
+  @@index([grand_parent_organisation_id], map: "9ec03c8c90dd50a1f141fa75e4b3598b")
 }
 
 enum task_status {
+  New
+  In_Progress @map("In Progress")
+  Completed
+}
+
+enum organisation_status {
+  New
+  In_Progress @map("In Progress")
+  Completed
+}
+
+enum parent_organisation_parent_org_status {
   New
   In_Progress @map("In Progress")
   Completed

@@ -5,17 +5,18 @@
     import { createEventDispatcher } from "svelte";
 
     export let displayName;
-    let filterValue;
+    export let filterValue;
 
     const dispatch = createEventDispatcher();
 </script>
 
 <Input
     class="h-6"
+    type="date"
     name={displayName}
     placeholder="Filter..."
     bind:value={filterValue}
-    on:change={() => dispatch("filter-change", { filterValue })} />
+    on:change={() => dispatch("filter-change", { filterValue, filterComparison: "eq" })} />
 
 <Button variant="link" size="inline-icon" class="ml-2 h-4 w-4" on:click={() => dispatch("filter-clear")}>
     <RotateCcw />

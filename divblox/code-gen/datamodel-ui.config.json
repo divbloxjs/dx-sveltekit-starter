@@ -242,5 +242,113 @@
 			"placeholder": "categoryName",
 			"default": ""
 		}
+	},
+	"organisation": {
+		"orgName": {
+			"type": "text",
+			"displayName": "Org name",
+			"placeholder": "orgName",
+			"default": ""
+		},
+		"orgDate": {
+			"type": "date",
+			"displayName": "Org date",
+			"placeholder": "orgDate",
+			"default": ""
+		},
+		"orgDateTime": {
+			"type": "datetime-local",
+			"displayName": "Org date time",
+			"placeholder": "orgDateTime",
+			"default": ""
+		},
+		"orgNumber": {
+			"type": "number",
+			"displayName": "Org number",
+			"placeholder": "orgNumber",
+			"default": ""
+		},
+		"orgJson": {
+			"type": "textarea",
+			"displayName": "Org json",
+			"placeholder": "orgJson",
+			"default": ""
+		},
+		"status": {
+			"type": "select-enum",
+			"displayName": "Status",
+			"placeholder": "status",
+			"default": ""
+		}
+	},
+	"parentOrganisation": {
+		"parentOrgName": {
+			"type": "text",
+			"displayName": "Parent org name",
+			"placeholder": "parentOrgName",
+			"default": ""
+		},
+		"parentOrgDate": {
+			"type": "date",
+			"displayName": "Parent org date",
+			"placeholder": "parentOrgDate",
+			"default": ""
+		},
+		"parentOrgDateTime": {
+			"type": "datetime-local",
+			"displayName": "Parent org date time",
+			"placeholder": "parentOrgDateTime",
+			"default": ""
+		},
+		"parentOrgNumber": {
+			"type": "number",
+			"displayName": "Parent org number",
+			"placeholder": "parentOrgNumber",
+			"default": ""
+		},
+		"parentOrgJson": {
+			"type": "textarea",
+			"displayName": "Parent org json",
+			"placeholder": "parentOrgJson",
+			"default": ""
+		},
+		"parentOrgStatus": {
+			"type": "select-enum",
+			"displayName": "Parent org status",
+			"placeholder": "parentOrgStatus",
+			"default": ""
+		}
+	},
+	"grandParentOrganisation": {
+		"grandParentOrgName": {
+			"type": "text",
+			"displayName": "Grand parent org name",
+			"placeholder": "grandParentOrgName",
+			"default": ""
+		},
+		"grandParentOrgDate": {
+			"type": "date",
+			"displayName": "Grand parent org date",
+			"placeholder": "grandParentOrgDate",
+			"default": ""
+		},
+		"grandParentOrgDateTime": {
+			"type": "datetime-local",
+			"displayName": "Grand parent org date time",
+			"placeholder": "grandParentOrgDateTime",
+			"default": ""
+		},
+		"grandParentOrgNumber": {
+			"type": "number",
+			"displayName": "Grand parent org number",
+			"placeholder": "grandParentOrgNumber",
+			"default": ""
+		},
+		"grandParentOrgJson": {
+			"type": "textarea",
+			"displayName": "Grand parent org json",
+			"placeholder": "grandParentOrgJson",
+			"default": ""
+		}
 	}
 }

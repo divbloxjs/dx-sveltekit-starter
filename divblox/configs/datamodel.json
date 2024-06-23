@@ -362,5 +362,141 @@
             "x": 716.5540093159486,
             "y": 35.561763733088156
         }
+    },
+    "organisation": {
+        "module": "main",
+        "indexes": [],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "orgName": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "orgDate": {
+                "type": "DATE",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "orgDateTime": {
+                "type": "DATETIME",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "orgNumber": {
+                "type": "INT",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "orgJson": {
+                "type": "JSON",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "status": {
+                "type": "ENUM",
+                "default": "New",
+                "allowNull": false,
+                "lengthOrValues": "'New','In Progress','Completed'"
+            }
+        },
+        "relationships": {
+            "parentOrganisation": ["parentOrganisationId"]
+        },
+        "dataModellerCoordinates": {
+            "x": 709.5911540995095,
+            "y": 567.2483813769915
+        }
+    },
+    "parentOrganisation": {
+        "module": "main",
+        "indexes": [],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "parentOrgName": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "parentOrgDate": {
+                "type": "DATE",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "parentOrgDateTime": {
+                "type": "DATETIME",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "parentOrgNumber": {
+                "type": "INT",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "parentOrgJson": {
+                "type": "JSON",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "parentOrgStatus": {
+                "type": "ENUM",
+                "default": "New",
+                "allowNull": false,
+                "lengthOrValues": "'New','In Progress','Completed'"
+            }
+        },
+        "relationships": {
+            "grandParentOrganisation": ["grandParentOrganisationId"]
+        },
+        "dataModellerCoordinates": {
+            "x": 709.5911540995095,
+            "y": 567.2483813769915
+        }
+    },
+    "grandParentOrganisation": {
+        "module": "main",
+        "indexes": [],
+        "options": {
+            "isAuditEnabled": true,
+            "enforceLockingConstraints": true
+        },
+        "attributes": {
+            "grandParentOrgName": {
+                "type": "VARCHAR",
+                "allowNull": true,
+                "lengthOrValues": "150"
+            },
+            "grandParentOrgDate": {
+                "type": "DATE",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "grandParentOrgDateTime": {
+                "type": "DATETIME",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "grandParentOrgNumber": {
+                "type": "INT",
+                "allowNull": true,
+                "lengthOrValues": null
+            },
+            "grandParentOrgJson": {
+                "type": "JSON",
+                "allowNull": true,
+                "lengthOrValues": null
+            }
+        },
+        "relationships": {},
+        "dataModellerCoordinates": {
+            "x": 709.5911540995095,
+            "y": 567.2483813769915
+        }
     }
 }

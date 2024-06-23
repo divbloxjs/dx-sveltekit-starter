@@ -3,6 +3,7 @@ import dataModel from "datamodel";
 import dataModelUiConfig from "datamodel-ui";
 import { parse } from "qs";
 import { getSqlCase } from "$lib/server/prisma.helpers";
+import { getSqlFromCamelCase } from "$lib/helpers";
 
 export const normalizeDatabaseArray = (array = [], removeLastUpdated = true, makeIdInteger = true) => {
     if (!Array.isArray(array)) throw new Error(`${array} is not a valid array`);
@@ -45,6 +46,36 @@ export const getRelationships = (entityName) => {
     return relationships;
 };
 
+export const getAllEnumOptions = (entityName, enums = {}) => {
+    for (const [attributeName, attributeDef] of Object.entries(dataModel[entityName].attributes)) {
+        if (attributeDef.type.toLowerCase() === "enum") {
+            if (!enums[entityName]) enums[entityName] = {};
+            enums[entityName][attributeName] = getEnumOptions(entityName, attributeName);
+        }
+    }
+
+    for (const relatedEntityName of Object.keys(getRelationships(entityName))) {
+        getAllEnumOptions(relatedEntityName, enums);
+    }
+};
+
+export const getEnumOptions = (entityName, attributeName, formatAsSelectOptions = true) => {
+    const optionsString = dataModel[entityName].attributes[attributeName].lengthOrValues;
+    const options = optionsString.trim().replaceAll("'", "").replaceAll('"', "").split(",");
+
+    if (!formatAsSelectOptions) return options;
+
+    const selectOptions = [];
+    options.forEach((option) => {
+        selectOptions.push({
+            label: option,
+            value: option
+        });
+    });
+
+    return selectOptions;
+};
+
 export const getEntityAttributeUiTypes = (entityName) => {
     const attributes = dataModelUiConfig?.[entityName];
 
@@ -66,8 +97,15 @@ export const getEntitiesRelatedTo = (entityName) => {
     return entityNames;
 };
 
-export const getEntityAttributes = (entityName) => {
-    return dataModel[entityName].attributes;
+export const getEntityAttributes = (entityName, convertToSqlCase = false) => {
+    if (!convertToSqlCase) return dataModel[entityName].attributes;
+
+    const attributesSqlCase = {};
+    for (const [attributeName, attributeDef] of Object.entries(dataModel[entityName].attributes)) {
+        attributesSqlCase[getSqlFromCamelCase(attributeName)] = attributeDef;
+    }
+
+    return attributesSqlCase;
 };
 
 export const getEntityRelationships = (entityName) => {
