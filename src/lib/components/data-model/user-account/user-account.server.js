@@ -2,7 +2,8 @@ import { prisma } from "$lib/server/prisma-instance";
 import { isNumeric } from "dx-utilities";
 import { getIntId, normalizeDatabaseArray } from "$components/data-model/_helpers/helpers";
 import { getEntitiesRelatedTo, getRelatedEntities } from "$components/data-model/_helpers/helpers.server";
-import { getPrismaSelectAllFromEntity, getPrismaConditions, getSqlCase } from "$lib/server/prisma.helpers";
+import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/prisma.helpers";
+import { getSqlFromCamelCase } from "$lib/helpers";
 
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
@@ -38,7 +39,7 @@ export const updateUserAccount = async (data) => {
     const relationships = getRelatedEntities("userAccount");
     Object.values(relationships).forEach((relationshipNames) => {
         relationshipNames.forEach((relationshipName) => {
-            const sqlCasedRelationshipName = getSqlCase(relationshipName);
+            const sqlCasedRelationshipName = getSqlFromCamelCase(relationshipName);
             if (data.hasOwnProperty(sqlCasedRelationshipName)) {
                 if (!isNumeric(data[sqlCasedRelationshipName])) {
                     delete data[sqlCasedRelationshipName];
@@ -75,7 +76,7 @@ export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
 
     userAccount.id = userAccount.id.toString();
     Object.keys(getRelatedEntities("userAccount")).forEach((relationshipName) => {
-        const sqlCasedRelationshipName = getSqlCase(`${relationshipName}Id`);
+        const sqlCasedRelationshipName = getSqlFromCamelCase(`${relationshipName}Id`);
         userAccount[sqlCasedRelationshipName] = userAccount[sqlCasedRelationshipName]?.toString();
     });
 
