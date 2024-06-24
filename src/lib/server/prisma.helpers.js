@@ -223,7 +223,7 @@ const convertFilterClauseToPrismaClause = (filterConstraint = {}, prismaFilterCo
             }
 
             if (attributes[attributeName].type.toLowerCase() === "enum") {
-                if (!getEnumOptions(currentEntityName, attributeName, false).includes(filterValue)) {
+                if (!getEnumOptions(currentEntityName, getCamelFromSqlCase(attributeName), false).includes(filterValue)) {
                     console.error("Invalid enum options are forcefully removed from search condition: ", attributeName);
                     return;
                 } else {
