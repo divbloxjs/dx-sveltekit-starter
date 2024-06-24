@@ -1,6 +1,6 @@
 <script>
     import * as Form from "$lib/components/shadcn/ui/form";
-    import { Input } from "$lib/components/shadcn/ui/input";
+    import { Input, InputNumber } from "$lib/components/shadcn/ui/input";
 
     export let form;
     export let name;
@@ -16,7 +16,11 @@
         {#if type !== "hidden"}
             <Form.Label>{label}</Form.Label>
         {/if}
-        <Input {...attrs} {...$$restProps} {type} bind:value />
+        {#if type === "number"}
+            <InputNumber {...attrs} {...$$restProps} bind:value />
+        {:else}
+            <Input {...attrs} {...$$restProps} {type} bind:value />
+        {/if}
     </Form.Control>
     <Form.FieldErrors />
 </Form.Field>

@@ -10,7 +10,7 @@
     import { handleSuperFormUpdatedToast } from "$lib";
     import { enhance } from "$app/forms";
     import { buttonVariants } from "$lib/components/shadcn/ui/button";
-    import { get } from "svelte/store";
+    import { env } from "$env/dynamic/public";
 
     export let data;
 
@@ -52,7 +52,9 @@
         <Form.FieldErrors />
     </Form.Field>
 
-    <a href="/notification-onboarding" class={`${buttonVariants({ variant: "link" })} w-fit self-center`}>Notification preferences</a>
+    {#if env.PUBLIC_ENABLE_WEB_PUSH.toLowerCase() === "true"}
+        <a href="/notification-onboarding" class={`${buttonVariants({ variant: "link" })} w-fit self-center`}>Notification preferences</a>
+    {/if}
     <div class="mt-2 flex flex-row justify-between">
         <form action={`?/deleteUser`} method="POST" use:enhance>
             <input type="hidden" name="id" bind:value={$formData.id} />

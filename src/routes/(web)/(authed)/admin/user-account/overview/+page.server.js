@@ -59,7 +59,7 @@ export const actions = {
 
         return {
             type: "success",
-            message: `Test notification sent to ${pushSubscriptions.length} subscription ${pushSubscriptions.length > 1 ? "s" : ""}`
+            message: `Test notification sent to ${pushSubscriptions.length} subscription${pushSubscriptions.length > 1 ? "s" : ""}`
         };
     }
 };

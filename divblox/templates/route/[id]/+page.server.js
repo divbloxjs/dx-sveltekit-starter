@@ -5,12 +5,13 @@ import { zod } from "sveltekit-superforms/adapters";
 import {
     __entityName__CreateSchema,
     __entityName__UpdateSchema,
-} from "__dataModelComponentsPathAlias__/__entityNameKebabCase__/__entityNameKebabCase__.schema";
+} from "__dataModelComponentsPathAlias__/__entityNameKebabCase__/__entityNameKebabCase__.schema.js";
 
 import {
     load__entityNamePascalCase__,
     get__entityNamePascalCase__RelationshipData,
     update__entityNamePascalCase__,
+    create__entityNamePascalCase__,
 } from "__dataModelComponentsPathAlias__/__entityNameKebabCase__/__entityNameKebabCase__.server";
 
 /** @type {import('./$types').PageServerLoad} */
@@ -37,25 +38,29 @@ export const load = async (event) => {
 export const actions = {
     create: async (event) => {
         const form = await superValidate(event, zod(__entityName__CreateSchema));
-
         if (!form.valid) return fail(400, { form });
 
         try {
-            await prisma.__entityNameSqlCase__.create({ data: form.data });
+            await create__entityNamePascalCase__(form.data);
         } catch (error) {
             console.error(error);
-            return message(form, "Something went wrong. Please try again");
+            return message(form, "Something went wrong. Please try again", { status: 400 });
         }
+
+        return { form };
     },
     update: async (event) => {
         const form = await superValidate(event, zod(__entityName__UpdateSchema));
-
         if (!form.valid) return fail(400, { form });
 
-        const result = await update__entityNamePascalCase__(form.data);
-        if (!result) return message(form, "Bad!");
+        try {
+            await update__entityNamePascalCase__(form.data);
+        } catch (error) {
+            console.error(error);
+            return message(form, "Something went wrong. Please try again", { status: 400 });
+        }
 
-        return { form, message: "Updated successfully!" };
+        return { form };
     },
     delete: async (event) => {
         await prisma.__entityNameSqlCase__.delete({ where: { id: event.params?.id } });

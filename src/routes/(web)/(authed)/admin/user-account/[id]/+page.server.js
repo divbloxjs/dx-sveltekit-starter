@@ -92,11 +92,11 @@ export const actions = {
         locals.auth.isAdmin();
 
         const data = await request.formData();
-        const userAccountId = data.get("id");
+        const user_account_id = data.get("id");
 
-        if (!userAccountId) return fail(400, { message: "No ID provided" });
+        if (!user_account_id) return fail(400, { message: "No ID provided" });
 
-        const { pushSubscriptions, errors } = await deliverPushNotificationToAllSubscriptionsForUserAccount({ userAccountId });
+        const { pushSubscriptions, errors } = await deliverPushNotificationToAllSubscriptionsForUserAccount({ user_account_id });
 
         if (errors.length !== 0) {
             return fail(400, { message: "Could not deliver push notification", errors });
@@ -106,7 +106,7 @@ export const actions = {
 
         return {
             type: "success",
-            message: `Test notification sent to ${pushSubscriptions.length} subscription ${pushSubscriptions.length > 1 ? "s" : ""}`
+            message: `Test notification sent to ${pushSubscriptions.length} subscription${pushSubscriptions.length > 1 ? "s" : ""}`
         };
     }
 };

@@ -14,13 +14,6 @@ export const handle = async ({ event, resolve }) => {
         }
     }
 
-    // If in (anonymous) route group AND a session is provided, check for current user and if set - navigate to landing page
-    if (event.route.id?.includes("/(anonymous)") && event.cookies.get("sessionId")) {
-        if (event.locals.user) {
-            throw redirect(303, DEFAULT_ROUTE);
-        }
-    }
-
     const response = await resolve(event);
     // DX-NOTE: Can mutate the response for all requests here
     return response;

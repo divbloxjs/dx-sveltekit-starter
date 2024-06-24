@@ -25,22 +25,22 @@ export const actions = {
             return fail(400, { message: "Invalid push subscription details provided" });
         }
 
-        let uniqueIdentifier = data.get("uniqueIdentifier");
-        if (!uniqueIdentifier) {
+        let unique_identifier = data.get("uniqueIdentifier");
+        if (!unique_identifier) {
             const newUniqueIdentifier = createPushSubscriptionUniqueIdentifier(pushSubscriptionDetails?.endpoint);
             if (!newUniqueIdentifier) return fail(400, { message: "Could not generate a unique identifier" });
-            uniqueIdentifier = newUniqueIdentifier;
+            unique_identifier = newUniqueIdentifier;
         }
 
         const existingPushSubscription = await prisma.push_subscription.findFirst({
-            where: { uniqueIdentifier }
+            where: { unique_identifier }
         });
 
         if (existingPushSubscription) {
-            if (!existingPushSubscription.isActive) {
+            if (!existingPushSubscription.is_active) {
                 await prisma.push_subscription.update({
-                    where: { uniqueIdentifier },
-                    data: { isActive: true }
+                    where: { unique_identifier },
+                    data: { is_active: true }
                 });
             }
 
@@ -48,7 +48,7 @@ export const actions = {
         }
 
         const newPushSubscription = await prisma.push_subscription.create({
-            data: { uniqueIdentifier, pushSubscriptionDetails, userAccountId: locals?.user?.id }
+            data: { unique_identifier, push_subscription_details: pushSubscriptionDetails, user_account_id: locals?.user?.id }
         });
 
         return { message: "Created a new subscription", pushSubscription: newPushSubscription };
@@ -61,8 +61,8 @@ export const actions = {
 
         try {
             await prisma.push_subscription.update({
-                where: { uniqueIdentifier: existingUniqueIdentifier },
-                data: { isActive: false }
+                where: { unique_identifier: existingUniqueIdentifier },
+                data: { is_active: false }
             });
 
             return { message: "Subscription updated" };
@@ -75,22 +75,6 @@ export const actions = {
 
             return fail(400, { message: "Could not update push subscription" });
         }
-    },
-    test: async ({ request, locals }) => {
-        const { pushSubscriptions, errors } = await deliverPushNotificationToAllSubscriptionsForUserAccount({
-            userAccountId: locals?.user?.id
-        });
-
-        if (errors.length !== 0) {
-            return fail(400, { message: "Could not deliver push notification", errors });
-        }
-
-        if (pushSubscriptions.length === 0) return { type: "info", message: "No active push subscriptions found" };
-
-        return {
-            type: "success",
-            message: `Test notification sent to ${pushSubscriptions.length} subscription ${pushSubscriptions.length > 1 ? "s" : ""}`
-        };
     }
 };
 

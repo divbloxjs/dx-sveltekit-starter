@@ -11,7 +11,9 @@ import { DEFAULT_ROUTE } from "$constants/constants";
 import { env } from "$env/dynamic/private";
 
 /** @type {import('./$types').PageServerLoad} */
-export const load = async ({ cookies }) => {
+export const load = async ({ cookies, locals }) => {
+    if (cookies.get("sessionId") && locals.user) redirect(303, DEFAULT_ROUTE);
+
     const returnData = {
         loginForm: await superValidate(zod(loginSchema))
     };
@@ -22,6 +24,8 @@ export const load = async ({ cookies }) => {
     const userSession = await prisma.user_session.findFirst({
         where: { session_id, expires_at: { lte: new Date() } },
         select: { id: true, user_account: true }
+
+
     });
 
     if (!userSession) return { ...returnData, message: "No session ID set" };

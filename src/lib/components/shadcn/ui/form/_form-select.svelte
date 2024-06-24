@@ -1,7 +1,6 @@
 <script>
     import * as Form from "$lib/components/shadcn/ui/form";
     import * as Select from "$lib/components/shadcn/ui/select/index";
-    import { onMount } from "svelte";
 
     export let form;
 
@@ -14,9 +13,7 @@
 
     let selected;
 
-    onMount(() => {
-        selected = options.find(({ value, label }) => value === selectedValue) ?? { label: "-Please Select-", value: "" };
-    });
+    $: selectedValue, (selected = options.find(({ value, label }) => value === selectedValue) ?? { label: "-Please Select-", value: "" });
 </script>
 
 <Form.Field {form} {name} class="my-0 p-1">
