@@ -5,7 +5,13 @@ import { env as publicEnv } from "$env/dynamic/public";
 import webPush from "web-push";
 import { prisma } from "./prisma-instance";
 
-webPush.setVapidDetails(`mailto:${publicEnv.PUBLIC_WEB_PUSH_CONTACT_EMAIL_ADDRESS}`, publicEnv.PUBLIC_VAPID_KEY, env.PRIVATE_VAPID_KEY);
+if (publicEnv.PUBLIC_ENABLE_WEB_PUSH.toLowerCase() === "true") {
+    webPush.setVapidDetails(
+        `mailto:${publicEnv?.PUBLIC_WEB_PUSH_CONTACT_EMAIL_ADDRESS}`,
+        publicEnv?.PUBLIC_VAPID_KEY,
+        env?.PRIVATE_VAPID_KEY
+    );
+}
 
 /**
  * Delivers a push notification to a specific subscription
