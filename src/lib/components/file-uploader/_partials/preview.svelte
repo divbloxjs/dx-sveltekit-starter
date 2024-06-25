@@ -17,10 +17,10 @@
     let fileType = "any";
     $: file,
         (() => {
-            if (["mov", "mp4", "ogg", "webm"].includes(file?.uploadedFileExtension.toLowerCase())) {
+            if (["mov", "mp4", "ogg", "webm"].includes(file?.uploaded_file_extension.toLowerCase())) {
                 fileType = "video";
             } else if (
-                ["image/apng", "image/png", "image/jpeg", "image/svg", "image/ico", "image/gif"].includes(file?.mimeType.toLowerCase())
+                ["image/apng", "image/png", "image/jpeg", "image/svg", "image/ico", "image/gif"].includes(file?.mime_type.toLowerCase())
             ) {
                 fileType = "image";
             } else {
@@ -82,10 +82,10 @@
                         <div
                             class="max-w-[20ch] truncate hover:cursor-pointer md:max-w-[40ch]"
                             on:click={async () => {
-                                await navigator.clipboard.writeText(file?.displayName);
+                                await navigator.clipboard.writeText(file?.display_name);
                                 toast.success("Copied to clipboard");
                             }}>
-                            {file?.displayName}
+                            {file?.display_name}
                         </div>
 
                         <button
@@ -108,7 +108,7 @@
                 {:else}
                     <div class="flex h-72 w-60 flex-col items-center justify-center rounded-lg p-4 md:w-96">
                         <div class="max-w-[30ch] truncate hover:cursor-pointer md:max-w-[100ch]">
-                            {file?.displayName}
+                            {file?.display_name}
                         </div>
                         <Button
                             variant="ghost"

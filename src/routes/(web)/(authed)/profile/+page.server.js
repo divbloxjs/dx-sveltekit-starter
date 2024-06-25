@@ -78,17 +78,17 @@ export const actions = {
         event.locals.auth.isAuthenticated();
 
         const data = await event.request.formData();
-        const displayName = data.get("displayName");
+        const display_name = data.get("display_name");
         const fileId = data.get("id");
 
         await prisma.file.update({
             where: {
                 id: fileId,
-                linkedEntity: "userAccount",
-                linkedEntityId: event.locals.user?.id,
+                linked_entity: "userAccount",
+                linked_entity_id: event.locals.user?.id,
                 category: FILE_CATEGORY.PROFILE_PICTURE
             },
-            data: { displayName }
+            data: { display_name }
         });
 
         return { message: "Updated successfully!" };

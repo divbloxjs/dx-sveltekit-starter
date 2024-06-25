@@ -32,18 +32,18 @@ export class S3Controller {
         return this.bucketName;
     }
 
-    getStaticUrl({ containerIdentifier = undefined, objectIdentifier }) {
-        if (containerIdentifier) this.bucketName = containerIdentifier;
-        return this.#getUrlFromBucketAndObjectKey({ bucketName: this.bucketName, objectKey: objectIdentifier });
+    getStaticUrl({ container_identifier = undefined, object_identifier }) {
+        if (container_identifier) this.bucketName = container_identifier;
+        return this.#getUrlFromBucketAndObjectKey({ bucketName: this.bucketName, objectKey: object_identifier });
     }
 
-    getStaticBaseUrl({ containerIdentifier = undefined }) {
-        if (containerIdentifier) this.bucketName = containerIdentifier;
+    getStaticBaseUrl({ container_identifier = undefined }) {
+        if (container_identifier) this.bucketName = container_identifier;
         return this.#getBaseUrlFromBucket({ bucketName: this.bucketName });
     }
 
-    async uploadFile({ file, objectIdentifier, containerIdentifier = undefined, isPublic = undefined }) {
-        if (containerIdentifier) this.bucketName = containerIdentifier;
+    async uploadFile({ file, object_identifier, container_identifier = undefined, isPublic = undefined }) {
+        if (container_identifier) this.bucketName = container_identifier;
         if (isPublic) this.bucketName = env.AWS_PUBLIC_BUCKET_NAME;
 
         let fileBuffer = file;
@@ -54,33 +54,33 @@ export class S3Controller {
         try {
             await this.#putObjectInBucket({
                 bucketName: this.bucketName,
-                objectKey: objectIdentifier,
+                objectKey: object_identifier,
                 file: fileBuffer
             });
         } catch (error) {
             if (error?.Code === "NoSuchBucket") {
                 await this.#createBucket(this.bucketName, isPublic);
-                await this.uploadFile({ file, objectIdentifier, containerIdentifier, isPublic });
+                await this.uploadFile({ file, object_identifier, container_identifier, isPublic });
             }
         }
     }
 
-    async deleteFile({ containerIdentifier, objectIdentifier }) {
-        await this.#deleteObjectFromBucket(containerIdentifier, objectIdentifier);
+    async deleteFile({ container_identifier, object_identifier }) {
+        await this.#deleteObjectFromBucket(container_identifier, object_identifier);
     }
 
-    async getPresignedUrlForDownload({ containerIdentifier = undefined, objectIdentifier }) {
-        if (containerIdentifier) this.bucketName = containerIdentifier;
+    async getPresignedUrlForDownload({ container_identifier = undefined, object_identifier }) {
+        if (container_identifier) this.bucketName = container_identifier;
 
-        const command = new GetObjectCommand({ Bucket: this.bucketName, Key: objectIdentifier });
+        const command = new GetObjectCommand({ Bucket: this.bucketName, Key: object_identifier });
 
         return await getSignedUrl(this.#s3Client, command, { expiresIn: 3600 });
     }
 
-    async getPresignedUrlForUpload({ containerIdentifier = undefined, objectIdentifier }) {
-        if (containerIdentifier) this.bucketName = containerIdentifier;
+    async getPresignedUrlForUpload({ container_identifier = undefined, object_identifier }) {
+        if (container_identifier) this.bucketName = container_identifier;
 
-        const command = new PutObjectCommand({ Bucket: this.bucketName, Key: objectIdentifier });
+        const command = new PutObjectCommand({ Bucket: this.bucketName, Key: object_identifier });
 
         return await getSignedUrl(this.#s3Client, command, { expiresIn: 3600 });
     }

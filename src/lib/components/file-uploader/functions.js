@@ -4,7 +4,7 @@ export const getFileExtension = (filePath) => {
     return filePath.substr(filePath.lastIndexOf(".") + 1);
 };
 
-export const getFileWithoutExtension = (filePath) => {
+export const getFileNameWithoutExtension = (filePath) => {
     if (!filePath.includes(".")) return filePath;
 
     return filePath.substr(0, filePath.lastIndexOf("."));
@@ -19,5 +19,5 @@ export const getFileWithoutExtension = (filePath) => {
  * @returns {string} the processed filePath
  */
 export const insertBeforeFileExtension = (filePath, stringToInsert = "") => {
-    return `${getFileWithoutExtension(filePath)}${stringToInsert}.${getFileExtension(filePath)}`;
+    return `${getFileNameWithoutExtension(filePath)}${stringToInsert}.${getFileExtension(filePath)}`;
 };
