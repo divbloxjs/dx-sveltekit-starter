@@ -57,7 +57,7 @@ export async function POST({ request, url, locals }) {
             linked_entity: LINKED_ENTITY,
             category: UPLOAD_TYPE,
             createThumbnailAndWebImages: createThumbnailAndWebImages,
-            cloudIsPubliclyAvailable: isPublic
+            cloud_is_publicly_available: isPublic
         });
 
         if (!filesToCreate) error(400, "Could not upload files");
@@ -86,10 +86,10 @@ export async function POST({ request, url, locals }) {
                 sizes_saved: createdFile.sizes_saved,
                 linked_entity: createdFile.linked_entity,
                 linked_entity_id: createdFile.linked_entity_id?.toString(),
-                mimeType: createdFile.mimeType,
-                originalSizeInBytes: createdFile.originalSizeInBytes,
-                uploadedFileExtension: getFileExtension(createdFile.displayName),
-                displayName: createdFile.displayName
+                mime_type: createdFile.mime_type,
+                original_size_in_bytes: createdFile.original_size_in_bytes,
+                uploaded_file_extension: getFileExtension(createdFile.display_name),
+                display_name: createdFile.display_name
             };
 
             filesDataToReturn.push(file);
@@ -151,10 +151,10 @@ export async function GET({ request, url, locals }) {
                 sizes_saved: files[i].sizes_saved,
                 linked_entity: files[i].linked_entity,
                 linked_entity_id: files[i].linked_entity_id?.toString(),
-                mimeType: files[i].mimeType,
-                originalSizeInBytes: files[i].originalSizeInBytes,
-                uploadedFileExtension: getFileExtension(files[i].displayName),
-                displayName: files[i].displayName
+                mime_type: files[i].mime_type,
+                original_size_in_bytes: files[i].original_size_in_bytes,
+                uploaded_file_extension: getFileExtension(files[i].display_name),
+                display_name: files[i].display_name
             });
         }
 
@@ -183,7 +183,7 @@ export async function DELETE({ request }) {
                 containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
             }
 
-            await fileController.deleteFile({ object_identifier: finalObjectIdentifier, containerIdentifier });
+            await fileController.deleteFile({ object_identifier: finalObjectIdentifier, container_identifier: containerIdentifier });
         }
 
         await prisma.file.delete({ where: { id: body.id } });
@@ -196,9 +196,8 @@ export async function DELETE({ request }) {
 
 const deleteFiles = async (files) => {
     try {
+        const fileController = new FileController();
         for (const file of files) {
-            const fileController = new FileController();
-
             for (let sizeType of file?.sizes_saved ?? []) {
                 let finalObjectIdentifier = `${sizeType}_${file.object_identifier}`;
                 let containerIdentifier = env.AWS_PRIVATE_BUCKET_NAME;

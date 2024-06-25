@@ -28,14 +28,10 @@
         isNew = false;
     });
 
-    const focusOnMount = (el) => {
-        el?.focus();
-    };
-
     let file = preloadedFile;
 
     file.url = preloadedFile.urls.original;
-    if (preloadedFile.sizesSaved.includes("thumbnail")) {
+    if (preloadedFile.sizes_saved.includes("thumbnail")) {
         file.url = preloadedFile.urls.thumbnail;
     }
 
@@ -45,16 +41,19 @@
         if (deleteResult.ok) dispatch("deleted", { toRemoveIndex: index });
     };
 
-    let displayNameInputEl;
+    let updateDisplayNameFormEl: HTMLFormElement;
+    let displayNameInputEl: HTMLInputElement;
     let isEditingDisplayName = false;
     let isEditingDisplayNameFocusTrapState = false;
-    $: isEditingDisplayName,
-        (async () => {
-            await sleep(100);
-            isEditingDisplayNameFocusTrapState = !isEditingDisplayNameFocusTrapState;
+    $: isEditingDisplayName, selectInput();
 
-            if (isEditingDisplayNameFocusTrapState) displayNameInputEl?.select();
-        })();
+    const selectInput = async () => {
+        await sleep(100); // Input needs to mount into the DOM...?
+
+        if (isEditingDisplayNameFocusTrapState) displayNameInputEl?.select();
+        isEditingDisplayNameFocusTrapState = !isEditingDisplayNameFocusTrapState;
+    };
+
     let submittingUpdate = false;
     /**
      *  @type {import('./$types').SubmitFunction}
@@ -66,7 +65,7 @@
             update();
 
             if (result.type === "success") {
-                file.displayName = formData.get("displayName");
+                file.display_name = formData.get("display_name");
             }
 
             dispatch("updated", { updatedIndex: formData.get("id") });
@@ -76,7 +75,7 @@
     };
 
     let humanReadableSize = "";
-    let sizeInKb = preloadedFile.originalSizeInBytes / 1024;
+    let sizeInKb = preloadedFile.original_size_in_bytes / 1024;
     let sizeInMb = sizeInKb / 1024;
     let sizeInGb = sizeInMb / 1024;
 
@@ -86,8 +85,6 @@
             : sizeInMb > 1
               ? `${Math.floor((sizeInMb / 10) * 10)} mb`
               : `${Math.floor((sizeInKb / 10) * 10)} kb`;
-
-    let updateDisplayNameFormEl;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -97,7 +94,7 @@
     transition:slide={{ delay: 250, duration: 300, easing: quintOut, axis: "y" }}>
     {#if isEditingDisplayName}
         <div class="flex h-12 w-12 min-w-12 overflow-hidden">
-            <MimeType {file}></MimeType>
+            <MimeType {file} />
         </div>
         <span class="items-left flex min-w-0 grow flex-col justify-center px-2 transition-colors duration-1000" class:bg-green-200={isNew}>
             <form
@@ -106,8 +103,8 @@
                 method="POST"
                 use:focusTrap={isEditingDisplayNameFocusTrapState}
                 use:enhance={submitDisplayNameUpdate}>
-                <Input bind:inputEl={displayNameInputEl} name="displayName" value={file.displayName}></Input>
-                <Input type="hidden" name="id" value={file.id}></Input>
+                <Input bind:inputEl={displayNameInputEl} name="display_name" value={file.display_name} />
+                <Input type="hidden" name="id" value={file.id} />
             </form>
         </span>
 
@@ -130,11 +127,11 @@
         </span>
     {:else}
         <div class="flex h-12 w-12 min-w-12 overflow-hidden">
-            <MimeType {file}></MimeType>
+            <MimeType {file} />
         </div>
         <span class="items-left flex min-w-0 grow flex-col justify-center px-2 transition-colors duration-1000" class:bg-green-200={isNew}>
             <a href={file.url} target="_blank" class="truncate">
-                {file.displayName}
+                {file.display_name}
             </a>
             <a href={file.url} target="_blank" class="truncate text-xs italic">{humanReadableSize} </a>
         </span>

@@ -31,7 +31,7 @@
     export let data;
 
     let attributeMap = {};
-    buildAttributeMap(dataTableConfig, attributeMap);
+    buildAttributeMap("userRole", dataTableConfig, attributeMap);
 
     let flatRows = [];
     $: (() => {
@@ -49,7 +49,7 @@
         goto(`${basePath}/overview?${newSearchParams.toString()}`, {
             keepFocus: true
         });
-    }
+    };
 
     const handleSearchClear = () => {
         search = "";
@@ -59,7 +59,7 @@
         goto(`${basePath}/overview?${newSearchParams.toString()}`, {
             keepFocus: true
         });
-    }
+    };
 
     const handleFilterChange = (displayName, attributeName) => {
         const originalParams = parse($page.url.search, { ignoreQueryPrefix: true });
@@ -75,7 +75,7 @@
         goto(`${basePath}/overview?${newParams}`, {
             keepFocus: true
         });
-    }
+    };
     const handleFilterClear = (displayName, attributeName) => {
         filters[displayName] = "";
         const originalParams = parse($page.url.search, { ignoreQueryPrefix: true });
@@ -85,7 +85,7 @@
         goto(`${basePath}/overview?${newParams}`, {
             invalidateAll: true
         });
-    }
+    };
 
     const handleLimitChange = () => {
         let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
@@ -93,7 +93,7 @@
         goto(`${basePath}/overview?${newSearchParams.toString()}`, {
             invalidateAll: true
         });
-    }
+    };
 
     const handlePaginationPrev = () => {
         let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
@@ -102,7 +102,7 @@
         goto(`${basePath}/overview?${newSearchParams.toString()}`, {
             invalidateAll: true
         });
-    }
+    };
     const handlePaginationNext = () => {
         let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
         offset = offset + limit;
@@ -110,24 +110,14 @@
         goto(`${basePath}/overview?${newSearchParams.toString()}`, {
             invalidateAll: true
         });
-    }
+    };
 </script>
 
 <div class="flex flex-row justify-between p-2">
     <div class="flex flex-col">
         <div class="flex flex-row gap-2">
-            <Input
-                type="text"
-                bind:value={search}
-                name="search"
-                placeholder="Search..."
-                on:change={handleSearchChange}>
-            </Input>
-            <Button
-                variant="link"
-                size="sm"
-                class="px-0"
-                on:click={handleSearchClear}>
+            <Input type="text" bind:value={search} name="search" placeholder="Search..." on:change={handleSearchChange}></Input>
+            <Button variant="link" size="sm" class="px-0" on:click={handleSearchClear}>
                 <X></X>
             </Button>
         </div>
@@ -178,12 +168,12 @@
                 {#if allowEdit || allowDelete}
                     <td class="flex items-center justify-center text-center">
                         <a
-                        href={`${basePath}/${data?.userRoleArray[index]?.id}`}
-                            class="bg-tranparent border-tertiary text-tertiary border border-none">
+                            href={`${basePath}/${data?.userRoleArray[index]?.id}`}
+                            class="bg-tranparent border border-none border-tertiary text-tertiary">
                             <Pencil class="h-4 w-4" /></a>
 
-                    <form action={`${basePath}/${data?.userRoleArray[index]?.id}?/delete`} use:enhance method="POST">
-                        <input type="hidden" bind:value={data.userRoleArray[index].id} />
+                        <form action={`${basePath}/${data?.userRoleArray[index]?.id}?/delete`} use:enhance method="POST">
+                            <input type="hidden" bind:value={data.userRoleArray[index].id} />
                             <Button type="submit" class="border-none" variant="destructive-outline" size="inline-icon">
                                 <X class="h-4 w-4" /></Button>
                         </form>
@@ -198,12 +188,7 @@
     <div class="flex flex-col gap-2">
         <Label>Items per page</Label>
         <div class="flex gap-2">
-            <Input
-                type="number"
-                name="limit"
-                placeholder="Items per Page"
-                bind:value={limit}
-                on:change={handleLimitChange} />
+            <Input type="number" name="limit" placeholder="Items per Page" bind:value={limit} on:change={handleLimitChange} />
 
             <div class="flex gap-2">
                 <Button on:click={handlePaginationPrev}>Prev</Button>

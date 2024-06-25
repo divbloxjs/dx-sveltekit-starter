@@ -228,7 +228,7 @@
 
 <Preview {preloadedFiles} bind:index={previewFileIndex}></Preview>
 
-<div class="relative h-full w-full overflow-hidden rounded-xl bg-neutral-100 p-2">
+<div class="relative h-full w-full overflow-hidden rounded-xl bg-background-100 p-2">
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
@@ -278,7 +278,7 @@
                                 <progress
                                     max="100"
                                     value={percentComplete ?? 0}
-                                    class="h-2 flex-grow pl-2 [&::-moz-progress-bar]:bg-violet-400 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:rounded [&::-webkit-progress-value]:bg-violet-400" />
+                                    class="[&::-webkit-progress-bar]:bg-background-content h-2 flex-grow pl-2 [&::-moz-progress-bar]:bg-primary [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded [&::-webkit-progress-value]:bg-primary" />
                             </span>
                         {/if}
                     </div>
@@ -291,7 +291,8 @@
                     Drag and Drop
                 </span>
                 <span class="mx-auto opacity-0 transition-opacity duration-100" class:opacity-100={!isDraggingOver && !uploadingFiles}>
-                    or</span>
+                    or
+                </span>
                 <div
                     class="flex w-full justify-center opacity-0 transition-opacity duration-100"
                     class:opacity-100={!isDraggingOver && !uploadingFiles}>
@@ -305,7 +306,7 @@
                 </div>
             {:else}
                 <span
-                    class="mx-auto animate-shake text-xl text-destructive opacity-0 transition-opacity duration-100"
+                    class="mx-auto w-full animate-shake text-center text-xl text-destructive opacity-0 transition-opacity duration-100"
                     class:opacity-100={!isDraggingOver && !uploadingFiles}>
                     Something went wrong!
                 </span>
@@ -348,7 +349,7 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
         class:hidden={!isDraggingOver}
-        class="absolute left-0 top-0 h-full w-full bg-blue-100/40"
+        class="absolute left-0 top-0 h-full w-full bg-background-300/20"
         on:drop|preventDefault|stopPropagation={handleDrop}
         on:dragenter|preventDefault|stopPropagation={handleDragEnter}
         on:dragover|preventDefault|stopPropagation={handleDragOver}

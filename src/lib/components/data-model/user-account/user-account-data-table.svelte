@@ -10,15 +10,10 @@
     import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
     import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Input } from "$lib/components/shadcn/ui/input";
-    import Bell from "lucide-svelte/icons/bell";
     import Pencil from "lucide-svelte/icons/pencil";
     import RotateCcw from "lucide-svelte/icons/rotate-ccw";
     import X from "lucide-svelte/icons/x";
     import { Label } from "$lib/components/shadcn/ui/label";
-    import { handleFormActionToast } from "$lib";
-    import * as Tooltip from "$lib/components/shadcn/ui/tooltip";
-    import Dialog from "$components/shadcn/ui/dialog/_dialog.svelte";
-    import Textarea from "$components/shadcn/ui/textarea/textarea.svelte";
     import NotificationTest from "./_notification-test.svelte";
     import { env } from "$env/dynamic/public";
 
@@ -40,7 +35,7 @@
     export let data;
 
     let attributeMap = {};
-    buildAttributeMap(dataTableConfig, attributeMap);
+    buildAttributeMap("userAccount", dataTableConfig, attributeMap);
 
     let flatRows = [];
     $: (() => {
