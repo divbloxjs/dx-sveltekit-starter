@@ -6,12 +6,15 @@
 
     /** @type {import('./$types').PageData} */
     export let data;
+
+    const basePath = "/admin/user-role";
+    const redirectBackPath = $page.url.searchParams.get("redirectBackPath") ?? basePath;
 </script>
 
 <div class="flex w-full max-w-4xl self-center">
     {#if $page.params.id === "new"}
-        <FormCreateUserRole {data} basePath="/admin/user-role" />
+        <FormCreateUserRole {data} {basePath} {redirectBackPath} />
     {:else if parseInt($page.params.id) > 0}
-        <FormUpdateUserRole {data} basePath="/admin/user-role" />
+        <FormUpdateUserRole {data} {basePath} {redirectBackPath} />
     {/if}
 </div>

@@ -2,9 +2,17 @@ import { fail } from "@sveltejs/kit";
 import { prisma } from "$lib/server/prisma-instance";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { userRoleCreateSchema, userRoleUpdateSchema } from "$components/data-model/user-role/user-role.schema";
+import {
+    userRoleCreateSchema,
+    userRoleUpdateSchema,
+} from "$lib/components/data-model/user-role/user-role.schema.js";
 
-import { loadUserRole, getUserRoleRelationshipData, updateUserRole } from "$components/data-model/user-role/user-role.server";
+import {
+    loadUserRole,
+    getUserRoleRelationshipData,
+    updateUserRole,
+    createUserRole,
+} from "$lib/components/data-model/user-role/user-role.server";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
@@ -34,31 +42,35 @@ export const actions = {
         event.locals.auth.isAdmin();
 
         const form = await superValidate(event, zod(userRoleCreateSchema));
-
         if (!form.valid) return fail(400, { form });
 
         try {
-            await prisma.user_role.create({ data: form.data });
+            await createUserRole(form.data);
         } catch (error) {
             console.error(error);
-            return message(form, "Something went wrong. Please try again");
+            return message(form, "Something went wrong. Please try again", { status: 400 });
         }
+
+        return { form };
     },
     update: async (event) => {
         event.locals.auth.isAdmin();
 
         const form = await superValidate(event, zod(userRoleUpdateSchema));
-
         if (!form.valid) return fail(400, { form });
 
-        const result = await updateUserRole(form.data);
-        if (!result) return message(form, "Bad!");
+        try {
+            await updateUserRole(form.data);
+        } catch (error) {
+            console.error(error);
+            return message(form, "Something went wrong. Please try again", { status: 400 });
+        }
 
-        return { form, message: "Updated successfully!" };
+        return { form };
     },
     delete: async (event) => {
         event.locals.auth.isAdmin();
 
         await prisma.user_role.delete({ where: { id: event.params?.id } });
-    }
+    },
 };

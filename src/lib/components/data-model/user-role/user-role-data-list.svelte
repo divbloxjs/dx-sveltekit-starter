@@ -1,6 +1,6 @@
 <script>
+    import { onMount } from "svelte";
     import { page } from "$app/stores";
-    import { goto } from "$app/navigation";
 
     import { Input } from "$lib/components/shadcn/ui/input";
     import { Button } from "$lib/components/shadcn/ui/button";
@@ -8,90 +8,96 @@
 
     import DataListRowUserRole from "$lib/components/data-model/user-role/data-series/user-role-data-list-row.svelte";
 
-    export let basePath = "/user-role";
-    export let data;
+    export let getEntityArrayPath = "/user-role";
+    export let entityInstancePath = "/user-role";
+    export let redirectBackPath = $page.url.pathname;
 
-    let limit = parseInt($page.url.searchParams.get("limit") ?? "2");
-    if (!limit) limit = 2;
+    export let defaultSearch = "";
+    let search = defaultSearch;
 
-    let search = $page.url.searchParams.get("search");
-    if (!search) search = "";
+    export let defaultLimit = 2;
+    let limit = defaultLimit;
 
-    let offset = parseInt($page.url.searchParams.get("offset") ?? "0");
-    if (!offset) offset = 0;
+    export let paginateSize = 2;
+
+    let userRoleArray = [];
+    let userRoleTotalCount = 0;
+    let enums = [];
+
+    let isInitialised = false;
+    onMount(async () => {
+        await getUserRoleArray();
+        limit = userRoleArray.length;
+    });
+
+    const getUserRoleArray = async (searchParams) => {
+        isInitialised = false;
+        const response = await fetch(`${getEntityArrayPath}?${searchParams?.toString() ?? ""}`);
+        const result = await response.json();
+
+        userRoleArray = result.userRoleArray;
+        userRoleTotalCount = result.userRoleTotalCount;
+        enums = result.enums;
+
+        isInitialised = true;
+    };
 
     const handleSearchChange = () => {
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        newSearchParams.set("search", search);
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
+        let newSearchParams = new URLSearchParams();
+        if (search) newSearchParams.set("search", search);
+
+        limit = defaultLimit;
+        newSearchParams.set("limit", limit.toString());
+
+        getUserRoleArray(newSearchParams);
     };
 
     const handleSearchClear = () => {
         search = "";
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        newSearchParams.delete("search");
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
-    };
-    const handleLimitChange = () => {
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        newSearchParams.set("limit", limit.toString());
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
-    };
-    const handleLimitClear = () => {
-        limit = 10;
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        newSearchParams.set("limit", limit.toString());
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
+        let newSearchParams = new URLSearchParams();
+        if (limit) newSearchParams.set("limit", limit.toString());
+
+        getUserRoleArray(newSearchParams);
     };
 
     const handleLoadMore = () => {
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        limit = limit + 2;
-        newSearchParams.set("limit", limit.toString());
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
+        limit = limit + paginateSize;
+
+        let newSearchParams = new URLSearchParams();
+        if (limit) newSearchParams.set("limit", limit.toString());
+        if (search) newSearchParams.set("search", search);
+
+        getUserRoleArray(newSearchParams);
     };
-
-
-
-	const handleResetAll = async () => {
-		await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
-	}
 </script>
 
-<div class="flex w-full flex-col">
-    <Label for="search">
-        Search
-        <div class="flex flex-row gap-2">
-            <Input type="text" bind:value={search} on:change={handleSearchChange} />
-            <Button on:click={handleSearchClear}>Clear</Button>
-        </div>
-    </Label>
-
-    <Label for="limit">
-        Limit
-        <div class="flex flex-row gap-2">
-            <Input type="number" bind:value={limit} on:change={handleLimitChange} />
-            <Button on:click={handleLimitClear}>Reset</Button>
-        </div>
-    </Label>
-
-    <Button variant="link" class="self-center"on:click={handleResetAll}>Reset All</Button>
-
-    <div class="w-full divide-y overflow-hidden rounded-lg border">
-        {#each data.userRoleArray as userRoleData}
-            <DataListRowUserRole {userRoleData} />
-        {/each}
+<div class="flex w-full flex-col gap-2">
+    <Label for="search">Search</Label>
+    <div class="flex flex-row gap-2">
+        <Input class="h-9" type="text" bind:value={search} on:change={handleSearchChange} />
+        <Button size="sm" on:click={handleSearchClear}>Clear</Button>
     </div>
 
-    <Button variant="link" class="self-center" on:click={handleLoadMore}>Load More</Button>
+    <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
+        {#if isInitialised}
+            {#each userRoleArray as userRoleData}
+                <DataListRowUserRole {userRoleData} basePath={entityInstancePath} {redirectBackPath} />
+            {/each}
+
+            {#if userRoleArray.length === 0}
+                <button class="w-full bg-card px-2 py-4 text-center">
+                    <p class="truncate">No results found</p>
+                </button>
+            {/if}
+        {:else}
+            <button class="w-full bg-card px-2 py-4 text-center">
+                <p class="truncate">Loading...</p>
+            </button>
+        {/if}
+    </div>
+    userRoleTotalCount: {userRoleTotalCount} <br />
+    limit: {limit}
+    {#if userRoleTotalCount > limit}
+        <Button variant="link" size="sm" class="self-center" on:click={handleLoadMore}>Load More</Button>
+    {/if}
 </div>

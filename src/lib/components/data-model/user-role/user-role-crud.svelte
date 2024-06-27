@@ -2,20 +2,16 @@
 	import DataListUserRole from '$lib/components/data-model/user-role/user-role-data-list.svelte';
 	import DataTableUserRole from '$lib/components/data-model/user-role/user-role-data-table.svelte';
 
+	export let basePath = "/user-role";
 	export let data;
-	export let form;
-
-	export let displayType = '';
-	export let list = false;
-
-	let viewportWidth = 700;
-
-	$: list = viewportWidth < 600;
 </script>
 
-<svelte:window bind:innerWidth={viewportWidth} />
-{#if list}
-	<DataListUserRole {data} />
-{:else}
-	<DataTableUserRole {data} allowDelete={true} allowEdit={true} />
-{/if}
+<div class="flex w-full @container">
+    <div class="hidden w-full @lg:block">
+        <DataTableUserRole {data} {basePath} allowDelete={true} allowEdit={true} />
+    </div>
+
+    <div class="w-full @lg:hidden">
+        <DataListUserRole getEntityArrayPath={basePath} entityInstancePath={basePath} redirectBackPath={basePath} />
+    </div>
+</div>

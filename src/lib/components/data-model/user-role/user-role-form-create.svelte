@@ -17,13 +17,15 @@
 
     export let data;
     export let basePath = "/user-role";
+    export let redirectBackPath = "/user-role";
 
     const form = superForm(data.form, {
         validators: zodClient(userRoleCreateSchema),
+        dataType: "json",
         onResult: async (event) => {
             if (event.result.type === "success") {
                 toast.success("Created userRole");
-                await goto(`${basePath}/overview`);
+                await goto(`${redirectBackPath}?event=success-create`);
             }
         }
     });
@@ -43,7 +45,7 @@
     {/if}
 
     <div class="mt-2 flex flex-row justify-between">
-        <a href={`${basePath}/overview`} class={buttonVariants({ variant: "outline" })}>Cancel</a>
+        <a href={`${redirectBackPath}?event=cancel-create`} class={buttonVariants({ variant: "outline" })}>Cancel</a>
         <Button type="submit">Submit</Button>
     </div>
 </form>

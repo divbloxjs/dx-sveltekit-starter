@@ -27,7 +27,8 @@
 
     let isInitialised = false;
     onMount(async () => {
-        get__entityNamePascalCase__Array();
+        await get__entityNamePascalCase__Array();
+        limit = __entityNamePascalCase__Array.length;
     });
 
     const get__entityNamePascalCase__Array = async (searchParams) => {
