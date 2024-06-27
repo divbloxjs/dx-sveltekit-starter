@@ -2,13 +2,13 @@
     import { onMount } from "svelte";
     import { page } from "$app/stores";
 
-    import { Input } from "$lib/components/shadcn/ui/input";
-    import { Button } from "$lib/components/shadcn/ui/button";
-    import { Label } from "$lib/components/shadcn/ui/label";
+    import { Input } from "__uiComponentsPathAlias__/ui/input";
+    import { Button } from "__uiComponentsPathAlias__/ui/button";
+    import { Label } from "__uiComponentsPathAlias__/ui/label";
 
-    import DataListRow__entityNamePascalCase__ from "$lib/components/data-model/__entityNameKebabCase__/data-series/__entityNameKebabCase__-data-list-row.svelte";
+    import DataListRow__entityNamePascalCase__ from "__dataModelComponentsPathAlias__/__entityNameKebabCase__/data-series/__entityNameKebabCase__-data-list-row.svelte";
 
-    export let get__entityNamePascalCase__ArrayPath = "/__entityNameKebabCase__";
+    export let getEntityArrayPath = "/__entityNameKebabCase__";
     export let entityInstancePath = "/__entityNameKebabCase__";
     export let redirectBackPath = $page.url.pathname;
 
@@ -32,12 +32,13 @@
 
     const get__entityNamePascalCase__Array = async (searchParams) => {
         isInitialised = false;
-        const response = await fetch(`${get__entityNamePascalCase__ArrayPath}?${searchParams?.toString() ?? ""}`);
+        const response = await fetch(`${getEntityArrayPath}?${searchParams?.toString() ?? ""}`);
         const result = await response.json();
 
         __entityName__Array = result.__entityName__Array;
         __entityName__TotalCount = result.__entityName__TotalCount;
         enums = result.enums;
+
         isInitialised = true;
     };
 
@@ -77,7 +78,7 @@
         <Button size="sm" on:click={handleSearchClear}>Clear</Button>
     </div>
 
-    <div class="max-h-56 w-full divide-y overflow-y-auto rounded-lg border">
+    <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
         {#if isInitialised}
             {#each __entityName__Array as __entityName__Data}
                 <DataListRow__entityNamePascalCase__ {__entityName__Data} basePath={entityInstancePath} {redirectBackPath} />

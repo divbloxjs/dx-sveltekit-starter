@@ -5,16 +5,16 @@
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
     import { toast } from "svelte-sonner";
-    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
+    import { Button, buttonVariants } from "__uiComponentsPathAlias__/ui/button";
 
     import { __entityName__UpdateSchema } from "./__entityNameKebabCase__.schema.js";
 
-    import FormSelect from "$lib/components/shadcn/ui/form/_form-select.svelte";
-    import FormInput from "$lib/components/shadcn/ui/form/_form-input.svelte";
-    import FormTextarea from "$lib/components/shadcn/ui/form/_form-textarea.svelte";
-    import FormCheckbox from "$lib/components/shadcn/ui/form/_form-checkbox.svelte";
+    import FormSelect from "__uiComponentsPathAlias__/ui/form/_form-select.svelte";
+    import FormInput from "__uiComponentsPathAlias__/ui/form/_form-input.svelte";
+    import FormTextarea from "__uiComponentsPathAlias__/ui/form/_form-textarea.svelte";
+    import FormCheckbox from "__uiComponentsPathAlias__/ui/form/_form-checkbox.svelte";
 
-    import AlertDialog from "$lib/components/shadcn/ui/alert-dialog/_alert-dialog.svelte";
+    import AlertDialog from "__uiComponentsPathAlias__/ui/alert-dialog/_alert-dialog.svelte";
 
     export let data;
     export let basePath = "/__entityNameKebabCase__";
@@ -39,6 +39,8 @@
 
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="w-full p-1 @container">
     <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
+    <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
+
 __formValueComponents__
     </div>
 

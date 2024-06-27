@@ -15,7 +15,7 @@
     {#if $page.params.id === "new"}
         <FormCreate__entityNamePascalCase__ {data} {basePath} {redirectBackPath} />
     {:else if parseInt($page.params.id) > 0}
-        <FormUpdate__entityNamePascalCase__ {data} {redirectBackPath} />
+        <FormUpdate__entityNamePascalCase__ {data} {basePath} {redirectBackPath} />
     {/if}
 </div>
 

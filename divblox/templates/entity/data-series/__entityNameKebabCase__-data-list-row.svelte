@@ -17,6 +17,5 @@
     __entityRowHtml__
 </button>
 
-<!-- Interrogate relationships in the organisationData object -->
-
+<!-- Interrogate relationships in the __entityName__Data object -->
 
