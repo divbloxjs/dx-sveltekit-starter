@@ -5,19 +5,20 @@
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
     import { toast } from "svelte-sonner";
-    import { Button, buttonVariants } from "__uiComponentsPathAlias__/ui/button";
+    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
 
     import { __entityName__UpdateSchema } from "./__entityNameKebabCase__.schema.js";
 
-    import FormSelect from "__uiComponentsPathAlias__/ui/form/_form-select.svelte";
-    import FormInput from "__uiComponentsPathAlias__/ui/form/_form-input.svelte";
-    import FormTextarea from "__uiComponentsPathAlias__/ui/form/_form-textarea.svelte";
-    import FormCheckbox from "__uiComponentsPathAlias__/ui/form/_form-checkbox.svelte";
+    import FormSelect from "$lib/components/shadcn/ui/form/_form-select.svelte";
+    import FormInput from "$lib/components/shadcn/ui/form/_form-input.svelte";
+    import FormTextarea from "$lib/components/shadcn/ui/form/_form-textarea.svelte";
+    import FormCheckbox from "$lib/components/shadcn/ui/form/_form-checkbox.svelte";
 
-    import AlertDialog from "__uiComponentsPathAlias__/ui/alert-dialog/_alert-dialog.svelte";
+    import AlertDialog from "$lib/components/shadcn/ui/alert-dialog/_alert-dialog.svelte";
 
     export let data;
     export let basePath = "/__entityNameKebabCase__";
+    export let redirectBackPath = "/__entityNameKebabCase__";
 
     let deleteAlertOpen = false;
     let deleteFormEl;
@@ -28,7 +29,7 @@
         onResult: async (event) => {
             if (event.result.type === "success") {
                 toast.success("Updated __entityName__");
-                await goto(`${basePath}`);
+                await goto(`${redirectBackPath}?event=success-update`);
             }
         }
     });
@@ -36,10 +37,8 @@
     const { form: formData, enhance: formEnhance, message, errors, submitting } = form;
 </script>
 
-<form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="@container w-full p-1">
-    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
-    <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
-
+<form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="w-full p-1 @container">
+    <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
 __formValueComponents__
     </div>
 
@@ -48,7 +47,7 @@ __formValueComponents__
     {/if}
 
     <div class="mt-2 flex w-full flex-row justify-between">
-        <a href={`${basePath}`} class={buttonVariants({ variant: "outline", size: "sm" })}>Cancel</a>
+        <a href={`${redirectBackPath}?event=cancel-update`} class={buttonVariants({ variant: "outline", size: "sm" })}>Cancel</a>
 
         <div class="flex gap-2">
             <form
@@ -62,7 +61,7 @@ __formValueComponents__
                             return;
                         }
 
-                        await goto(`${basePath}`);
+                        await goto(`${redirectBackPath}?event=success-delete`);
                     };
                 }}>
                 <Button variant="destructive" size="sm" on:click={() => (deleteAlertOpen = !deleteAlertOpen)}>Delete</Button>
