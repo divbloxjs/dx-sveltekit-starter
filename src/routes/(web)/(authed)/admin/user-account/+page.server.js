@@ -1,15 +1,13 @@
 // export const ssr = false;
 
-import { loadUserAccountArray } from "$components/data-model/user-account/user-account.server";
+import { loadUserAccountArray } from "$lib/components/data-model/user-account/user-account.server";
 import { deliverPushNotificationToAllSubscriptionsForUserAccount } from "$lib/server/web-push";
 import { fail } from "@sveltejs/kit";
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
 
 /** @type {import('./$types').PageServerLoad} */
-export const load = async ({ url, params, locals }) => {
-    locals.auth.isAdmin();
-
+export const load = async ({ url, params }) => {
     const urlSearchParams = parse(url.search, { ignoreQueryPrefix: true });
 
     const constraints = {};

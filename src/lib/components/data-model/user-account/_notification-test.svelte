@@ -10,7 +10,7 @@
     import Dialog from "$components/shadcn/ui/dialog/_dialog.svelte";
     import Textarea from "$components/shadcn/ui/textarea/textarea.svelte";
 
-    export let data;
+    export let id;
 
     let testNotificationDialogOpen = false;
     let submittingTest = false;
@@ -51,7 +51,7 @@
     title="Send test notification?"
     description="This will send a push notification to all devices registered for this user">
     <form action="?/testPushNotification" method="POST" use:enhance={submitTest} class="flex flex-col gap-4 py-4">
-        <input type="hidden" name="id" value={data?.userAccountArray[index]?.id} />
+        <input type="hidden" name="id" value={id} />
         <div class="grid grid-cols-4 items-center gap-4">
             <Label for="title" class="text-right">Title</Label>
             <Input name="title" placeholder="New message" class="col-span-3" />

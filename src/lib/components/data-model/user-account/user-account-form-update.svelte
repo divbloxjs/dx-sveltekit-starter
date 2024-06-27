@@ -18,16 +18,18 @@
 
     export let data;
     export let basePath = "/user-account";
+    export let redirectBackPath = "/user-account";
 
     let deleteAlertOpen = false;
     let deleteFormEl;
 
     const form = superForm(data.form, {
         validators: zodClient(userAccountUpdateSchema),
+        dataType: "json",
         onResult: async (event) => {
             if (event.result.type === "success") {
                 toast.success("Updated userAccount");
-                await goto(`${basePath}/overview`);
+                await goto(`${redirectBackPath}?event=success-update`);
             }
         }
     });
@@ -48,7 +50,7 @@
             name="user_role_id"
             label="User role"
             bind:selectedValue={$formData.user_role_id}
-            options={data?.userRoleOptions?.map((option) => {
+            options={data?.userRoleIdOptions?.map((option) => {
                 return {
                     label: option.role_name,
                     value: option.id
@@ -61,7 +63,7 @@
     {/if}
 
     <div class="mt-2 flex w-full flex-row justify-between">
-        <a href={`${basePath}/overview`} class={buttonVariants({ variant: "outline", size: "sm" })}>Cancel</a>
+        <a href={`${redirectBackPath}?event=cancel-update`} class={buttonVariants({ variant: "outline", size: "sm" })}>Cancel</a>
 
         <div class="flex gap-2">
             <form
@@ -75,7 +77,7 @@
                             return;
                         }
 
-                        await goto(`${basePath}/overview`);
+                        await goto(`${redirectBackPath}?event=success-delete`);
                     };
                 }}>
                 <Button variant="destructive" size="sm" on:click={() => (deleteAlertOpen = !deleteAlertOpen)}>Delete</Button>

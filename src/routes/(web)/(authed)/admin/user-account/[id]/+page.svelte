@@ -6,12 +6,15 @@
 
     /** @type {import('./$types').PageData} */
     export let data;
+
+    const basePath = "/admin/user-account";
+    const redirectBackPath = $page.url.searchParams.get("redirectBackPath") ?? basePath;
 </script>
 
 <div class="flex w-full max-w-4xl self-center">
     {#if $page.params.id === "new"}
-        <FormCreateUserAccount {data} basePath="/admin/user-account" />
+        <FormCreateUserAccount {data} {basePath} {redirectBackPath} />
     {:else if parseInt($page.params.id) > 0}
-        <FormUpdateUserAccount {data} basePath="/admin/user-account" />
+        <FormUpdateUserAccount {data} {basePath} {redirectBackPath} />
     {/if}
 </div>
