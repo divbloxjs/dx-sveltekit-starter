@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { page } from "$app/stores";
 
     import { Input } from "$lib/components/shadcn/ui/input";
@@ -12,6 +12,8 @@
     export let entityInstancePath = "/user-role";
     export let redirectBackPath = $page.url.pathname;
 
+    export let disableDefaultRowClickAction = false;
+
     export let defaultSearch = "";
     let search = defaultSearch;
 
@@ -19,6 +21,8 @@
     let limit = defaultLimit;
 
     export let paginateSize = 2;
+
+    const dispatch = createEventDispatcher();
 
     let userRoleArray = [];
     let userRoleTotalCount = 0;
@@ -81,7 +85,12 @@
     <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
         {#if isInitialised}
             {#each userRoleArray as userRoleData}
-                <DataListRowUserRole {userRoleData} basePath={entityInstancePath} {redirectBackPath} />
+                <DataListRowUserRole
+                    {userRoleData}
+                    basePath={entityInstancePath}
+                    {redirectBackPath}
+                    {disableDefaultRowClickAction}
+                    on:row-clicked={(event) => dispatch("row-clicked", event.detail)} />
             {/each}
 
             {#if userRoleArray.length === 0}
