@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { page } from "$app/stores";
 
     import { Input } from "$lib/components/shadcn/ui/input";
@@ -12,6 +12,8 @@
     export let entityInstancePath = "/user-account";
     export let redirectBackPath = $page.url.pathname;
 
+    export let disableDefaultRowClickAction = false;
+
     export let defaultSearch = "";
     let search = defaultSearch;
 
@@ -19,6 +21,8 @@
     $: limit = defaultLimit;
 
     export let paginateSize = 2;
+
+    const dispatch = createEventDispatcher();
 
     let userAccountArray = [];
     let userAccountTotalCount = 0;
@@ -80,7 +84,12 @@
     <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
         {#if isInitialised}
             {#each userAccountArray as userAccountData}
-                <DataListRowUserAccount {userAccountData} basePath={entityInstancePath} {redirectBackPath} />
+                <DataListRowUserAccount
+                    {userAccountData}
+                    basePath={entityInstancePath}
+                    {redirectBackPath}
+                    {disableDefaultRowClickAction}
+                    on:row-clicked={(event) => dispatch("row-clicked", event.detail)} />
             {/each}
 
             {#if userAccountArray.length === 0}
