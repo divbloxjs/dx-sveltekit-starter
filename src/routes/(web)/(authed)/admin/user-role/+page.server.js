@@ -1,13 +1,11 @@
 // export const ssr = false;
 
-import { loadUserRoleArray } from "$components/data-model/user-role/user-role.server";
+import { loadUserRoleArray } from "$lib/components/data-model/user-role/user-role.server";
 import { isNumeric, isValidObject } from "dx-utilities";
 import { parse } from "qs";
 
 /** @type {import('./$types').PageServerLoad} */
-export const load = async ({ url, params, locals }) => {
-    locals.auth.isAdmin();
-
+export const load = async ({ url, params }) => {
     const urlSearchParams = parse(url.search, { ignoreQueryPrefix: true });
 
     const constraints = {};

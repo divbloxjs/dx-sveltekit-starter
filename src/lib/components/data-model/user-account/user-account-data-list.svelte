@@ -1,6 +1,6 @@
 <script>
+    import { createEventDispatcher, onMount } from "svelte";
     import { page } from "$app/stores";
-    import { goto } from "$app/navigation";
 
     import { Input } from "$lib/components/shadcn/ui/input";
     import { Button } from "$lib/components/shadcn/ui/button";
@@ -8,88 +8,103 @@
 
     import DataListRowUserAccount from "$lib/components/data-model/user-account/data-series/user-account-data-list-row.svelte";
 
-    export let basePath = "/user-account";
-    export let data;
+    export let getUserAccountArrayPath = "/user-account";
+    export let entityInstancePath = "/user-account";
+    export let redirectBackPath = $page.url.pathname;
 
-    let limit = parseInt($page.url.searchParams.get("limit") ?? "2");
-    if (!limit) limit = 2;
+    export let disableDefaultRowClickAction = false;
 
-    let search = $page.url.searchParams.get("search");
-    if (!search) search = "";
+    export let defaultSearch = "";
+    let search = defaultSearch;
 
-    let offset = parseInt($page.url.searchParams.get("offset") ?? "0");
-    if (!offset) offset = 0;
+    export let defaultLimit = 2;
+    $: limit = defaultLimit;
+
+    export let paginateSize = 2;
+
+    const dispatch = createEventDispatcher();
+
+    let userAccountArray = [];
+    let userAccountTotalCount = 0;
+    let enums = [];
+
+    let isInitialised = false;
+    onMount(async () => {
+        getUserAccountArray();
+    });
+
+    const getUserAccountArray = async (searchParams) => {
+        isInitialised = false;
+        const response = await fetch(`${getUserAccountArrayPath}?${searchParams?.toString() ?? ""}`);
+        const result = await response.json();
+
+        userAccountArray = result.userAccountArray;
+        userAccountTotalCount = result.userAccountTotalCount;
+        enums = result.enums;
+
+        isInitialised = true;
+    };
 
     const handleSearchChange = () => {
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        newSearchParams.set("search", search);
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
+        let newSearchParams = new URLSearchParams();
+        if (search) newSearchParams.set("search", search);
+
+        limit = defaultLimit;
+        newSearchParams.set("limit", limit.toString());
+
+        getUserAccountArray(newSearchParams);
     };
 
     const handleSearchClear = () => {
         search = "";
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        newSearchParams.delete("search");
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
-    };
-    const handleLimitChange = () => {
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        newSearchParams.set("limit", limit.toString());
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
-    };
-    const handleLimitClear = () => {
-        limit = 10;
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        newSearchParams.set("limit", limit.toString());
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
+        let newSearchParams = new URLSearchParams();
+        if (limit) newSearchParams.set("limit", limit.toString());
+
+        getUserAccountArray(newSearchParams);
     };
 
     const handleLoadMore = () => {
-        let newSearchParams = new URLSearchParams($page.url.searchParams.toString());
-        limit = limit + 2;
-        newSearchParams.set("limit", limit.toString());
-        goto(`${basePath}/overview?${newSearchParams.toString()}`, {
-            invalidateAll: true
-        });
-    };
+        limit = limit + paginateSize;
 
-    const handleResetAll = async () => {
-        await goto(`${basePath}/overview`, { invalidateAll: true, replaceState: true });
+        let newSearchParams = new URLSearchParams();
+        if (limit) newSearchParams.set("limit", limit.toString());
+        if (search) newSearchParams.set("search", search);
+
+        getUserAccountArray(newSearchParams);
     };
 </script>
 
-<div class="flex w-full flex-col">
-    <Label for="search">
-        Search
-        <div class="flex flex-row gap-2">
-            <Input type="text" bind:value={search} on:change={handleSearchChange} />
-            <Button on:click={handleSearchClear}>Clear</Button>
-        </div>
-    </Label>
-
-    <Label for="limit">
-        Limit
-        <div class="flex flex-row gap-2">
-            <Input type="number" bind:value={limit} on:change={handleLimitChange} />
-            <Button on:click={handleLimitClear}>Reset</Button>
-        </div>
-    </Label>
-
-    <Button variant="link" class="self-center" on:click={handleResetAll}>Reset All</Button>
-
-    <div class="w-full divide-y overflow-hidden rounded-lg border">
-        {#each data.userAccountArray as userAccountData}
-            <DataListRowUserAccount {userAccountData} />
-        {/each}
+<div class="flex w-full flex-col gap-2">
+    <Label for="search">Search</Label>
+    <div class="flex flex-row gap-2">
+        <Input class="h-9" type="text" bind:value={search} on:change={handleSearchChange} />
+        <Button size="sm" on:click={handleSearchClear}>Clear</Button>
     </div>
 
-    <Button variant="link" class="self-center" on:click={handleLoadMore}>Load More</Button>
+    <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
+        {#if isInitialised}
+            {#each userAccountArray as userAccountData}
+                <DataListRowUserAccount
+                    {userAccountData}
+                    basePath={entityInstancePath}
+                    {redirectBackPath}
+                    {disableDefaultRowClickAction}
+                    on:row-clicked={(event) => dispatch("row-clicked", event.detail)} />
+            {/each}
+
+            {#if userAccountArray.length === 0}
+                <button class="w-full bg-card px-2 py-4 text-center">
+                    <p class="truncate">No results found</p>
+                </button>
+            {/if}
+        {:else}
+            <button class="w-full bg-card px-2 py-4 text-center">
+                <p class="truncate">Loading...</p>
+            </button>
+        {/if}
+    </div>
+
+    {#if userAccountTotalCount > limit}
+        <Button variant="link" size="sm" class="self-center" on:click={handleLoadMore}>Load More</Button>
+    {/if}
 </div>

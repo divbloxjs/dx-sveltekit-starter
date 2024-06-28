@@ -1,14 +1,15 @@
-import { error, fail } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 import { prisma } from "$lib/server/prisma-instance";
-import { message, setError, superValidate } from "sveltekit-superforms";
+import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { userAccountCreateSchema, userAccountUpdateSchema } from "$components/data-model/user-account/user-account.schema";
-import argon2 from "argon2";
+import { userAccountCreateSchema, userAccountUpdateSchema } from "$lib/components/data-model/user-account/user-account.schema.js";
+
 import {
     loadUserAccount,
     getUserAccountRelationshipData,
-    updateUserAccount
-} from "$components/data-model/user-account/user-account.server";
+    updateUserAccount,
+    createUserAccount
+} from "$lib/components/data-model/user-account/user-account.server";
 import { deliverPushNotificationToAllSubscriptionsForUserAccount } from "$lib/server/web-push";
 
 /** @type {import('./$types').PageServerLoad} */
@@ -51,34 +52,26 @@ export const actions = {
             delete form.data.password;
         }
         try {
-            await prisma.user_account.create({ data: form.data });
+            await createUserAccount(form.data);
         } catch (error) {
             console.error(error);
             // https://www.prisma.io/docs/orm/reference/error-reference#p2002
             if (error?.code === "P2002") {
                 return setError(form, "email_address", "User already exists");
             }
-
-            return fail(400, { form });
         }
+
+        return { form };
     },
     update: async (event) => {
-        event.locals.auth.isAdmin();
-
         const form = await superValidate(event, zod(userAccountUpdateSchema));
-
         if (!form.valid) return fail(400, { form });
-
-        if (form.data.password) {
-            form.data.hashed_password = await argon2.hash(form.data.password);
-            delete form.data.password;
-        }
 
         try {
             await updateUserAccount(form.data);
         } catch (error) {
             console.error(error);
-            return fail(400, form);
+            return message(form, "Something went wrong. Please try again", { status: 400 });
         }
 
         return { form };

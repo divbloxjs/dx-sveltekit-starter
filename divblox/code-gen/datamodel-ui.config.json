@@ -1,212 +1,212 @@
 {
-    "file": {
-        "category": {
-            "type": "text",
-            "displayName": "Category",
-            "placeholder": "category",
-            "default": ""
-        },
-        "mimeType": {
-            "type": "text",
-            "displayName": "Mime type",
-            "placeholder": "mimeType",
-            "default": ""
-        },
-        "sizesSaved": {
-            "type": "textarea",
-            "displayName": "Sizes saved",
-            "placeholder": "sizesSaved",
-            "default": ""
-        },
-        "baseFileUrl": {
-            "type": "text",
-            "displayName": "Base file url",
-            "placeholder": "baseFileUrl",
-            "default": ""
-        },
-        "displayName": {
-            "type": "text",
-            "displayName": "Display name",
-            "placeholder": "displayName",
-            "default": ""
-        },
-        "linkedEntity": {
-            "type": "text",
-            "displayName": "Linked entity",
-            "placeholder": "linkedEntity",
-            "default": ""
-        },
-        "linkedEntityId": {
-            "type": "number",
-            "displayName": "Linked entity id",
-            "placeholder": "linkedEntityId",
-            "default": ""
-        },
-        "objectIdentifier": {
-            "type": "text",
-            "displayName": "Object identifier",
-            "placeholder": "objectIdentifier",
-            "default": ""
-        },
-        "originalSizeInBytes": {
-            "type": "number",
-            "displayName": "Original size in bytes",
-            "placeholder": "originalSizeInBytes",
-            "default": ""
-        },
-        "uploadedFileExtension": {
-            "type": "text",
-            "displayName": "Uploaded file extension",
-            "placeholder": "uploadedFileExtension",
-            "default": ""
-        },
-        "cloudContainerIdentifier": {
-            "type": "text",
-            "displayName": "Cloud container identifier",
-            "placeholder": "cloudContainerIdentifier",
-            "default": ""
-        },
-        "cloudIsPubliclyAvailable": {
-            "type": "checkbox",
-            "displayName": "Cloud is publicly available",
-            "placeholder": "cloudIsPubliclyAvailable",
-            "default": ""
-        }
-    },
-    "userRole": {
-        "roleName": {
-            "type": "text",
-            "displayName": "Role name",
-            "placeholder": "roleName",
-            "default": ""
-        }
-    },
-    "userAccount": {
-        "lastName": {
-            "type": "text",
-            "displayName": "Last name",
-            "placeholder": "lastName",
-            "default": ""
-        },
-        "username": {
-            "type": "text",
-            "displayName": "Username",
-            "placeholder": "username",
-            "default": ""
-        },
-        "firstName": {
-            "type": "text",
-            "displayName": "First name",
-            "placeholder": "firstName",
-            "default": ""
-        },
-        "emailAddress": {
-            "type": "text",
-            "displayName": "Email address",
-            "placeholder": "emailAddress",
-            "default": ""
-        },
-        "hashedPassword": {
-            "type": "text",
-            "displayName": "Hashed password",
-            "placeholder": "hashedPassword",
-            "default": ""
-        }
-    },
-    "userSession": {
-        "expiresAt": {
-            "type": "datetime-local",
-            "displayName": "Expires at",
-            "placeholder": "expiresAt",
-            "default": ""
-        },
-        "sessionId": {
-            "type": "text",
-            "displayName": "Session id",
-            "placeholder": "sessionId",
-            "default": ""
-        },
-        "userAgent": {
-            "type": "text",
-            "displayName": "User agent",
-            "placeholder": "userAgent",
-            "default": ""
-        },
-        "sessionData": {
-            "type": "textarea",
-            "displayName": "Session data",
-            "placeholder": "sessionData",
-            "default": ""
-        },
-        "durationInMinutes": {
-            "type": "number",
-            "displayName": "Duration in minutes",
-            "placeholder": "durationInMinutes",
-            "default": ""
-        }
-    },
-    "oneTimeToken": {
-        "expiresAt": {
-            "type": "datetime-local",
-            "displayName": "Expires at",
-            "placeholder": "expiresAt",
-            "default": ""
-        },
-        "tokenType": {
-            "type": "text",
-            "displayName": "Token type",
-            "placeholder": "tokenType",
-            "default": ""
-        },
-        "tokenValue": {
-            "type": "text",
-            "displayName": "Token value",
-            "placeholder": "tokenValue",
-            "default": ""
-        },
-        "linkedEntityId": {
-            "type": "number",
-            "displayName": "Linked entity id",
-            "placeholder": "linkedEntityId",
-            "default": ""
-        },
-        "linkedEntityName": {
-            "type": "text",
-            "displayName": "Linked entity name",
-            "placeholder": "linkedEntityName",
-            "default": ""
-        },
-        "timeToLiveInMinutes": {
-            "type": "number",
-            "displayName": "Time to live in minutes",
-            "placeholder": "timeToLiveInMinutes",
-            "default": ""
-        }
-    },
-    "pushSubscription": {
-        "isActive": {
-            "type": "checkbox",
-            "displayName": "Is active",
-            "placeholder": "isActive",
-            "default": ""
-        },
-        "uniqueIdentifier": {
-            "type": "text",
-            "displayName": "Unique identifier",
-            "placeholder": "uniqueIdentifier",
-            "default": ""
-        },
-        "hasUnseenNotification": {
-            "type": "checkbox",
-            "displayName": "Has unseen notification",
-            "placeholder": "hasUnseenNotification",
-            "default": ""
-        },
-        "pushSubscriptionDetails": {
-            "type": "textarea",
-            "displayName": "Push subscription details",
-            "placeholder": "pushSubscriptionDetails",
-            "default": ""
-        }
-    }
+	"file": {
+		"category": {
+			"type": "text",
+			"displayName": "Category",
+			"placeholder": "category",
+			"default": ""
+		},
+		"mimeType": {
+			"type": "text",
+			"displayName": "Mime type",
+			"placeholder": "mimeType",
+			"default": ""
+		},
+		"sizesSaved": {
+			"type": "textarea",
+			"displayName": "Sizes saved",
+			"placeholder": "sizesSaved",
+			"default": ""
+		},
+		"baseFileUrl": {
+			"type": "text",
+			"displayName": "Base file url",
+			"placeholder": "baseFileUrl",
+			"default": ""
+		},
+		"displayName": {
+			"type": "text",
+			"displayName": "Display name",
+			"placeholder": "displayName",
+			"default": ""
+		},
+		"linkedEntity": {
+			"type": "text",
+			"displayName": "Linked entity",
+			"placeholder": "linkedEntity",
+			"default": ""
+		},
+		"linkedEntityId": {
+			"type": "number",
+			"displayName": "Linked entity id",
+			"placeholder": "linkedEntityId",
+			"default": ""
+		},
+		"objectIdentifier": {
+			"type": "text",
+			"displayName": "Object identifier",
+			"placeholder": "objectIdentifier",
+			"default": ""
+		},
+		"originalSizeInBytes": {
+			"type": "number",
+			"displayName": "Original size in bytes",
+			"placeholder": "originalSizeInBytes",
+			"default": ""
+		},
+		"uploadedFileExtension": {
+			"type": "text",
+			"displayName": "Uploaded file extension",
+			"placeholder": "uploadedFileExtension",
+			"default": ""
+		},
+		"cloudContainerIdentifier": {
+			"type": "text",
+			"displayName": "Cloud container identifier",
+			"placeholder": "cloudContainerIdentifier",
+			"default": ""
+		},
+		"cloudIsPubliclyAvailable": {
+			"type": "checkbox",
+			"displayName": "Cloud is publicly available",
+			"placeholder": "cloudIsPubliclyAvailable",
+			"default": ""
+		}
+	},
+	"userRole": {
+		"roleName": {
+			"type": "text",
+			"displayName": "Role name",
+			"placeholder": "roleName",
+			"default": ""
+		}
+	},
+	"userAccount": {
+		"lastName": {
+			"type": "text",
+			"displayName": "Last name",
+			"placeholder": "lastName",
+			"default": ""
+		},
+		"username": {
+			"type": "text",
+			"displayName": "Username",
+			"placeholder": "username",
+			"default": ""
+		},
+		"firstName": {
+			"type": "text",
+			"displayName": "First name",
+			"placeholder": "firstName",
+			"default": ""
+		},
+		"emailAddress": {
+			"type": "text",
+			"displayName": "Email address",
+			"placeholder": "emailAddress",
+			"default": ""
+		},
+		"hashedPassword": {
+			"type": "text",
+			"displayName": "Hashed password",
+			"placeholder": "hashedPassword",
+			"default": ""
+		}
+	},
+	"userSession": {
+		"expiresAt": {
+			"type": "datetime-local",
+			"displayName": "Expires at",
+			"placeholder": "expiresAt",
+			"default": ""
+		},
+		"sessionId": {
+			"type": "text",
+			"displayName": "Session id",
+			"placeholder": "sessionId",
+			"default": ""
+		},
+		"userAgent": {
+			"type": "text",
+			"displayName": "User agent",
+			"placeholder": "userAgent",
+			"default": ""
+		},
+		"sessionData": {
+			"type": "textarea",
+			"displayName": "Session data",
+			"placeholder": "sessionData",
+			"default": ""
+		},
+		"durationInMinutes": {
+			"type": "number",
+			"displayName": "Duration in minutes",
+			"placeholder": "durationInMinutes",
+			"default": ""
+		}
+	},
+	"oneTimeToken": {
+		"expiresAt": {
+			"type": "datetime-local",
+			"displayName": "Expires at",
+			"placeholder": "expiresAt",
+			"default": ""
+		},
+		"tokenType": {
+			"type": "text",
+			"displayName": "Token type",
+			"placeholder": "tokenType",
+			"default": ""
+		},
+		"tokenValue": {
+			"type": "text",
+			"displayName": "Token value",
+			"placeholder": "tokenValue",
+			"default": ""
+		},
+		"linkedEntityId": {
+			"type": "number",
+			"displayName": "Linked entity id",
+			"placeholder": "linkedEntityId",
+			"default": ""
+		},
+		"linkedEntityName": {
+			"type": "text",
+			"displayName": "Linked entity name",
+			"placeholder": "linkedEntityName",
+			"default": ""
+		},
+		"timeToLiveInMinutes": {
+			"type": "number",
+			"displayName": "Time to live in minutes",
+			"placeholder": "timeToLiveInMinutes",
+			"default": ""
+		}
+	},
+	"pushSubscription": {
+		"isActive": {
+			"type": "checkbox",
+			"displayName": "Is active",
+			"placeholder": "isActive",
+			"default": ""
+		},
+		"uniqueIdentifier": {
+			"type": "text",
+			"displayName": "Unique identifier",
+			"placeholder": "uniqueIdentifier",
+			"default": ""
+		},
+		"hasUnseenNotification": {
+			"type": "checkbox",
+			"displayName": "Has unseen notification",
+			"placeholder": "hasUnseenNotification",
+			"default": ""
+		},
+		"pushSubscriptionDetails": {
+			"type": "textarea",
+			"displayName": "Push subscription details",
+			"placeholder": "pushSubscriptionDetails",
+			"default": ""
+		}
+	}
 }

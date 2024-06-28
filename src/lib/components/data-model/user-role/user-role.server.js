@@ -1,13 +1,27 @@
 import { prisma } from "$lib/server/prisma-instance";
 import { isNumeric } from "dx-utilities";
-import { getIntId, normalizeDatabaseArray } from "$components/data-model/_helpers/helpers";
-import { getEntitiesRelatedTo, getRelatedEntities } from "$components/data-model/_helpers/helpers.server";
 import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/prisma.helpers";
+import { getSqlFromCamelCase } from "$lib/helpers";
+import { formatISO } from "date-fns/formatISO";
+import { format } from "date-fns";
 
+import { normalizeDatabaseArray } from "../_helpers/helpers";
+import {
+    getEntitiesRelatedTo,
+    getRelatedEntities,
+    getEntityAttributeUiTypes,
+    getRelationships,
+    getAllEnumOptions,
+} from "../_helpers/helpers.server";
+
+// DX-NOTE: Maximum number of options to load for related entities
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
+// DX-NOTE: Configuration for which attributes to search through.
+//          This search performs a fuzzy LIKE comparison using wildcards, and as such
+//          IGNORES any non-text data types.
 const searchConfig = {
-    attributes: ["roleName"]
+    attributes: ["roleName"],
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
@@ -18,61 +32,47 @@ export const loadUserRoleArray = async (constraints = {}) => {
     const prismaConditions = getPrismaConditions("userRole", searchConfig, constraints);
 
     const userRoleArray = await prisma.user_role.findMany({
-        // relationLoadStrategy: 'join', // or "query"
         select: selectClause,
-        ...prismaConditions
+        ...prismaConditions,
     });
 
-    try {
-        normalizeDatabaseArray(userRoleArray);
-    } catch (err) {
-        console.error(err);
-    }
+    normalizeDatabaseArray(userRoleArray);
 
-    return { userRoleArray };
-};
+    const totalCountConstraints = { search: constraints.search, filter: constraints.filter };
+    const totalCountPrismaConditions = getPrismaConditions("userRole", searchConfig, totalCountConstraints);
+    const userRoleTotalCount = await prisma.user_role.count({ ...totalCountPrismaConditions });
 
-export const createUserRole = async (data) => {
-    await prisma.user_role.create({ data });
-};
+    const enums = {};
+    getAllEnumOptions("userRole", enums);
 
-export const updateUserRole = async (data) => {
-    const relationships = getRelatedEntities("userRole");
-
-    Object.values(relationships).forEach((relationshipName) => {
-        if (data.hasOwnProperty(relationshipName)) {
-            if (!isNumeric(data[relationshipName])) {
-                delete data[relationshipName];
-                console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
-            }
-
-            if (typeof data[relationshipName] === "string") {
-                data[relationshipName] = parseInt(data[relationshipName]);
-            }
-        } else {
-            data[relationshipName] = null;
-        }
-    });
-
-    const result = await prisma.user_role.update({
-        data,
-        where: { id: data.id }
-    });
-};
-
-export const deleteUserRole = async (id = -1) => {
-    await prisma.user_role.delete({ where: { id } });
+    return { userRoleArray, userRoleTotalCount, enums };
 };
 
 export const loadUserRole = async (id = -1, relationshipOptions = true) => {
     const userRole = await prisma.user_role.findUnique({
-        where: { id: id }
+        where: { id: id },
     });
 
     userRole.id = userRole.id.toString();
-    Object.keys(getRelatedEntities("userRole")).forEach((relationshipName) => {
-        userRole[`${relationshipName}Id`] = userRole[`${relationshipName}Id`]?.toString();
-    });
+
+    const attributeNameTypeMap = getEntityAttributeUiTypes("userRole");
+
+    for (const [key, val] of Object.entries(userRole)) {
+        if (val && attributeNameTypeMap[key] === "date") {
+            userRole[key] = formatISO(val, { representation: "date" });
+        }
+
+        if (val && attributeNameTypeMap[key] === "datetime-local") {
+            userRole[key] = format(val, "yyyy-MM-dd'T'hh:mm");
+        }
+    }
+
+    for (const [relatedEntityName, relationshipNames] of Object.entries(getRelationships("userRole"))) {
+        for (const relationshipName of relationshipNames) {
+            userRole[getSqlFromCamelCase(relationshipName)] =
+                userRole[getSqlFromCamelCase(relationshipName)]?.toString();
+        }
+    }
 
     let returnObject = { userRole };
     if (!relationshipOptions) return returnObject;
@@ -80,7 +80,7 @@ export const loadUserRole = async (id = -1, relationshipOptions = true) => {
     const relationshipData = await getUserRoleRelationshipData();
     returnObject = {
         ...returnObject,
-        ...relationshipData
+        ...relationshipData,
     };
 
     if (getEntitiesRelatedTo("userRole").length === 0) return returnObject;
@@ -88,14 +88,89 @@ export const loadUserRole = async (id = -1, relationshipOptions = true) => {
     const associatedData = await getUserRoleAssociatedData(userRole?.id);
     returnObject = {
         ...returnObject,
-        ...associatedData
+        ...associatedData,
     };
 
     return returnObject;
 };
 
+export const createUserRole = async (data) => {
+    const relationships = getRelatedEntities("userRole");
+    const attributeNameTypeMap = getEntityAttributeUiTypes("userRole");
+
+    for (const [key, val] of Object.entries(data)) {
+        if (attributeNameTypeMap[key] === "date" || attributeNameTypeMap[key] === "datetime-local") {
+            data[key] = new Date(val);
+        }
+    }
+
+    Object.values(relationships).forEach((relationshipNames) => {
+        relationshipNames.forEach((relationshipName) => {
+            relationshipName = getSqlFromCamelCase(relationshipName);
+            if (data.hasOwnProperty(relationshipName)) {
+                if (!isNumeric(data[relationshipName])) {
+                    delete data[relationshipName];
+                    console.error(
+                        `Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`,
+                    );
+                }
+
+                if (typeof data[relationshipName] === "string") {
+                    data[relationshipName] = parseInt(data[relationshipName]);
+                }
+            } else {
+                data[relationshipName] = null;
+            }
+        });
+    });
+
+    await prisma.user_role.create({ data });
+};
+
+export const updateUserRole = async (data) => {
+    const relationships = getRelatedEntities("userRole");
+    const attributeNameTypeMap = getEntityAttributeUiTypes("userRole");
+
+    for (const [key, val] of Object.entries(data)) {
+        if (attributeNameTypeMap[key] === "date" || attributeNameTypeMap[key] === "datetime-local") {
+            data[key] = new Date(val);
+        }
+    }
+
+    Object.values(relationships).forEach((relationshipNames) => {
+        relationshipNames.forEach((relationshipName) => {
+            relationshipName = getSqlFromCamelCase(relationshipName);
+            if (data.hasOwnProperty(relationshipName)) {
+                if (!isNumeric(data[relationshipName])) {
+                    delete data[relationshipName];
+                    console.error(
+                        `Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`,
+                    );
+                }
+
+                if (typeof data[relationshipName] === "string") {
+                    data[relationshipName] = parseInt(data[relationshipName]);
+                }
+            } else {
+                data[relationshipName] = null;
+            }
+        });
+    });
+
+    await prisma.user_role.update({
+        data,
+        where: { id: data.id },
+    });
+};
+
+export const deleteUserRole = async (id = -1) => {
+    await prisma.user_role.delete({ where: { id } });
+};
+
 export const getUserRoleRelationshipData = async () => {
     const relationshipData = {};
+
+    ;
 
     return relationshipData;
 };
@@ -104,18 +179,22 @@ export const getUserRoleAssociatedData = async (userRoleId) => {
     const associatedData = {};
 
     associatedData.userAccount = await getAssociatedUserAccountArray(userRoleId);
+;
+
     return associatedData;
 };
 
 //#region RelatedEntity / AssociatedEntity Helpers
 
+;
 const getAssociatedUserAccountArray = async (userRoleId) => {
     const userAccountArray = await prisma.user_account.findMany({
         where: { user_role_id: userRoleId },
-        take: RELATIONSHIP_LOAD_LIMIT
+        take: RELATIONSHIP_LOAD_LIMIT,
     });
 
     return userAccountArray;
 };
+;
 
 //#endregion RelatedEntity / AssociatedEntity Helpers
