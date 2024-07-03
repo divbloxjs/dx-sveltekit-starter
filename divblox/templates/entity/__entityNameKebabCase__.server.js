@@ -11,7 +11,7 @@ import {
     getRelatedEntities,
     getEntityAttributeUiTypes,
     getRelationships,
-    getAllEnumOptions,
+    getAllEnumOptions
 } from "../_helpers/helpers.server";
 
 // DX-NOTE: Maximum number of options to load for related entities
@@ -21,7 +21,7 @@ const RELATIONSHIP_LOAD_LIMIT = 50;
 //          This search performs a fuzzy LIKE comparison using wildcards, and as such
 //          IGNORES any non-text data types.
 const searchConfig = {
-    attributes: ["__allAttributesString__"],
+    attributes: ["__allAttributesString__"]
     // relationships: {
     //     relatedEntityName: { attributes: [] }
     // }
@@ -33,7 +33,7 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
 
     const __entityName__Array = await prisma.__entityNameSqlCase__.findMany({
         select: selectClause,
-        ...prismaConditions,
+        ...prismaConditions
     });
 
     normalizeDatabaseArray(__entityName__Array);
@@ -50,7 +50,7 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
 
 export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions = true) => {
     const __entityName__ = await prisma.__entityNameSqlCase__.findUnique({
-        where: { id: id },
+        where: { id: id }
     });
 
     __entityName__.id = __entityName__.id.toString();
@@ -65,12 +65,15 @@ export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions 
         if (val && attributeNameTypeMap[key] === "datetime-local") {
             __entityName__[key] = format(val, "yyyy-MM-dd'T'hh:mm");
         }
+
+        if (val && attributes[key]?.type?.toLowerCase() === "decimal") {
+            __entityName__[key] = parseFloat(val?.toString());
+        }
     }
 
     for (const [relatedEntityName, relationshipNames] of Object.entries(getRelationships("__entityName__"))) {
         for (const relationshipName of relationshipNames) {
-            __entityName__[getSqlFromCamelCase(relationshipName)] =
-                __entityName__[getSqlFromCamelCase(relationshipName)]?.toString();
+            __entityName__[getSqlFromCamelCase(relationshipName)] = __entityName__[getSqlFromCamelCase(relationshipName)]?.toString();
         }
     }
 
@@ -80,7 +83,7 @@ export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions 
     const relationshipData = await get__entityNamePascalCase__RelationshipData();
     returnObject = {
         ...returnObject,
-        ...relationshipData,
+        ...relationshipData
     };
 
     if (getEntitiesRelatedTo("__entityName__").length === 0) return returnObject;
@@ -88,7 +91,7 @@ export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions 
     const associatedData = await get__entityNamePascalCase__AssociatedData(__entityName__?.id);
     returnObject = {
         ...returnObject,
-        ...associatedData,
+        ...associatedData
     };
 
     return returnObject;
@@ -110,9 +113,7 @@ export const create__entityNamePascalCase__ = async (data) => {
             if (data.hasOwnProperty(relationshipName)) {
                 if (!isNumeric(data[relationshipName])) {
                     delete data[relationshipName];
-                    console.error(
-                        `Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`,
-                    );
+                    console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
                 }
 
                 if (typeof data[relationshipName] === "string") {
@@ -143,9 +144,7 @@ export const update__entityNamePascalCase__ = async (data) => {
             if (data.hasOwnProperty(relationshipName)) {
                 if (!isNumeric(data[relationshipName])) {
                     delete data[relationshipName];
-                    console.error(
-                        `Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`,
-                    );
+                    console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
                 }
 
                 if (typeof data[relationshipName] === "string") {
@@ -159,7 +158,7 @@ export const update__entityNamePascalCase__ = async (data) => {
 
     await prisma.__entityNameSqlCase__.update({
         data,
-        where: { id: data.id },
+        where: { id: data.id }
     });
 };
 
