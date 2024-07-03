@@ -17,11 +17,20 @@ export const normalizeDatabaseObject = (object = {}, removeLastUpdated = true, m
     if (!isValidObject(object)) return false;
 
     Object.keys(object).forEach((keyName) => {
-        if (isValidObject(object[keyName])) {
-            if (isNumeric(object[keyName])) {
-                object[keyName] = parseInt(object[keyName]);
+        // Prisma Decimal Object - weird non-serializable non-POJO (https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types)
+        if (object[keyName] && typeof object[keyName] === "object") {
+            if (
+                Object.keys(object[keyName])[1] === "s" &&
+                Object.keys(object[keyName])[2] === "e" &&
+                Object.keys(object[keyName])[3] === "d"
+            ) {
+                // Convert Decimal.js object into simple serializable string
+                object[keyName] = object[keyName].toString();
+                return;
             }
+        }
 
+        if (isValidObject(object[keyName])) {
             normalizeDatabaseObject(object[keyName]);
         }
 
@@ -133,18 +142,12 @@ export const getConstraintFromSearchParams = (url) => {
     return constraints;
 };
 
-export const buildAttributeMap = (
-    entityName = "",
-    tableConfig = {},
-    orderedAttributeMap = {},
-    relationshipStack = [],
-) => {
+export const buildAttributeMap = (entityName = "", tableConfig = {}, orderedAttributeMap = {}, relationshipStack = []) => {
     if (!isValidObject(tableConfig)) return {};
 
     Object.keys(tableConfig).forEach((keyName) => {
         const isNestedRelationship =
-            isValidObject(tableConfig[keyName]) &&
-            Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
+            isValidObject(tableConfig[keyName]) && Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
 
         if (isNestedRelationship) {
             const innerRelationshipStack = JSON.parse(JSON.stringify(relationshipStack));
@@ -162,7 +165,7 @@ export const buildAttributeMap = (
                     : getSqlFromCamelCase(relationshipStack[relationshipStack.length - 1]),
             type: tableConfig[keyName]?.type ?? "text",
             stack: [...relationshipStack, getSqlFromCamelCase(keyName)],
-            displayName: tableConfig[keyName].displayName ?? keyName,
+            displayName: tableConfig[keyName].displayName ?? keyName
         };
     });
 };
@@ -183,7 +186,7 @@ export const flattenRowObject = (nestedRowData = {}, attributeMap = {}) => {
     Object.values(attributeMap).forEach((attributeDef) => {
         row.push({
             value: getDeepValue(nestedRowData, [...attributeDef.stack]),
-            type: attributeDef.type,
+            type: attributeDef.type
         });
     });
 
