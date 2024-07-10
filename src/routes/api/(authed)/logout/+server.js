@@ -8,6 +8,8 @@ export const POST = async ({ cookies }) => {
     if (!session_id) throw redirect(301, "/login");
 
     await prisma.user_session.delete({ where: { session_id } });
+
     cookies.delete("sessionId", { path: "/" });
+
     throw redirect(301, "/login");
 };

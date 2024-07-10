@@ -53,6 +53,8 @@ export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
         where: { id: id }
     });
 
+    if (!userAccount) return { userAccount: null };
+
     userAccount.id = userAccount.id.toString();
 
     const attributeNameTypeMap = getEntityAttributeUiTypes("userAccount");

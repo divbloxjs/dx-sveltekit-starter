@@ -18,7 +18,6 @@
      * @type {import("svelte/store").Writable<import("../../../../app").UserInfo | null>}
      */
     const currentUser = getContext("currentUser");
-    console.log("Current User:", $currentUser);
 </script>
 
 <div class="flex h-full w-full justify-center">

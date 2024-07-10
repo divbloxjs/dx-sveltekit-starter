@@ -79,7 +79,7 @@ model user_session {
   last_updated        DateTime      @default(now()) @db.DateTime(0)
   user_account_id     BigInt?
   expires_at          DateTime      @db.DateTime(0)
-  user_account        user_account? @relation(fields: [user_account_id], references: [id], map: "f298f8a9edb939a04c156fac7189a080")
+  user_account        user_account? @relation(fields: [user_account_id], references: [id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
 
-  @@index([user_account_id], map: "f298f8a9edb939a04c156fac7189a080")
+  @@index([user_account_id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
 }
