@@ -1,4 +1,4 @@
-import { fail } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import { prisma } from "$lib/server/prisma-instance";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
@@ -28,7 +28,7 @@ export const load = async (event) => {
     }
 
     const userAccountData = await loadUserAccount(params?.id);
-
+    if (!userAccountData.userAccount) return error(404, { message: "Not found" });
     form.data = { ...userAccountData.userAccount };
 
     return { form, ...userAccountData };

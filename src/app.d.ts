@@ -2,6 +2,9 @@
 // for information about these interfaces
 import { AuthorisationManager } from "$lib/server/auth";
 
+/**
+ * The structure of the current user object that is set on request.locals
+ */
 export type UserInfo = {
     id: number;
     email_address: string;
@@ -11,6 +14,12 @@ export type UserInfo = {
         id: int;
         role_name: string;
     };
+};
+
+export type GenericDropdownOptions = Array<GenericDropdownOption>;
+export type GenericDropdownOption = {
+    label: string;
+    value: string;
 };
 
 declare global {

@@ -5,6 +5,7 @@ import { fail, json } from "@sveltejs/kit";
 export const PUT = async ({ request, url }) => {
     // TODO Auth on who you are and what files you can update
     const body = await request.json();
+
     try {
         await prisma.file.update({ where: { object_identifier: body.guid }, data: { display_name: body.display_name } });
 

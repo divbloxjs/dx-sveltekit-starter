@@ -1,4 +1,3 @@
-import { DEFAULT_ROUTE } from "$constants/constants";
 import { AuthorisationManager, authenticateUser } from "$lib/server/auth";
 import { redirect } from "@sveltejs/kit";
 
@@ -14,16 +13,20 @@ export const handle = async ({ event, resolve }) => {
         }
     }
 
-    const response = await resolve(event);
     // DX-NOTE: Can mutate the response for all requests here
+    const response = await resolve(event);
+
     return response;
 };
 
 /** @type {import('@sveltejs/kit').HandleServerError} */
 export async function handleError({ error, event, status, message }) {
+    // DX-NOTE: Hook that handles any request that end with an error.
+    // Global catch, can be used for logging or piping errors elsewhere
+
     console.log("error", error);
-    // console.log("event", event);
     console.log("status", status);
     console.log("message", message);
+
     return { message };
 }

@@ -48,8 +48,6 @@
         submittingAccept = true;
 
         const permission = await Notification.requestPermission();
-        console.log("permission", permission);
-
         if (permission !== "granted") {
             toast.error("Notification permissions are disabled", {
                 description: "Please re-enable notifications on your browser for this site and try again"
@@ -59,10 +57,6 @@
         }
 
         try {
-            // const fetchedToken = await getToken(firebaseMessaging, { serviceWorkerRegistration, vapidKey: env.PUBLIC_VAPID_KEY });
-
-            // console.log("fetchedToken", fetchedToken);
-
             const existingPushSubscription = await serviceWorkerRegistration.pushManager.getSubscription();
 
             // Store the received token
@@ -85,19 +79,6 @@
 
             $pushNotificationUniqueIdentifier = result?.data?.pushSubscription?.uniqueIdentifier ?? "";
             submittingAccept = false;
-        };
-    };
-
-    /**
-     *  @type {import('./$types').SubmitFunction}
-     */
-    const submitTest = async ({ formData, cancel }) => {
-        submittingTest = true;
-        return async ({ result, update }) => {
-            submittingTest = false;
-            update();
-
-            handleFormActionToast(result);
         };
     };
 
@@ -139,22 +120,6 @@
                     <Button type="submit" disabled={submittingAccept} loading={submittingAccept}>Accept</Button>
                 </form>
             </div>
-
-            <!-- TODO Remove when user account tests done -->
-            <!-- <form action="?/test" method="POST" use:enhance={submitTest} class="absolute right-2 top-2">
-                <Tooltip.Root>
-                    <Tooltip.Trigger>
-                        <Tooltip.Root>
-                            <Tooltip.Trigger>
-                                <Button type="submit" size="sm" disabled={submittingTest} loading={submittingTest}>Test</Button>
-                            </Tooltip.Trigger>
-                        </Tooltip.Root>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                        <p>Send a test notification to all your <br /> registered push subscriptions</p>
-                    </Tooltip.Content>
-                </Tooltip.Root>
-            </form> -->
         </Card.Content>
     </Card.Root>
 </div>

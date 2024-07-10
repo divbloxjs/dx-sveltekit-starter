@@ -10,7 +10,6 @@ import { error } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {
-    console.log("event?.locals?", event?.locals);
     const userAccountData = await loadUserAccount(event?.locals?.user?.id);
     const userAccount = userAccountData.userAccount;
 

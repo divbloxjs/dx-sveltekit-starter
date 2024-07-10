@@ -19,7 +19,6 @@
         invalidateAll: "force",
         resetForm: true,
         onUpdated: (event) => {
-            console.log("event", event);
             handleSuperFormUpdatedToast(event?.form);
         }
     });

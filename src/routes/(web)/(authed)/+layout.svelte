@@ -12,7 +12,7 @@
      * @type {import("svelte/store").Writable<import("../../../app").UserInfo | null>}
      */
     const currentUser = writable();
-    $: data.user, (() => currentUser.set(data.user))();
+    $: data.currentUser, (() => currentUser.set(data.currentUser))();
 
     setContext("currentUser", currentUser);
 
@@ -30,4 +30,5 @@
     class="mb-[calc(env(safe-area-inset-bottom)+3.5rem)] mt-[calc(env(safe-area-inset-top)+3rem)] flex h-full w-full flex-col overflow-auto">
     <slot />
 </div>
+
 <BottomNavUser />

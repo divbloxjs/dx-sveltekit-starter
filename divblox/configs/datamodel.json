@@ -74,10 +74,10 @@
 				"lengthOrValues": "150"
 			},
 			"cloudIsPubliclyAvailable": {
-				"type": "BOOLEAN",
+				"type": "TINYINT",
 				"default": 0,
 				"allowNull": false,
-				"lengthOrValues": null
+				"lengthOrValues": 1
 			}
 		},
 		"relationships": {},
@@ -276,10 +276,10 @@
 		},
 		"attributes": {
 			"isActive": {
-				"type": "BOOLEAN",
+				"type": "TINYINT",
 				"default": 1,
 				"allowNull": false,
-				"lengthOrValues": null
+				"lengthOrValues": 1
 			},
 			"uniqueIdentifier": {
 				"type": "VARCHAR",
@@ -288,10 +288,10 @@
 				"lengthOrValues": 50
 			},
 			"hasUnseenNotification": {
-				"type": "BOOLEAN",
+				"type": "TINYINT",
 				"default": 0,
 				"allowNull": false,
-				"lengthOrValues": null
+				"lengthOrValues": 1
 			},
 			"pushSubscriptionDetails": {
 				"type": "JSON",
