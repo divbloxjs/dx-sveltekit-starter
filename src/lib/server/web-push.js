@@ -6,6 +6,14 @@ import webPush from "web-push";
 import { prisma } from "./prisma-instance";
 
 if (publicEnv.PUBLIC_ENABLE_WEB_PUSH?.toLowerCase() === "true") {
+    if (!publicEnv?.PUBLIC_VAPID_KEY) {
+        throw new Error(`Invalid Public Vapid Key provided: ${publicEnv?.PUBLIC_VAPID_KEY}`);
+    }
+
+    if (!env?.PRIVATE_VAPID_KEY) {
+        throw new Error(`Invalid Private Vapid Key provided: ${env?.PRIVATE_VAPID_KEY}`);
+    }
+
     webPush.setVapidDetails(
         `mailto:${publicEnv?.PUBLIC_WEB_PUSH_CONTACT_EMAIL_ADDRESS}`,
         publicEnv?.PUBLIC_VAPID_KEY,
@@ -26,6 +34,10 @@ export const deliverPushNotificationToUniqueSubscription = async ({
     },
     mustSetAsUnseen = false
 }) => {
+    if (publicEnv.PUBLIC_ENABLE_WEB_PUSH?.toLowerCase() !== "true") {
+        console.error("Push notifications not enabled. Update the 'PUBLIC_ENABLE_WEB_PUSH' environment variable");
+        return true;
+    }
     const pushSubscription = await prisma.push_subscription.findFirst({ where: { unique_identifier } });
 
     if (!pushSubscription) return false;
@@ -66,6 +78,11 @@ export const deliverPushNotificationToAllSubscriptionsForUserAccount = async ({
     },
     mustSetAsUnseen = false
 }) => {
+    if (publicEnv.PUBLIC_ENABLE_WEB_PUSH?.toLowerCase() !== "true") {
+        console.error("Push notifications not enabled. Update the 'PUBLIC_ENABLE_WEB_PUSH' environment variable");
+        return true;
+    }
+
     if (!user_account_id) return { pushSubscriptions: [], errors: [{ message: "Invalid user account provided" }] };
     const pushSubscriptions = await prisma.push_subscription.findMany({ where: { user_account_id, is_active: true } });
 
