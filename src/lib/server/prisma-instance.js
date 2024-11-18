@@ -12,4 +12,4 @@ if (process.env.NODE_ENV === "development") {
     global.prisma = prisma;
 }
 
-export { prisma };
+export { prisma, PrismaClient };

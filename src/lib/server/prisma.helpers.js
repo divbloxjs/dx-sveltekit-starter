@@ -31,7 +31,7 @@ export const getPrismaSelectAllFromEntity = (entityName, select = {}, baseEntity
     return select;
 };
 
-export const getPrismaConditions = (entityName = "", searchConfig = {}, constraints = {}) => {
+export const getPrismaConditions = (entityName = "", searchConfig = {}, constraints = {}, queryConditions = {}) => {
     const prismaConditions = {};
 
     if (constraints.limit) {
@@ -42,6 +42,7 @@ export const getPrismaConditions = (entityName = "", searchConfig = {}, constrai
         prismaConditions.skip = constraints.offset;
     }
 
+    // Sort on the table headers come first
     if (constraints.sort) {
         prismaConditions.orderBy = [];
         Object.keys(constraints.sort).forEach((attributeName) => {
@@ -49,6 +50,12 @@ export const getPrismaConditions = (entityName = "", searchConfig = {}, constrai
             obj[attributeName] = constraints.sort[attributeName];
             prismaConditions.orderBy.push(obj);
         });
+    } else if (queryConditions.orderBy) {
+        if (!prismaConditions.orderBy) {
+            prismaConditions.orderBy = queryConditions.orderBy;
+        }
+
+        prismaConditions.orderBy = [...prismaConditions.orderBy, ...queryConditions.orderBy];
     }
 
     if (constraints.search) {
@@ -166,6 +173,14 @@ export const getPrismaConditions = (entityName = "", searchConfig = {}, constrai
         );
     }
 
+    if (queryConditions.where) {
+        if (!prismaConditions.where) {
+            prismaConditions.where = queryConditions.where;
+        }
+
+        prismaConditions.where = { ...prismaConditions.where, ...queryConditions.where };
+    }
+
     return prismaConditions;
 };
 
@@ -250,11 +265,7 @@ const convertFilterClauseToPrismaClause = (filterConstraint = {}, prismaFilterCo
 
             if (!prismaFilterConditions[attributeName]) prismaFilterConditions[attributeName] = {};
 
-            console.log("attributeName", attributeName);
-            console.log("prismaCondition", prismaCondition);
-            console.log("filterValue", filterValue);
             prismaFilterConditions[attributeName][prismaCondition] = filterValue;
-            console.log("prismaFilterConditions", prismaFilterConditions);
         });
     });
 };

@@ -55,7 +55,7 @@ export const authenticateUser = async ({ route, cookies, request }) => {
      * @type {import("../../app").UserInfo}
      */
     let userInfo = {
-        id: userSession.user_account?.id,
+        id: String(userSession.user_account?.id),
         first_name: userSession.user_account?.first_name,
         last_name: userSession.user_account?.last_name,
         email_address: userSession.user_account?.email_address,
