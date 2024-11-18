@@ -10,7 +10,8 @@
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
         "lint": "prettier --check .",
         "format": "prettier --write .",
-        "seedUsers": "npx run-func ./src/lib/server/boot.js seedUsers"
+        "seedUsers": "npx run-func ./src/lib/server/boot.js seedUsers",
+        "testFile": "npx run-func ./src/lib/server/test.js testFile"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.2.2",

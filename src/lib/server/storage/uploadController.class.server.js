@@ -1,31 +1,20 @@
 import { env } from "$env/dynamic/private";
-import { AwsStorage } from "./awsStorage.class.server";
-import { getFileExtension, getFileNameWithoutExtension, insertBeforeFileExtension } from "../functions";
+import { getFileExtension, getFileNameWithoutExtension, insertBeforeFileExtension } from "./functions";
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import sharp from "sharp";
 import imageType from "image-type";
 import { existsSync } from "fs";
+import { AwsStorage } from "./awsStorage.class.server";
+import { prisma } from "../prisma-instance";
+import { DiskStorage } from "./diskStorage.class.server";
 
-export class FileController {
-    #saveLocally;
-    #saveInCloud;
-    #cloudController;
-
-    constructor({
-        saveLocally = env.STORE_FILES_LOCALLY.toLowerCase() === "true" ? true : false,
-        saveInCloud = env.STORE_FILES_IN_CLOUD.toLowerCase() === "true" ? true : false
-    } = {}) {
-        if (saveInCloud) this.#saveInCloud = saveInCloud;
-        if (saveLocally) this.#saveLocally = saveLocally;
-
-        switch (env.CLOUD_STORAGE_PROVIDER) {
-            case "aws_s3":
-                this.#cloudController = new AwsStorage();
-                break;
-            default:
-                console.log("Invalid cloud storage provider provided. Only aws_s3 supported");
-                break;
-        }
+export class UploadController {
+    #storage;
+    /**
+     * @param {AwsStorage|DiskStorage} storage
+     */
+    constructor(storage) {
+        this.#storage = storage;
     }
 
     async uploadFiles({
@@ -36,7 +25,7 @@ export class FileController {
         createThumbnailAndWebImages = false,
         cloud_is_publicly_available = false
     }) {
-        if (files.length === 0) return [];
+        if (files?.length === 0) return [];
 
         const filesToUpload = [];
         for (let i = 0; i < files.length; i++) {
@@ -78,36 +67,25 @@ export class FileController {
             };
         }
 
-        let localStaticFileUrls = [];
-
-        if (this.#saveLocally) {
-            for (let i = 0; i < filesToUpload.length; i++) {
-                localStaticFileUrls[i] = {};
-                for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
-                    const localStaticFilePath = `${env.LOCAL_STORAGE_FOLDER_PATH}/${object_identifier}`;
-
-                    if (!existsSync(env.LOCAL_STORAGE_FOLDER_PATH)) {
-                        mkdirSync(env.LOCAL_STORAGE_FOLDER_PATH);
-                    }
-                    writeFileSync(localStaticFilePath, Buffer.from(fileArrayBuffer));
-                    localStaticFileUrls[i][sizeType] = localStaticFilePath;
-                }
+        let staticFileUrls = [];
+        for (let i = 0; i < filesToUpload.length; i++) {
+            staticFileUrls[i] = {};
+            for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
+                this.#storage.uploadFile({ file: fileArrayBuffer, object_identifier });
             }
         }
 
-        if (this.#saveInCloud) {
-            for (let i = 0; i < filesToUpload.length; i++) {
-                for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
-                    if (cloud_is_publicly_available) {
-                        object_identifier = `public/${object_identifier}`;
-                    }
-
-                    await this.#cloudController.uploadFile({
-                        file: fileArrayBuffer,
-                        object_identifier,
-                        is_public: cloud_is_publicly_available
-                    });
+        for (let i = 0; i < filesToUpload.length; i++) {
+            for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
+                if (cloud_is_publicly_available) {
+                    object_identifier = `public/${object_identifier}`;
                 }
+
+                await this.#storage.uploadFile({
+                    file: fileArrayBuffer,
+                    object_identifier,
+                    isPublic: cloud_is_publicly_available
+                });
             }
         }
 
@@ -182,31 +160,65 @@ export class FileController {
         return fileToCreateArray;
     }
 
-    async deleteFile({ container_identifier, object_identifier }) {
-        if (this.#saveLocally) {
-            //DELETE file locally
-            const localStaticFilePath = `${env.LOCAL_STORAGE_FOLDER_PATH}/${object_identifier}`;
-            unlinkSync(localStaticFilePath);
+    async deleteFile({ object_identifier }) {
+        const file = await prisma.file.findFirst({ where: { object_identifier } });
+        if (!file) return;
+
+        try {
+            for (let sizeType of file?.sizes_saved ?? []) {
+                let finalObjectIdentifier = `${sizeType}_${file.object_identifier}`;
+                let containerIdentifier = env.AWS_PRIVATE_BUCKET_NAME;
+                if (file?.cloud_is_publicly_available) {
+                    finalObjectIdentifier = `public/${finalObjectIdentifier}`;
+                    containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
+                }
+
+                const result = this.#storage.deleteFile({ object_identifier: finalObjectIdentifier, containerIdentifier });
+            }
+        } catch (err) {
+            console.error(err);
+            return fail(400);
         }
 
-        if (this.#saveInCloud && container_identifier) {
-            await this.#cloudController?.deleteFile({
-                container_identifier,
-                object_identifier
-            });
-        }
+        await prisma.file.delete({ where: { id: file.id } });
+        return json({ message: "Deleted successfully!" });
     }
 
-    async getUrlForDownload({ container_identifier, object_identifier, cloud_is_publicly_available = false }) {
-        if (this.#saveLocally) return `${env.LOCAL_STORAGE_FOLDER_PATH}/${object_identifier}`;
+    async deleteFiles({ object_identifiers = [] }) {
+        try {
+            for (const file of files) {
+                for (let sizeType of file?.sizes_saved ?? []) {
+                    let finalObjectIdentifier = `${sizeType}_${file.object_identifier}`;
+                    let containerIdentifier = env.AWS_PRIVATE_BUCKET_NAME;
+                    if (file?.cloudIsPubliclyAvailable) {
+                        finalObjectIdentifier = `public/${finalObjectIdentifier}`;
+                        containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
+                    }
 
-        if (cloud_is_publicly_available) {
-            return this.#cloudController?.getStaticUrl({ container_identifier, object_identifier: `public/${object_identifier}` });
+                    const result = this.#storage.deleteFile({ object_identifier: finalObjectIdentifier, containerIdentifier });
+                    await prisma.file.delete({ where: { id: file.id } });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            return fail(400);
         }
 
-        return this.#cloudController?.getPresignedUrlForDownload({ container_identifier, object_identifier });
+        await prisma.file.deleteMany({ where: { id: { in: files.map((file) => file.id) } } });
     }
 
+    /**
+     * @typedef {Object} imagesReturn
+     * @property {Buffer} original
+     * @property {Buffer} web
+     * @property {Buffer} thumbnail
+     */
+
+    /**
+     *
+     * @param {Object} imageArrayBuffer
+     * @returns {Promise<imagesReturn>}
+     */
     async getAllImageBuffers(imageArrayBuffer) {
         const returnImageBuffers = {};
         const { width, height } = await sharp(imageArrayBuffer).metadata();

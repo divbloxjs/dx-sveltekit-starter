@@ -44,7 +44,7 @@ model push_subscription {
   user_account_id           BigInt?
   user_account              user_account? @relation(fields: [user_account_id], references: [id], map: "a6830a6bd021bfd9a7dcc48677959e08")
 
-  @@index([user_account_id], map: "a6830a6bd021bfd9a7dcc48677959e08")
+  @@index([user_account_id], map: "43a061ae5786574e7acb2ad289badd8b")
 }
 
 model user_account {
@@ -60,7 +60,7 @@ model user_account {
   user_role         user_role?          @relation(fields: [user_role_id], references: [id], map: "423b4e4321253537640cf95f33c36b61")
   user_session      user_session[]
 
-  @@index([user_role_id], map: "423b4e4321253537640cf95f33c36b61")
+  @@index([user_role_id], map: "b02d5f11deb8221c55501a46f632b17b")
 }
 
 model user_role {
@@ -72,14 +72,14 @@ model user_role {
 
 model user_session {
   id                  BigInt        @id @default(autoincrement())
+  expires_at          DateTime      @db.DateTime(0)
   session_id          String        @unique(map: "userSessionSessionid") @db.VarChar(50)
   user_agent          String?       @db.VarChar(200)
   session_data        Json
   duration_in_minutes Int
   last_updated        DateTime      @default(now()) @db.DateTime(0)
   user_account_id     BigInt?
-  expires_at          DateTime      @db.DateTime(0)
   user_account        user_account? @relation(fields: [user_account_id], references: [id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
 
-  @@index([user_account_id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
+  @@index([user_account_id], map: "0369c69fb31d6c04fa987d6ee12393de")
 }

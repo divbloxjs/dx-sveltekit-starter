@@ -12,19 +12,24 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-export class S3Controller {
+export class AwsStorage {
     #region;
     #fileUploadMaxSizeInBytes;
     #s3Client;
-    constructor({ bucketName = undefined, fileUploadMaxSizeInBytes = 20 * 1024 * 1024 } = {}) {
-        this.#region = "af-south-1";
+    constructor({
+        bucketName = env.AWS_PRIVATE_BUCKET_NAME ?? "",
+        fileUploadMaxSizeInBytes = 20 * 1024 * 1024,
+        awsKey = env.AWS_KEY ?? "",
+        awsSecret = env.AWS_SECRET ?? "",
+        region = "af-south-1"
+    } = {}) {
+        this.#region = region;
         this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes;
+        this.bucketName = bucketName;
 
-        this.bucketName = env.AWS_PRIVATE_BUCKET_NAME;
-        if (bucketName) this.bucketName = bucketName;
         this.#s3Client = new S3Client({
             region: this.#region,
-            credentials: { accessKeyId: env.AWS_KEY, secretAccessKey: env.AWS_SECRET }
+            credentials: { accessKeyId: awsKey, secretAccessKey: awsSecret }
         });
     }
 
