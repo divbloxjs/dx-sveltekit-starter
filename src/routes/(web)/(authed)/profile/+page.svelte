@@ -8,6 +8,11 @@
     import * as Tabs from "$lib/components/shadcn/ui/tabs/index.js";
     import * as Card from "$lib/components/shadcn/ui/card/index.js";
     import { FILE_CATEGORY } from "$lib/constants/constants";
+    import { resetMode, setMode } from "mode-watcher";
+    import { Button } from "$ui/button/index.js";
+    import * as DropdownMenu from "$lib/components/shadcn/ui/dropdown-menu/index.js";
+    import Moon from "lucide-svelte/icons/moon";
+    import Sun from "lucide-svelte/icons/sun";
 
     const pageTitle = getContext("pageTitle");
     $pageTitle = "Profile";
@@ -30,7 +35,26 @@
             <Tabs.Content value="account">
                 <Card.Root>
                     <Card.Content class="space-y-2">
-                        <div class="mt-4 flex flex-col self-center">
+                        <div class="relative mt-4 flex flex-col self-center">
+                            <div class="absolute -right-3 -top-4 text-xl font-bold">
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger asChild let:builder>
+                                        <Button builders={[builder]} variant="link" size="icon" class="float-right">
+                                            <Sun
+                                                class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                            <Moon
+                                                class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                            <span class="sr-only">Toggle theme</span>
+                                        </Button>
+                                    </DropdownMenu.Trigger>
+                                    <DropdownMenu.Content align="end">
+                                        <DropdownMenu.Item on:click={() => setMode("light")}>Light</DropdownMenu.Item>
+                                        <DropdownMenu.Item on:click={() => setMode("dark")}>Dark</DropdownMenu.Item>
+                                        <DropdownMenu.Item on:click={() => resetMode()}>System</DropdownMenu.Item>
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
+                            </div>
+
                             <SingleImageUploader
                                 getFilesEndpoint={`/api/file-upload/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
                                 postFilesEndpoint="/api/file-upload/user-account"
