@@ -3,7 +3,7 @@
     import { page } from "$app/stores";
 
     import { Input } from "$lib/components/shadcn/ui/input";
-    import { Button } from "$lib/components/shadcn/ui/button";
+    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Label } from "$lib/components/shadcn/ui/label";
 
     import DataListRowUserAccount from "$lib/components/data-model/user-account/data-series/user-account-data-list-row.svelte";
@@ -22,6 +22,8 @@
 
     export let paginateSize = 2;
 
+    export let allowCreate = true;
+
     const dispatch = createEventDispatcher();
 
     let userAccountArray = [];
@@ -30,7 +32,10 @@
 
     let isInitialised = false;
     onMount(async () => {
-        getUserAccountArray();
+        let newSearchParams = new URLSearchParams();
+        newSearchParams.set("limit", limit.toString());
+
+        getUserAccountArray(newSearchParams);
     });
 
     const getUserAccountArray = async (searchParams) => {
@@ -41,7 +46,6 @@
         userAccountArray = result.userAccountArray;
         userAccountTotalCount = result.userAccountTotalCount;
         enums = result.enums;
-
         isInitialised = true;
     };
 
@@ -74,13 +78,17 @@
     };
 </script>
 
-<div class="flex w-full flex-col gap-2">
+<div class="flex w-full flex-col gap-2 p-2">
     <Label for="search">Search</Label>
     <div class="flex flex-row gap-2">
         <Input class="h-9" type="text" bind:value={search} on:change={handleSearchChange} />
         <Button size="sm" on:click={handleSearchClear}>Clear</Button>
     </div>
-
+    <div class="mt-2 flex flex-row">
+        {#if allowCreate}
+            <a href={`${entityInstancePath}/new`} class={`${buttonVariants({ size: "sm" })}`}>New</a>
+        {/if}
+    </div>
     <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
         {#if isInitialised}
             {#each userAccountArray as userAccountData}

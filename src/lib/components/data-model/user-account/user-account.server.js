@@ -139,17 +139,17 @@ export const updateUserAccount = async (data) => {
     Object.values(relationships).forEach((relationshipNames) => {
         relationshipNames.forEach((relationshipName) => {
             relationshipName = getSqlFromCamelCase(relationshipName);
-            if (data.hasOwnProperty(relationshipName)) {
-                if (!isNumeric(data[relationshipName])) {
-                    delete data[relationshipName];
-                    console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
-                }
+            if (!data.hasOwnProperty(relationshipName)) {
+                return;
+            }
 
-                if (typeof data[relationshipName] === "string") {
-                    data[relationshipName] = parseInt(data[relationshipName]);
-                }
-            } else {
-                data[relationshipName] = null;
+            if (!isNumeric(data[relationshipName])) {
+                delete data[relationshipName];
+                console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
+            }
+
+            if (typeof data[relationshipName] === "string") {
+                data[relationshipName] = parseInt(data[relationshipName]);
             }
         });
     });

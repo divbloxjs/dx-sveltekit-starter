@@ -12,6 +12,10 @@
     </div>
 
     <div class="w-full @lg:hidden">
-        <DataListUserAccount getUserAccountArrayPath={basePath} entityInstancePath={basePath} redirectBackPath={basePath} />
+        <DataListUserAccount
+            allowCreate={true}
+            getUserAccountArrayPath={basePath}
+            entityInstancePath={basePath}
+            redirectBackPath={basePath} />
     </div>
 </div>
