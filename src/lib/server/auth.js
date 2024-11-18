@@ -43,6 +43,11 @@ export const authenticateUser = async ({ route, cookies, request }) => {
         data: { expires_at: addMinutes(new Date(), 20) }
     });
 
+    if (!userSession.user_account?.id) {
+        cookies.delete("sessionId", { path: "/" });
+        return null;
+    }
+
     // Match cookie expiry date and max age to new session data
     cookies.set("sessionId", userSession.session_id, {
         path: "/",
