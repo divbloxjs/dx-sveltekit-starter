@@ -50,12 +50,14 @@
                     <AlignJustify />
                 </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="start">
-                <DropdownMenu.Item on:click={() => goto("/profile")}>
-                    <span class="flex h-10 w-full items-center justify-start hover:cursor-pointer"><UserRound />Profile</span>
+            <DropdownMenu.Content>
+                <DropdownMenu.Item class="gap-2" on:click={() => goto("/profile")}>
+                    <UserRound />
+                    <span>Profile</span>
                 </DropdownMenu.Item>
-                <DropdownMenu.Item on:click={() => doLogout()}>
-                    <span class="flex h-10 w-full items-center justify-start hover:cursor-pointer"><Power />Log out</span>
+                <DropdownMenu.Item class="gap-2" on:click={() => doLogout()}>
+                    <Power />
+                    <span>Log out</span>
                 </DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>

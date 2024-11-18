@@ -7,6 +7,7 @@
      */
     export let form;
     export let name;
+    export let fieldClass = "";
 
     export let type = "text";
     export let label = undefined;
@@ -20,20 +21,20 @@
 {#if type === "hidden"}
     <Form.Field {form} {name} class="m-0 p-0">
         <Form.Control let:attrs>
-            <Input {...attrs} {...$$restProps} {type} bind:value />
+            <Input {...attrs} {...$$restProps} {type} bind:value on:change />
         </Form.Control>
     </Form.Field>
 {:else}
-    <Form.Field {form} {name}>
+    <Form.Field {form} {name} class={fieldClass}>
         <Form.Control let:attrs>
             {#if label}
                 <Form.Label>{label}</Form.Label>
             {/if}
 
             {#if type === "number"}
-                <InputNumber {...attrs} {...$$restProps} bind:value />
+                <InputNumber {...attrs} {...$$restProps} bind:value on:change />
             {:else}
-                <Input {...attrs} {...$$restProps} {type} bind:value />
+                <Input {...attrs} {...$$restProps} {type} bind:value on:change />
             {/if}
         </Form.Control>
         <Form.FieldErrors />

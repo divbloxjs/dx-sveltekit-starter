@@ -1,4 +1,5 @@
 import { env } from "$env/dynamic/private";
+import { env as publicEnv } from "$env/dynamic/public";
 import { createTransport } from "nodemailer";
 
 const transporter = createTransport({
@@ -15,7 +16,7 @@ export const sendPasswordResetEmail = async (userAccount, oneTimeTokenValue) => 
     A request to reset your password has been received.<br>
     If this was not you, you can safely ignore this email.<br><br><br>
     
-    <a href="${env.PUBLIC_BASE_URL}/confirm-password-reset?token=${oneTimeTokenValue}">Reset Password</a>`;
+    <a href="${publicEnv.PUBLIC_BASE_URL}/confirm-password-reset?token=${oneTimeTokenValue}">Reset Password</a>`;
 
     const mailOptions = {
         from: env.SMTP_EMAIL_ADDRESS,

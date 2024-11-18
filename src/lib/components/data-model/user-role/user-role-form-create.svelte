@@ -33,11 +33,9 @@
     const { form: formData, enhance, message, errors } = form;
 </script>
 
-<form method="POST" action={`${basePath}/new?/create`} use:enhance class="@container w-full p-1">
-    <div class="@7xl:columns-4 @4xl:columns-3 @xl:columns-2 child:break-inside-avoid-column columns-1">
-	<FormInput {form} name="role_name" label="Role name" type="text" bind:value={$formData.role_name} />
-
-
+<form method="POST" action={`${basePath}/new?/create`} use:enhance class="w-full p-1 @container">
+    <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
+        <FormInput {form} name="role_name" label="Role name" type="text" bind:value={$formData.role_name} />
     </div>
 
     {#if $message}

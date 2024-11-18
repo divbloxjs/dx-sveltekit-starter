@@ -34,7 +34,7 @@
         <Button
             variant="link"
             on:click={() => {
-                goto("/admin");
+                goto("/admin/user-account");
             }}><UserCog /></Button>
         <Button
             variant="link"

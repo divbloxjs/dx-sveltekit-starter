@@ -9,8 +9,19 @@ export const handle = async ({ event, resolve }) => {
     // If in the (authed) route group, check sessionId for current user
     if (event.route.id?.includes("/(authed)")) {
         if (!event.locals.user) {
+            // No sessionId present at all
+            if (!event.cookies.get("sessionId")) {
+                throw redirect(303, "/login");
+            }
+
+            // Invalid/expired sessionId
             throw redirect(303, "/login?session-expired=true");
         }
+    }
+
+    // If in the admin route group, check if the current user isAdmin()
+    if (event.route.id?.includes("/admin")) {
+        event.locals.auth.isAdmin();
     }
 
     // DX-NOTE: Can mutate the response for all requests here

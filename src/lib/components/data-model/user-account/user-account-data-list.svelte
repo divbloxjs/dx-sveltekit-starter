@@ -3,10 +3,11 @@
     import { page } from "$app/stores";
 
     import { Input } from "$lib/components/shadcn/ui/input";
-    import { Button } from "$lib/components/shadcn/ui/button";
+    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Label } from "$lib/components/shadcn/ui/label";
 
     import DataListRowUserAccount from "$lib/components/data-model/user-account/data-series/user-account-data-list-row.svelte";
+    import { Plus, X } from "lucide-svelte";
 
     export let getUserAccountArrayPath = "/user-account";
     export let entityInstancePath = "/user-account";
@@ -22,6 +23,8 @@
 
     export let paginateSize = 2;
 
+    export let allowCreate = true;
+
     const dispatch = createEventDispatcher();
 
     let userAccountArray = [];
@@ -30,7 +33,10 @@
 
     let isInitialised = false;
     onMount(async () => {
-        getUserAccountArray();
+        let newSearchParams = new URLSearchParams();
+        newSearchParams.set("limit", limit.toString());
+
+        getUserAccountArray(newSearchParams);
     });
 
     const getUserAccountArray = async (searchParams) => {
@@ -41,7 +47,6 @@
         userAccountArray = result.userAccountArray;
         userAccountTotalCount = result.userAccountTotalCount;
         enums = result.enums;
-
         isInitialised = true;
     };
 
@@ -75,10 +80,12 @@
 </script>
 
 <div class="flex w-full flex-col gap-2">
-    <Label for="search">Search</Label>
     <div class="flex flex-row gap-2">
-        <Input class="h-9" type="text" bind:value={search} on:change={handleSearchChange} />
-        <Button size="sm" on:click={handleSearchClear}>Clear</Button>
+        <Input class="h-9" type="text" bind:value={search} placeholder="Search..." on:change={handleSearchChange} />
+        <Button size="sm" variant="link" class="px-0" on:click={handleSearchClear}><X /></Button>
+        {#if allowCreate}
+            <a href={`${entityInstancePath}/new`} class={`${buttonVariants({ size: "sm" })}`}><Plus></Plus></a>
+        {/if}
     </div>
 
     <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">

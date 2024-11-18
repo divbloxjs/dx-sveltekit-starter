@@ -12,8 +12,8 @@ export class FileController {
     #cloudController;
 
     constructor({
-        saveLocally = env.STORE_FILES_LOCALLY.toLowerCase() === "true" ? true : false,
-        saveInCloud = env.STORE_FILES_IN_CLOUD.toLowerCase() === "true" ? true : false
+        saveLocally = env.STORE_FILES_LOCALLY?.toLowerCase() === "true" ? true : false,
+        saveInCloud = env.STORE_FILES_IN_CLOUD?.toLowerCase() === "true" ? true : false
     } = {}) {
         if (saveInCloud) this.#saveInCloud = saveInCloud;
         if (saveLocally) this.#saveLocally = saveLocally;
@@ -228,7 +228,7 @@ export class FileController {
                 webSharpOptions.height = uploadedImageMaxDimension > size.maxDimension ? size.maxDimension : height;
             }
 
-            const newImageBuffer = await sharp(imageArrayBuffer).resize(webSharpOptions).toBuffer();
+            const newImageBuffer = await sharp(imageArrayBuffer).resize(webSharpOptions).jpeg({ quality: 80 }).toBuffer();
             returnImageBuffers[size.type] = newImageBuffer;
         }
 
