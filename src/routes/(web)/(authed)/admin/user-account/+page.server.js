@@ -45,7 +45,7 @@ export const actions = {
         const title = data.get("title") ?? "Test notification";
         const body = data.get("body") ?? "Test notification body";
         const { pushSubscriptions, errors } = await deliverPushNotificationToAllSubscriptionsForUserAccount({
-            userAccountId: locals?.user?.id,
+            user_account_id: data.get("id"),
             notificationContent: { title, body }
         });
 
