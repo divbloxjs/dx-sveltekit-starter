@@ -31,12 +31,12 @@
 <div class="flex h-full w-full flex-col items-center justify-center">
     <Card.Root class="w-80 bg-card shadow-2xl">
         <Card.Header class="mb-2 p-0 text-center">
-            <AppLogo class="w-56 self-center py-8" />
-            <Card.Title>
+            <AppLogo class="w-56 self-center py-6" />
+            <Card.Title class="px-4 mt-0">
                 Reset your {env.PUBLIC_APP_DISPLAY_NAME} password
             </Card.Title>
             {#if $page.url.searchParams.get("submitted")}
-                <Card.Description class="py-4">
+                <Card.Description class="p-4">
                     <span class="font-bold">Done!</span>
                     If you have an account with us, you will receive an email with a link to reset your password.
                 </Card.Description>
