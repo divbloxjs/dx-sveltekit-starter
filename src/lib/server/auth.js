@@ -56,11 +56,12 @@ export const authenticateUser = async ({ route, cookies, request }) => {
         expires: userSession.expires_at
     });
 
-    /**
-     * @type {import("../../app").UserInfo}
-     */
+    if (!userSession.user_account?.id) {
+        return null;
+    }
+
     let userInfo = {
-        id: String(userSession.user_account?.id),
+        id: userSession.user_account?.id,
         first_name: userSession.user_account?.first_name,
         last_name: userSession.user_account?.last_name,
         email_address: userSession.user_account?.email_address,
