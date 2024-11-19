@@ -92,7 +92,6 @@ export class AuthorisationManager {
     /** @param {import("@sveltejs/kit").RequestEvent} event */
     constructor(event) {
         this.#event = event;
-
         this.user = event.locals.user;
     }
 
@@ -110,40 +109,19 @@ export class AuthorisationManager {
         return this;
     }
 
+    /** @param {string} roleName */
     hasRole(roleName) {
-        if (this.user?.user_role?.role_name !== roleName) error(403, `Missing role: ${roleName}`);
-
-        return this;
-    }
-
-    hasAnyRole(roles) {
-        if (roles.some((role) => this.user?.roles.includes(role))) {
-            error(403, "missing any role: " + roles.join(", "));
+        if (this.user?.user_role?.role_name !== roleName) {
+            error(403, `Missing role: ${roleName}`);
         }
 
         return this;
     }
 
-    hasAllRoles(roles) {
-        if (roles.every((role) => this.user?.roles.includes(role))) {
-            const missing = roles.filter((role) => !this.user?.roles.includes(role)).join(", ");
-            error(403, "missing role(s): " + missing);
-        }
-
-        return this;
-    }
-
-    isProjectOwner(project) {
-        if (!this.user || !project.owners.includes(this.user.uid)) {
-            error(403, "not project owner");
-        }
-
-        return this;
-    }
-
-    isInternalAccount() {
-        if (!this.user || !this.user.email?.endsWith("@company.com")) {
-            error(403, "not internal account");
+    /** @param {string[]} roleNames */
+    hasAnyRole(roleNames) {
+        if (roleNames.some((roleName) => this.user?.user_role?.role_name === roleName)) {
+            error(403, `Incorrect role: '${this.user?.user_role?.role_name}'. Allowed role(s): ${roleNames.join(", ")}`);
         }
 
         return this;

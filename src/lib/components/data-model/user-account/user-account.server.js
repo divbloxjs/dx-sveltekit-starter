@@ -123,6 +123,7 @@ export const createUserAccount = async (data) => {
         });
     });
 
+    data.username = data.email_address;
     await prisma.user_account.create({ data });
 };
 
