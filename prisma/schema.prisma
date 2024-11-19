@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["strictUndefinedChecks"]
 }
 
 datasource db {
@@ -8,7 +9,7 @@ datasource db {
 }
 
 model file {
-  id                          BigInt  @id @default(autoincrement())
+  id                          Int     @id @default(autoincrement())
   category                    String  @db.VarChar(300)
   mime_type                   String? @db.VarChar(150)
   sizes_saved                 Json
@@ -24,7 +25,7 @@ model file {
 }
 
 model one_time_token {
-  id                      BigInt   @id @default(autoincrement())
+  id                      Int      @id @default(autoincrement())
   expires_at              DateTime @db.DateTime(0)
   token_type              String   @db.VarChar(100)
   token_value             String   @unique(map: "oneTimeTokenTokenValue") @db.VarChar(32)
@@ -35,51 +36,51 @@ model one_time_token {
 }
 
 model push_subscription {
-  id                        BigInt        @id @default(autoincrement())
+  id                        Int           @id @default(autoincrement())
   is_active                 Boolean       @default(true)
   unique_identifier         String?       @unique(map: "pushSubscriptionUniqueIdentifier") @db.VarChar(50)
   has_unseen_notification   Boolean       @default(false)
   push_subscription_details Json?
   last_updated              DateTime      @default(now()) @db.DateTime(0)
-  user_account_id           BigInt?
+  user_account_id           Int?
   user_account              user_account? @relation(fields: [user_account_id], references: [id], map: "a6830a6bd021bfd9a7dcc48677959e08")
 
-  @@index([user_account_id], map: "a6830a6bd021bfd9a7dcc48677959e08")
+  @@index([user_account_id], map: "a167b28e9c07901711c66e37efd333e5")
 }
 
 model user_account {
-  id                BigInt              @id @default(autoincrement())
+  id                Int                 @id @default(autoincrement())
   last_name         String?             @db.VarChar(150)
   username          String              @unique(map: "userAccountUsername") @db.VarChar(250)
   first_name        String?             @db.VarChar(100)
   email_address     String              @db.VarChar(250)
   hashed_password   String?             @db.VarChar(100)
   last_updated      DateTime            @default(now()) @db.DateTime(0)
-  user_role_id      BigInt?
+  user_role_id      Int?
   push_subscription push_subscription[]
   user_role         user_role?          @relation(fields: [user_role_id], references: [id], map: "423b4e4321253537640cf95f33c36b61")
   user_session      user_session[]
 
-  @@index([user_role_id], map: "423b4e4321253537640cf95f33c36b61")
+  @@index([user_role_id], map: "3b789f9d496484fbd8259924d2fbb623")
 }
 
 model user_role {
-  id           BigInt         @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   role_name    String         @db.VarChar(100)
   last_updated DateTime       @default(now()) @db.DateTime(0)
   user_account user_account[]
 }
 
 model user_session {
-  id                  BigInt        @id @default(autoincrement())
+  id                  Int           @id @default(autoincrement())
+  expires_at          DateTime      @db.DateTime(0)
   session_id          String        @unique(map: "userSessionSessionid") @db.VarChar(50)
   user_agent          String?       @db.VarChar(200)
   session_data        Json
   duration_in_minutes Int
   last_updated        DateTime      @default(now()) @db.DateTime(0)
-  user_account_id     BigInt?
-  expires_at          DateTime      @db.DateTime(0)
+  user_account_id     Int?
   user_account        user_account? @relation(fields: [user_account_id], references: [id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
 
-  @@index([user_account_id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
+  @@index([user_account_id], map: "3fe998c77db7428504875854645b7917")
 }
