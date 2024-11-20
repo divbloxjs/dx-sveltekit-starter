@@ -64,6 +64,6 @@ export const actions = {
         return { form };
     },
     delete: async (event) => {
-        await prisma.__entityNameSqlCase__.delete({ where: { id: event.params?.id } });
+        await prisma.__entityNameSqlCase__.delete({ where: { id: Number(event.params?.id) } });
     }
 };
