@@ -7,6 +7,7 @@
     import { Label } from "$lib/components/shadcn/ui/label";
 
     import DataListRowUserAccount from "$lib/components/data-model/user-account/data-series/user-account-data-list-row.svelte";
+    import { Plus, X } from "lucide-svelte";
 
     export let getUserAccountArrayPath = "/user-account";
     export let entityInstancePath = "/user-account";
@@ -82,13 +83,12 @@
     <Label for="search">Search</Label>
     <div class="flex flex-row gap-2">
         <Input class="h-9" type="text" bind:value={search} on:change={handleSearchChange} />
-        <Button size="sm" on:click={handleSearchClear}>Clear</Button>
-    </div>
-    <div class="mt-2 flex flex-row">
+        <Button size="sm" variant="link" class="px-0" on:click={handleSearchClear}><X /></Button>
         {#if allowCreate}
-            <a href={`${entityInstancePath}/new`} class={`${buttonVariants({ size: "sm" })}`}>New</a>
+            <a href={`${entityInstancePath}/new`} class={`${buttonVariants({ size: "sm" })}`}><Plus></Plus></a>
         {/if}
     </div>
+
     <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
         {#if isInitialised}
             {#each userAccountArray as userAccountData}

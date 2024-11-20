@@ -1,11 +1,15 @@
 import { tv } from "tailwind-variants";
 import Root from "./button.svelte";
+
 const buttonVariants = tv({
     base: "uppercase inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
     variants: {
         variant: {
-            default: "bg-primary text-primary-foreground hover:bg-primary/90",
-            outline: "border border-primary hover:bg-accent hover:text-accent-foreground",
+            default: "bg-neutral text-background-100",
+            outline: "border border-neutral hover:bg-neutral hover:text-background-100",
+
+            primary: "bg-primary text-primary-foreground hover:bg-primary/90",
+            "primary-outline": "border border-primary hover:bg-accent hover:text-accent-foreground",
 
             secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90",
             "secondary-outline": "border border-secondary text-secondary hover:bg-secondary/90 hover:text-secondary-foreground",
@@ -31,7 +35,7 @@ const buttonVariants = tv({
             xs: "h-7 rounded-md px-2 text-sm",
             lg: "h-11 rounded-md px-8",
             icon: "h-10 w-10",
-            "inline-icon": "h-5 w-5",
+            "inline-icon": "h-6 w-6",
             link: "px-0"
         }
     },

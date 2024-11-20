@@ -3,10 +3,11 @@
     import { page } from "$app/stores";
 
     import { Input } from "$lib/components/shadcn/ui/input";
-    import { Button } from "$lib/components/shadcn/ui/button";
+    import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Label } from "$lib/components/shadcn/ui/label";
 
     import DataListRowUserRole from "$lib/components/data-model/user-role/data-series/user-role-data-list-row.svelte";
+    import { Plus, X } from "lucide-svelte";
 
     export let getEntityArrayPath = "/user-role";
     export let entityInstancePath = "/user-role";
@@ -22,6 +23,8 @@
 
     export let paginateSize = 2;
 
+    export let allowCreate = true;
+
     const dispatch = createEventDispatcher();
 
     let userRoleArray = [];
@@ -30,8 +33,10 @@
 
     let isInitialised = false;
     onMount(async () => {
+        let newSearchParams = new URLSearchParams();
+        newSearchParams.set("limit", limit.toString());
+
         await getUserRoleArray();
-        limit = userRoleArray.length;
     });
 
     const getUserRoleArray = async (searchParams) => {
@@ -75,11 +80,13 @@
     };
 </script>
 
-<div class="flex w-full flex-col gap-2">
-    <Label for="search">Search</Label>
+<div class="flex w-full flex-col gap-2 p-2">
     <div class="flex flex-row gap-2">
         <Input class="h-9" type="text" bind:value={search} on:change={handleSearchChange} />
-        <Button size="sm" on:click={handleSearchClear}>Clear</Button>
+        <Button size="sm" variant="link" class="px-0" on:click={handleSearchClear}><X /></Button>
+        {#if allowCreate}
+            <a href={`${entityInstancePath}/new`} class={`${buttonVariants({ size: "sm" })}`}><Plus></Plus></a>
+        {/if}
     </div>
 
     <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
@@ -104,8 +111,6 @@
             </button>
         {/if}
     </div>
-    userRoleTotalCount: {userRoleTotalCount} <br />
-    limit: {limit}
     {#if userRoleTotalCount > limit}
         <Button variant="link" size="sm" class="self-center" on:click={handleLoadMore}>Load More</Button>
     {/if}

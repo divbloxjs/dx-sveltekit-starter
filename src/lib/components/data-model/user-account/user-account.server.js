@@ -189,7 +189,6 @@ const getUserRoleIdOptions = async () => {
     });
 
     const userRoleIdOptions = userRoleIdArray.map((user_role_id) => {
-        user_role_id.id = user_role_id.id.toString();
         return user_role_id;
     });
 
