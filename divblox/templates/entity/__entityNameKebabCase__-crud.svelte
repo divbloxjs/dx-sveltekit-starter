@@ -6,12 +6,12 @@
     export let data;
 </script>
 
-<div class="flex w-full p-2 @container">
+<div class="flex h-full w-full p-2 @container">
     <div class="hidden w-full @lg:block">
         <DataTable__entityNamePascalCase__ {data} {basePath} allowDelete={true} allowEdit={true} />
     </div>
 
-    <div class="w-full @lg:hidden">
+    <div class="h-full max-h-full w-full @lg:hidden">
         <DataList__entityNamePascalCase__ getEntityArrayPath={basePath} entityInstancePath={basePath} redirectBackPath={basePath} />
     </div>
 </div>
