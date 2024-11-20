@@ -11,6 +11,7 @@
 
     import FormSelect from "__uiComponentsPathAlias__/ui/form/_form-select.svelte";
     import FormInput from "__uiComponentsPathAlias__/ui/form/_form-input.svelte";
+    import FormInputHidden from "__uiComponentsPathAlias__/ui/form/_form-input-hidden.svelte";
     import FormTextarea from "__uiComponentsPathAlias__/ui/form/_form-textarea.svelte";
     import FormCheckbox from "__uiComponentsPathAlias__/ui/form/_form-checkbox.svelte";
 
@@ -39,9 +40,9 @@
 
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="w-full p-1 @container">
     <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
-    <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
+        <FormInputHidden {form} name="id" label="id" type="number" bind:value={$formData.id} />
 
-__formValueComponents__
+        __formValueComponents__
     </div>
 
     {#if $message}

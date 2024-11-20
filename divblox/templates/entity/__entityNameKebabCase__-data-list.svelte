@@ -3,8 +3,9 @@
     import { page } from "$app/stores";
 
     import { Input } from "__uiComponentsPathAlias__/ui/input";
-    import { Button } from "__uiComponentsPathAlias__/ui/button";
-    import { Label } from "__uiComponentsPathAlias__/ui/label";
+    import { Button, buttonVariants } from "__uiComponentsPathAlias__/ui/button";
+
+    import { Plus, X } from "lucide-svelte";
 
     import DataListRow__entityNamePascalCase__ from "__dataModelComponentsPathAlias__/__entityNameKebabCase__/data-series/__entityNameKebabCase__-data-list-row.svelte";
 
@@ -22,6 +23,8 @@
 
     export let paginateSize = 2;
 
+    export let allowCreate = true;
+
     const dispatch = createEventDispatcher();
 
     let __entityName__Array = [];
@@ -30,8 +33,10 @@
 
     let isInitialised = false;
     onMount(async () => {
+        let newSearchParams = new URLSearchParams();
+        newSearchParams.set("limit", limit.toString());
+
         await get__entityNamePascalCase__Array();
-        limit = __entityName__Array.length;
     });
 
     const get__entityNamePascalCase__Array = async (searchParams) => {
@@ -76,18 +81,20 @@
 </script>
 
 <div class="flex w-full flex-col gap-2">
-    <Label for="search">Search</Label>
     <div class="flex flex-row gap-2">
-        <Input class="h-9" type="text" bind:value={search} on:change={handleSearchChange} />
-        <Button size="sm" on:click={handleSearchClear}>Clear</Button>
+        <Input class="h-9" type="text" bind:value={search} placeholder="Search..." on:change={handleSearchChange} />
+        <Button size="sm" variant="link" class="px-0" on:click={handleSearchClear}><X /></Button>
+        {#if allowCreate}
+            <a href={`${entityInstancePath}/new`} class={`${buttonVariants({ size: "sm" })}`}><Plus></Plus></a>
+        {/if}
     </div>
 
     <div class="max-h-96 w-full divide-y overflow-y-auto rounded-lg border">
         {#if isInitialised}
             {#each __entityName__Array as __entityName__Data}
-                <DataListRow__entityNamePascalCase__ 
-                    {__entityName__Data} 
-                    basePath={entityInstancePath} 
+                <DataListRow__entityNamePascalCase__
+                    {__entityName__Data}
+                    basePath={entityInstancePath}
                     {redirectBackPath}
                     {disableDefaultRowClickAction}
                     on:row-clicked={(event) => dispatch("row-clicked", event.detail)} />
