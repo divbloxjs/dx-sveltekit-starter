@@ -53,12 +53,14 @@
             <div class="flex h-24 flex-grow items-center justify-center bg-background-200 px-5 text-foreground">Background 200</div>
             <div class="flex h-24 flex-grow items-center justify-center bg-background-300 px-5 text-foreground">Background 300</div>
             <div class="flex h-24 flex-grow items-center justify-center bg-muted px-5 text-muted-foreground">Muted</div>
+            <div class="bg-neutral text-neutral-foreground flex h-24 flex-grow items-center justify-center px-5">Neutral</div>
         </div>
     </div>
 
     <div class="flex w-full text-xl font-bold">Buttons</div>
     <div class="flex w-full flex-wrap justify-start gap-1 px-5">
         <Button>Default</Button>
+        <Button variant="primary">Primary</Button>
         <Button variant="secondary">secondary</Button>
         <Button variant="tertiary">tertiary</Button>
         <Button variant="success">success</Button>
@@ -69,6 +71,7 @@
 
     <div class="flex w-full flex-wrap justify-start gap-1 px-5">
         <Button variant="outline">Outline</Button>
+        <Button variant="primary-outline">Outline</Button>
         <Button variant="secondary-outline">Outline</Button>
         <Button variant="tertiary-outline">Outline</Button>
         <Button variant="success-outline">Outline</Button>
