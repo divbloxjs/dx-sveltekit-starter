@@ -59,17 +59,11 @@ export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
 
     for (const [key, val] of Object.entries(userAccount)) {
         if (val && attributeNameTypeMap[key] === "date") {
-            userAccount[key] = formatISO(val, { representation: "date" });
+            userAccount[key] = format(val, "yyyy-MM-dd");
         }
 
         if (val && attributeNameTypeMap[key] === "datetime-local") {
             userAccount[key] = format(val, "yyyy-MM-dd'T'hh:mm");
-        }
-    }
-
-    for (const [relatedEntityName, relationshipNames] of Object.entries(getRelationships("userAccount"))) {
-        for (const relationshipName of relationshipNames) {
-            userAccount[getSqlFromCamelCase(relationshipName)] = userAccount[getSqlFromCamelCase(relationshipName)]?.toString();
         }
     }
 
