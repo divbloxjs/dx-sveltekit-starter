@@ -51,6 +51,8 @@
         if (!validateFileSize(target)) return;
         if (!validateFileNumber(target)) return;
 
+        console.log("target.files", target.files);
+
         uploadNewFiles(target.files);
     };
 
@@ -122,6 +124,8 @@
         currentXHR.addEventListener("load", transferComplete);
         currentXHR.addEventListener("error", transferFailed);
         currentXHR.addEventListener("abort", transferCanceled);
+
+        console.log("fullUploadEndpoint", fullUploadEndpoint);
 
         currentXHR.open("POST", fullUploadEndpoint, true);
 

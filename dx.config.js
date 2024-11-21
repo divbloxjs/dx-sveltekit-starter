@@ -7,7 +7,7 @@ export default {
     databaseConfigPath: "divblox/configs/database.config.js", // Path from root to the database configuration file
     databaseCaseImplementation: "snakecase", // Allowed options ['snakecase'|'camelcase'|'pascalcase']
     /** Supported options ['none','prisma'];
-        If defined, the relevant orm will automatically be
+        If defined, the relevant orm will automatically bedatabase.config.js
         installed and used for things like component generation 
     */
     ormImplementation: "prisma",

@@ -5,6 +5,8 @@ import { getFileExtension } from "$lib/components/file-uploader/functions";
 import { FileController } from "$lib/components/file-uploader/server/upload.server";
 import { env } from "$env/dynamic/private";
 import { FILE_CATEGORY } from "$lib/constants/constants";
+import { getStorage, storageProviders } from "$lib/server/storage/storageFactory.server";
+import { UploadController } from "$lib/server/storage/uploadController.class.server";
 
 const LINKED_ENTITY = "userAccount";
 const UPLOAD_TYPE = FILE_CATEGORY.PROFILE_PICTURE;
@@ -50,8 +52,10 @@ export async function POST({ request, url, locals }) {
     }
 
     try {
-        const fileController = new FileController();
-        const filesToCreate = await fileController.uploadFiles({
+        const storage = getStorage({ storageProvider: storageProviders.aws }, { isPublic });
+        const uploadController = new UploadController(storage);
+
+        const filesToCreate = uploadController.uploadFiles({
             files: filesToUpload,
             linked_entity_id,
             linked_entity: LINKED_ENTITY,
@@ -59,10 +63,29 @@ export async function POST({ request, url, locals }) {
             createThumbnailAndWebImages: createThumbnailAndWebImages,
             cloud_is_publicly_available: isPublic
         });
+        // return json({
+        //     success: true,
+        //     files: []
+        // });
 
-        if (!filesToCreate) error(400, "Could not upload files");
+        // const fileToCreate = await storage.uploadFile({
+        //     file: filesToUpload[0],
+        //     object_identifier: `${linked_entity_id}_${LINKED_ENTITY}`
+        // });
+        // console.log("fileToCreate", fileToCreate);
+
+        // const filesToCreate = await storage.uploadFiles({
+        //     files: filesToUpload,
+        //     linked_entity_id,
+        //     linked_entity: LINKED_ENTITY,
+        //     category: UPLOAD_TYPE,
+        //     createThumbnailAndWebImages: createThumbnailAndWebImages,
+        //     cloud_is_publicly_available: isPublic
+        // });
 
         await prisma.file.createMany({ data: filesToCreate });
+        // if (!filesToCreate) error(400, "Could not upload files");
+        // await prisma.file.createMany({ data: [fileToCreate] });
 
         const createdFiles = await prisma.file.findMany({
             where: { linked_entity: LINKED_ENTITY, linked_entity_id, category: UPLOAD_TYPE }
@@ -72,7 +95,7 @@ export async function POST({ request, url, locals }) {
         for (let createdFile of createdFiles) {
             const urls = {};
             for (let sizeType of createdFile.sizes_saved) {
-                urls[sizeType] = await fileController.getUrlForDownload({
+                urls[sizeType] = await storage.getUrlForDownload({
                     containerIdentifier: createdFile.cloudContainerIdentifier,
                     object_identifier: `${sizeType}_${createdFile.object_identifier}`,
                     isPublic: createdFile.cloudIsPubliclyAvailable
@@ -131,13 +154,13 @@ export async function GET({ request, url, locals }) {
         const category = url.searchParams.get("category") ?? "";
         const files = await prisma.file.findMany({ where: { linked_entity: LINKED_ENTITY, linked_entity_id, category } });
 
-        const fileController = new FileController();
+        const storage = getStorage({ storageProvider: "aws" });
         const filesToReturn = [];
         for (let i = 0; i < files.length; i++) {
             const urls = {};
 
             for (let sizeType of files[i].sizes_saved) {
-                urls[sizeType] = await fileController.getUrlForDownload({
+                urls[sizeType] = await storage.getUrlForDownload({
                     containerIdentifier: files[i].cloudContainerIdentifier,
                     object_identifier: `${sizeType}_${files[i].object_identifier}`,
                     cloudIsPubliclyAvailable: files[i].cloudIsPubliclyAvailable
@@ -173,7 +196,7 @@ export async function DELETE({ request }) {
 
     try {
         const file = await prisma.file.findFirst({ where: { id: body.id } });
-        const fileController = new FileController();
+        const storage = getStorage({ storageProvider: "aws" });
 
         for (let sizeType of file?.sizes_saved ?? []) {
             let finalObjectIdentifier = `${sizeType}_${file.object_identifier}`;
@@ -183,7 +206,7 @@ export async function DELETE({ request }) {
                 containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
             }
 
-            await fileController.deleteFile({ object_identifier: finalObjectIdentifier, container_identifier: containerIdentifier });
+            await storage.deleteFile({ object_identifier: finalObjectIdentifier, container_identifier: containerIdentifier });
         }
 
         await prisma.file.delete({ where: { id: body.id } });
@@ -196,7 +219,8 @@ export async function DELETE({ request }) {
 
 const deleteFiles = async (files) => {
     try {
-        const fileController = new FileController();
+        const storage = getStorage({ storageProvider: "aws" });
+
         for (const file of files) {
             for (let sizeType of file?.sizes_saved ?? []) {
                 let finalObjectIdentifier = `${sizeType}_${file.object_identifier}`;
@@ -206,7 +230,7 @@ const deleteFiles = async (files) => {
                     containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
                 }
 
-                await fileController.deleteFile({ object_identifier: finalObjectIdentifier, containerIdentifier });
+                await storage.deleteFile({ object_identifier: finalObjectIdentifier, containerIdentifier });
             }
         }
     } catch (err) {

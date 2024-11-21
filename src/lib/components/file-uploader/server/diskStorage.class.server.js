@@ -1,3 +1,10 @@
+export class diskStorage {
+    async upload() {}
+    async uploadMany() {}
+    async download() {}
+    async delete() {}
+}
+
 import { env } from "$env/dynamic/private";
 import { AwsStorage } from "./awsStorage.class.server";
 import { getFileExtension, getFileNameWithoutExtension, insertBeforeFileExtension } from "../functions";
@@ -7,25 +14,9 @@ import imageType from "image-type";
 import { existsSync } from "fs";
 
 export class FileController {
-    #saveLocally;
-    #saveInCloud;
-    #cloudController;
-
-    constructor({
-        saveLocally = env.STORE_FILES_LOCALLY?.toLowerCase() === "true" ? true : false,
-        saveInCloud = env.STORE_FILES_IN_CLOUD?.toLowerCase() === "true" ? true : false
-    } = {}) {
-        if (saveInCloud) this.#saveInCloud = saveInCloud;
-        if (saveLocally) this.#saveLocally = saveLocally;
-
-        switch (env.CLOUD_STORAGE_PROVIDER) {
-            case "aws_s3":
-                this.#cloudController = new AwsStorage();
-                break;
-            default:
-                console.log("Invalid cloud storage provider provided. Only aws_s3 supported");
-                break;
-        }
+    #uploadFolder;
+    constructor({ uploadFolder = env.LOCAL_STORAGE_FOLDER_PATH ?? "/uploads" }) {
+        this.#uploadFolder = uploadFolder;
     }
 
     async uploadFiles({
@@ -78,36 +69,17 @@ export class FileController {
             };
         }
 
-        let localStaticFileUrls = [];
+        let staticFileUrls = [];
+        for (let i = 0; i < filesToUpload.length; i++) {
+            staticFileUrls[i] = {};
+            for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
+                const localStaticFilePath = `${this.#uploadFolder}/${object_identifier}`;
 
-        if (this.#saveLocally) {
-            for (let i = 0; i < filesToUpload.length; i++) {
-                localStaticFileUrls[i] = {};
-                for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
-                    const localStaticFilePath = `${env.LOCAL_STORAGE_FOLDER_PATH}/${object_identifier}`;
-
-                    if (!existsSync(env.LOCAL_STORAGE_FOLDER_PATH)) {
-                        mkdirSync(env.LOCAL_STORAGE_FOLDER_PATH);
-                    }
-                    writeFileSync(localStaticFilePath, Buffer.from(fileArrayBuffer));
-                    localStaticFileUrls[i][sizeType] = localStaticFilePath;
+                if (!existsSync(this.#uploadFolder)) {
+                    mkdirSync(this.#uploadFolder);
                 }
-            }
-        }
-
-        if (this.#saveInCloud) {
-            for (let i = 0; i < filesToUpload.length; i++) {
-                for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
-                    if (cloud_is_publicly_available) {
-                        object_identifier = `public/${object_identifier}`;
-                    }
-
-                    await this.#cloudController.uploadFile({
-                        file: fileArrayBuffer,
-                        object_identifier,
-                        is_public: cloud_is_publicly_available
-                    });
-                }
+                writeFileSync(localStaticFilePath, Buffer.from(fileArrayBuffer));
+                staticFileUrls[i][sizeType] = localStaticFilePath;
             }
         }
 
@@ -228,7 +200,7 @@ export class FileController {
                 webSharpOptions.height = uploadedImageMaxDimension > size.maxDimension ? size.maxDimension : height;
             }
 
-            const newImageBuffer = await sharp(imageArrayBuffer).resize(webSharpOptions).jpeg({ quality: 80 }).toBuffer();
+            const newImageBuffer = await sharp(imageArrayBuffer).resize(webSharpOptions).toBuffer();
             returnImageBuffers[size.type] = newImageBuffer;
         }
 
