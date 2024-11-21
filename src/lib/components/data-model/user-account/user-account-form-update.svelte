@@ -2,7 +2,7 @@
     import { enhance } from "$app/forms";
     import { goto } from "$app/navigation";
 
-    import SuperDebug, { superForm } from "sveltekit-superforms";
+    import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
     import { toast } from "svelte-sonner";
     import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
@@ -38,7 +38,6 @@
     const { form: formData, enhance: formEnhance, message, errors, submitting } = form;
 </script>
 
-<SuperDebug data={$formData}></SuperDebug>
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="w-full p-1 @container">
     <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
         <FormInputHidden {form} name="id" label="id" bind:value={$formData.id} />
