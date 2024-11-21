@@ -15,6 +15,20 @@ import {
     getEntityAttributes
 } from "../_helpers/helpers.server";
 
+/**
+ * @typedef { import("@prisma/client").__entityNameSqlCase__ } __entityNamePascalCase__
+ * @typedef { import("@prisma/client").Prisma.__entityNameSqlCase__CreateInput } __entityNamePascalCase__CreateInput
+ * @typedef { import("@prisma/client").Prisma.__entityNameSqlCase__UpdateInput } __entityNamePascalCase__UpdateInput
+ */
+
+/**
+ * A point on a two dimensional plane.
+ * @typedef {Object} __entityNamePascalCase__Data
+ * @property {Object[]} __entityName__Array
+ * @property {number} __entityName__TotalCount
+ * @property {Object<?string, string[]>} enums
+ */
+
 // DX-NOTE: Maximum number of options to load for related entities
 const RELATIONSHIP_LOAD_LIMIT = 50;
 
@@ -28,6 +42,11 @@ const searchConfig = {
     // }
 };
 
+/**
+ *
+ * @param {Object} constraints
+ * @returns {Promise<__entityNamePascalCase__Data>}
+ */
 export const load__entityNamePascalCase__Array = async (constraints = {}) => {
     const selectClause = getPrismaSelectAllFromEntity("__entityName__");
     const prismaConditions = getPrismaConditions("__entityName__", searchConfig, constraints);
@@ -49,7 +68,11 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
     return { __entityName__Array, __entityName__TotalCount, enums };
 };
 
-export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions = true) => {
+/**
+ * @param {number} id
+ * @return {Promise<{fundingEvent: ?FundingEvent, relationshipData?: any[], associatedData?: any[]}>}
+ */
+export const load__entityNamePascalCase__ = async (id, relationshipOptions = true) => {
     const __entityName__ = await prisma.__entityNameSqlCase__.findUnique({
         where: { id: id }
     });
@@ -73,12 +96,6 @@ export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions 
         }
     }
 
-    for (const [relatedEntityName, relationshipNames] of Object.entries(getRelationships("__entityName__"))) {
-        for (const relationshipName of relationshipNames) {
-            __entityName__[getSqlFromCamelCase(relationshipName)] = __entityName__[getSqlFromCamelCase(relationshipName)]?.toString();
-        }
-    }
-
     let returnObject = { __entityName__ };
     if (!relationshipOptions) return returnObject;
 
@@ -99,75 +116,35 @@ export const load__entityNamePascalCase__ = async (id = -1, relationshipOptions 
     return returnObject;
 };
 
+/**
+ * @param {__entityNamePascalCase__CreateInput} data
+ * @return {Promise<__entityNamePascalCase__>}
+ */
 export const create__entityNamePascalCase__ = async (data) => {
-    const relationships = getRelatedEntities("__entityName__");
-    const attributeNameTypeMap = getEntityAttributeUiTypes("__entityName__");
-
-    for (const [key, val] of Object.entries(data)) {
-        if (attributeNameTypeMap[key] === "date" || attributeNameTypeMap[key] === "datetime-local") {
-            data[key] = new Date(val);
-        }
-    }
-
-    Object.values(relationships).forEach((relationshipNames) => {
-        relationshipNames.forEach((relationshipName) => {
-            relationshipName = getSqlFromCamelCase(relationshipName);
-            if (data.hasOwnProperty(relationshipName)) {
-                if (!isNumeric(data[relationshipName])) {
-                    delete data[relationshipName];
-                    console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
-                }
-
-                if (typeof data[relationshipName] === "string") {
-                    data[relationshipName] = parseInt(data[relationshipName]);
-                }
-            } else {
-                data[relationshipName] = null;
-            }
-        });
-    });
-
-    await prisma.__entityNameSqlCase__.create({ data });
+    return await prisma.__entityNameSqlCase__.create({ data });
 };
 
+/**
+ * @param {__entityNamePascalCase__UpdateInput} data
+ * @return {Promise<__entityNamePascalCase__>}
+ */
 export const update__entityNamePascalCase__ = async (data) => {
-    const relationships = getRelatedEntities("__entityName__");
-    const attributeNameTypeMap = getEntityAttributeUiTypes("__entityName__");
-
-    for (const [key, val] of Object.entries(data)) {
-        if (attributeNameTypeMap[key] === "date" || attributeNameTypeMap[key] === "datetime-local") {
-            data[key] = new Date(val);
-        }
-    }
-
-    Object.values(relationships).forEach((relationshipNames) => {
-        relationshipNames.forEach((relationshipName) => {
-            relationshipName = getSqlFromCamelCase(relationshipName);
-            if (data.hasOwnProperty(relationshipName)) {
-                if (!isNumeric(data[relationshipName])) {
-                    delete data[relationshipName];
-                    console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
-                }
-
-                if (typeof data[relationshipName] === "string") {
-                    data[relationshipName] = parseInt(data[relationshipName]);
-                }
-            } else {
-                data[relationshipName] = null;
-            }
-        });
-    });
-
     await prisma.__entityNameSqlCase__.update({
         data,
         where: { id: data.id }
     });
 };
 
-export const delete__entityNamePascalCase__ = async (id = -1) => {
+/**
+ * @param {number} id
+ */
+export const delete__entityNamePascalCase__ = async (id) => {
     await prisma.__entityNameSqlCase__.delete({ where: { id } });
 };
 
+/**
+ * @return {Promise<Object.<?string, any[]>>}
+ */
 export const get__entityNamePascalCase__RelationshipData = async () => {
     const relationshipData = {};
 
@@ -176,6 +153,9 @@ export const get__entityNamePascalCase__RelationshipData = async () => {
     return relationshipData;
 };
 
+/**
+ * @return {Promise<Object.<?string, any[]>>}
+ */
 export const get__entityNamePascalCase__AssociatedData = async (__entityName__Id) => {
     const associatedData = {};
 

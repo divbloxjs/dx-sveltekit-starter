@@ -1,11 +1,11 @@
+/**
+ * @return {Promise<any[]>}
+ */
 const get__relationshipNamePascalCase__Options = async () => {
     const __relationshipName__Array = await prisma.__relatedEntityNameSqlCase__.findMany({
+        select: { id: true },
         take: RELATIONSHIP_LOAD_LIMIT
     });
 
-    const __relationshipName__Options = __relationshipName__Array.map((__relationshipNameSqlCase__) => {
-        return __relationshipNameSqlCase__;
-    });
-
-    return __relationshipName__Options;
+    return __relationshipName__Array;
 };

@@ -40,7 +40,7 @@
 
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="w-full p-1 @container">
     <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
-        <FormInputHidden {form} name="id" label="id" type="number" bind:value={$formData.id} />
+        <FormInputHidden {form} name="id" label="id" bind:value={$formData.id} />
 
         __formValueComponents__
     </div>
