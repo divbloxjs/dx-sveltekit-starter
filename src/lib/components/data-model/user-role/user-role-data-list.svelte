@@ -80,7 +80,7 @@
     };
 </script>
 
-<div class="flex w-full flex-col gap-2 p-2">
+<div class="flex w-full flex-col gap-2">
     <div class="flex flex-row gap-2">
         <Input class="h-9" type="text" bind:value={search} on:change={handleSearchChange} />
         <Button size="sm" variant="link" class="px-0" on:click={handleSearchClear}><X /></Button>

@@ -179,14 +179,11 @@ export const getUserAccountAssociatedData = async (userAccountId) => {
 
 const getUserRoleIdOptions = async () => {
     const userRoleIdArray = await prisma.user_role.findMany({
+        select: { id: true, role_name: true },
         take: RELATIONSHIP_LOAD_LIMIT
     });
 
-    const userRoleIdOptions = userRoleIdArray.map((user_role_id) => {
-        return user_role_id;
-    });
-
-    return userRoleIdOptions;
+    return userRoleIdArray;
 };
 const getAssociatedUserSessionArray = async (userAccountId) => {
     const userSessionArray = await prisma.user_session.findMany({

@@ -95,9 +95,7 @@
     <div class="flex flex-col">
         <div class="flex flex-row gap-2">
             <Input type="text" bind:value={search} name="search" placeholder="Search..." on:change={handleSearchChange}></Input>
-            <Button variant="link" size="sm" class="px-0" on:click={handleSearchClear}>
-                <X></X>
-            </Button>
+            <Button variant="link" size="sm" class="px-0" on:click={handleSearchClear}><X /></Button>
         </div>
     </div>
     {#if allowCreate}

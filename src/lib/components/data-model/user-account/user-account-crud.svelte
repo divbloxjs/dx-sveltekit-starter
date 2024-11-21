@@ -6,7 +6,7 @@
     export let data;
 </script>
 
-<div class="flex w-full @container">
+<div class="flex w-full p-2 @container">
     <div class="hidden w-full @lg:block">
         <DataTableUserAccount {data} {basePath} allowDelete={true} allowEdit={true} />
     </div>

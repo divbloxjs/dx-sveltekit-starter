@@ -154,6 +154,7 @@ export const get__entityNamePascalCase__RelationshipData = async () => {
 };
 
 /**
+ * @param {number} __entityName__Id
  * @return {Promise<Object.<?string, any[]>>}
  */
 export const get__entityNamePascalCase__AssociatedData = async (__entityName__Id) => {

@@ -2,7 +2,6 @@ import { prisma } from "$lib/server/prisma-instance";
 import { isNumeric } from "dx-utilities";
 import { getPrismaSelectAllFromEntity, getPrismaConditions } from "$lib/server/prisma.helpers";
 import { getSqlFromCamelCase } from "$lib/helpers";
-import { formatISO } from "date-fns/formatISO";
 import { format } from "date-fns";
 
 import { normalizeDatabaseArray } from "../_helpers/helpers";
@@ -13,6 +12,20 @@ import {
     getRelationships,
     getAllEnumOptions
 } from "../_helpers/helpers.server";
+
+/**
+ * @typedef { import("@prisma/client").user_role } UserRole
+ * @typedef { import("@prisma/client").Prisma.user_roleCreateInput } UserRoleCreateInput
+ * @typedef { import("@prisma/client").Prisma.user_roleUpdateInput } UserRoleUpdateInput
+ */
+
+/**
+ * A point on a two dimensional plane.
+ * @typedef {Object} UserRoleData
+ * @property {Object[]} userRoleArray
+ * @property {number} userRoleTotalCount
+ * @property {Object<?string, string[]>} enums
+ */
 
 // DX-NOTE: Maximum number of options to load for related entities
 const RELATIONSHIP_LOAD_LIMIT = 50;
@@ -27,6 +40,11 @@ const searchConfig = {
     // }
 };
 
+/**
+ *
+ * @param {Object} constraints
+ * @returns {Promise<UserRoleData>}
+ */
 export const loadUserRoleArray = async (constraints = {}) => {
     const selectClause = getPrismaSelectAllFromEntity("userRole");
     const prismaConditions = getPrismaConditions("userRole", searchConfig, constraints);
@@ -48,7 +66,11 @@ export const loadUserRoleArray = async (constraints = {}) => {
     return { userRoleArray, userRoleTotalCount, enums };
 };
 
-export const loadUserRole = async (id = -1, relationshipOptions = true) => {
+/**
+ * @param {number} id
+ * @return {Promise<{userRole: ?UserRole, relationshipData?: any[], associatedData?: any[]}>}
+ */
+export const loadUserRole = async (id, relationshipOptions = true) => {
     const userRole = await prisma.user_role.findUnique({
         where: { id: id }
     });
@@ -57,7 +79,7 @@ export const loadUserRole = async (id = -1, relationshipOptions = true) => {
 
     for (const [key, val] of Object.entries(userRole)) {
         if (val && attributeNameTypeMap[key] === "date") {
-            userRole[key] = formatISO(val, { representation: "date" });
+            userRole[key] = format(val, "yyyy-MM-dd");
         }
 
         if (val && attributeNameTypeMap[key] === "datetime-local") {
@@ -91,6 +113,10 @@ export const loadUserRole = async (id = -1, relationshipOptions = true) => {
     return returnObject;
 };
 
+/**
+ * @param {UserRoleCreateInput} data
+ * @return {Promise<UserRole>}
+ */
 export const createUserRole = async (data) => {
     const relationships = getRelatedEntities("userRole");
     const attributeNameTypeMap = getEntityAttributeUiTypes("userRole");
@@ -122,6 +148,10 @@ export const createUserRole = async (data) => {
     await prisma.user_role.create({ data });
 };
 
+/**
+ * @param {UserRoleUpdateInput} data
+ * @return {Promise<UserRole>}
+ */
 export const updateUserRole = async (data) => {
     const relationships = getRelatedEntities("userRole");
     const attributeNameTypeMap = getEntityAttributeUiTypes("userRole");
@@ -156,16 +186,26 @@ export const updateUserRole = async (data) => {
     });
 };
 
-export const deleteUserRole = async (id = -1) => {
+/**
+ * @param {number} id
+ */
+export const deleteUserRole = async (id) => {
     await prisma.user_role.delete({ where: { id } });
 };
 
+/**
+ * @return {Promise<Object.<?string, any[]>>}
+ */
 export const getUserRoleRelationshipData = async () => {
     const relationshipData = {};
 
     return relationshipData;
 };
 
+/**
+ * @param {number} userRoleId
+ * @return {Promise<Object.<?string, any[]>>}
+ */
 export const getUserRoleAssociatedData = async (userRoleId) => {
     const associatedData = {};
 
@@ -175,6 +215,10 @@ export const getUserRoleAssociatedData = async (userRoleId) => {
 
 //#region RelatedEntity / AssociatedEntity Helpers
 
+/**
+ * @param {number} userRoleId
+ * @returns {Promise<any[]>}
+ */
 const getAssociatedUserAccountArray = async (userRoleId) => {
     const userAccountArray = await prisma.user_account.findMany({
         where: { user_role_id: userRoleId },
