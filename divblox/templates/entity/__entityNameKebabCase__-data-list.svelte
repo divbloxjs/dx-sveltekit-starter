@@ -45,6 +45,10 @@
         const response = await fetch(`${getEntityArrayPath}?${searchParams?.toString() ?? ""}`);
         const result = await response.json();
 
+        if (!Array.isArray(result.__entityName__Array)) {
+            return;
+        }
+
         __entityName__Array = result.__entityName__Array;
         __entityName__TotalCount = result.__entityName__TotalCount;
         enums = result.enums;
@@ -81,6 +85,10 @@
 
         const response = await fetch(`${getEntityArrayPath}?${newSearchParams?.toString() ?? ""}`);
         const result = await response.json();
+
+        if (!Array.isArray(result.__entityName__Array)) {
+            return;
+        }
 
         __entityName__Array = [...__entityName__Array, ...result.__entityName__Array];
         __entityName__TotalCount = result.__entityName__TotalCount;
