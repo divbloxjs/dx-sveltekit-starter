@@ -49,10 +49,7 @@ export const getAllEnumOptions = (entityName, enums = {}) => {
     for (const [attributeName, attributeDef] of Object.entries(dataModel[entityName].attributes)) {
         if (attributeDef.type.toLowerCase() === "enum") {
             if (!enums[getSqlFromCamelCase(entityName)]) enums[getSqlFromCamelCase(entityName)] = {};
-            enums[getSqlFromCamelCase(entityName)][getSqlFromCamelCase(attributeName)] = getEnumOptions(
-                entityName,
-                attributeName,
-            );
+            enums[getSqlFromCamelCase(entityName)][getSqlFromCamelCase(attributeName)] = getEnumOptions(entityName, attributeName);
         }
     }
 
@@ -71,7 +68,7 @@ export const getEnumOptions = (entityName, attributeName, formatAsSelectOptions 
     options.forEach((option) => {
         selectOptions.push({
             label: option,
-            value: option,
+            value: option
         });
     });
 
@@ -112,18 +109,6 @@ export const getEntityAttributes = (entityName, convertToSqlCase = false) => {
 
 export const getEntityRelationships = (entityName) => {
     return dataModel[entityName].relationships;
-};
-
-export const getIntId = (id) => {
-    if (!id || id === -1 || id === "-1") {
-        return null;
-    }
-
-    if (typeof id === "string") {
-        return parseInt(id);
-    }
-
-    return id;
 };
 
 export const getPrismaConditions = (searchConfig = {}, constraints = {}) => {
