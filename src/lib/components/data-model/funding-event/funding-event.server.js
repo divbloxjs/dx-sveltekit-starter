@@ -169,29 +169,25 @@ export const getFundingEventAssociatedData = async (fundingEventId) => {
 
 //#region RelatedEntity / AssociatedEntity Helpers
 
+/**
+ * @return {Promise<any[]>}
+ */
 const getFundIdOptions = async () => {
     const fundIdArray = await prisma.fund.findMany({
-        take: RELATIONSHIP_LOAD_LIMIT,
+        take: RELATIONSHIP_LOAD_LIMIT
     });
 
-    const fundIdOptions = fundIdArray.map((fund_id) => {
-        fund_id.id = fund_id.id.toString();
-        return fund_id;
-    });
-
-    return fundIdOptions;
+    return fundIdArray;
 };
+/**
+ * @return {Promise<any[]>}
+ */
 const getUserAccountIdOptions = async () => {
     const userAccountIdArray = await prisma.user_account.findMany({
-        take: RELATIONSHIP_LOAD_LIMIT,
+        take: RELATIONSHIP_LOAD_LIMIT
     });
 
-    const userAccountIdOptions = userAccountIdArray.map((user_account_id) => {
-        user_account_id.id = user_account_id.id.toString();
-        return user_account_id;
-    });
-
-    return userAccountIdOptions;
+    return userAccountIdArray;
 };
 ;
 ;
