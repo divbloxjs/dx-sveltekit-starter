@@ -79,23 +79,6 @@ export const load__entityNamePascalCase__ = async (id, relationshipOptions = tru
 
     if (!__entityName__) return { __entityName__: null };
 
-    const attributeNameTypeMap = getEntityAttributeUiTypes("__entityName__");
-    const attributes = getEntityAttributes("__entityName__", true);
-
-    for (const [key, val] of Object.entries(__entityName__)) {
-        if (val && attributeNameTypeMap[key] === "date") {
-            __entityName__[key] = formatISO(val, { representation: "date" });
-        }
-
-        if (val && attributeNameTypeMap[key] === "datetime-local") {
-            __entityName__[key] = format(val, "yyyy-MM-dd'T'hh:mm");
-        }
-
-        if (val && attributes[key]?.type?.toLowerCase() === "decimal") {
-            __entityName__[key] = parseFloat(val?.toString());
-        }
-    }
-
     let returnObject = { __entityName__ };
     if (!relationshipOptions) return returnObject;
 
