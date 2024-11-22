@@ -1,12 +1,11 @@
 import { env } from "$env/dynamic/private";
 import { AwsStorage } from "./awsStorage.class.server";
 import { DiskStorage } from "./diskStorage.class.server";
-// import { DiskStorage } from "./diskStorage.class.server";
 
 export const storageProviders = {
     aws: "aws",
     azure: "azure",
-    localFile: "localFile"
+    disk: "disk"
 };
 
 /**
@@ -22,7 +21,7 @@ export const storageProviders = {
 /**
  *
  * @param {{storageProvider: string}} conditions
- * @param {awsConfig} config
+ * @param {awsConfig | {uploadFolder?: string}} config
  * @returns {AwsStorage|DiskStorage}
  */
 export const getStorage = (conditions, config = {}) => {
@@ -36,7 +35,7 @@ export const getStorage = (conditions, config = {}) => {
         }
 
         return new AwsStorage(config);
-    } else if (conditions.storageProvider === storageProviders.localFile) {
+    } else if (conditions.storageProvider === storageProviders.disk) {
         return new DiskStorage(config);
     } else if (conditions.storageProvider === storageProviders.aws) {
         return new AwsStorage(config);

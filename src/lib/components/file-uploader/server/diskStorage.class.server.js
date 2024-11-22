@@ -13,8 +13,10 @@ import sharp from "sharp";
 import imageType from "image-type";
 import { existsSync } from "fs";
 
-export class FileController {
+export class DiskStorage {
     #uploadFolder;
+    #saveInCloud;
+    #cloudController;
     constructor({ uploadFolder = env.LOCAL_STORAGE_FOLDER_PATH ?? "/uploads" }) {
         this.#uploadFolder = uploadFolder;
     }

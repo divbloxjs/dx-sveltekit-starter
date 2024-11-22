@@ -1,9 +1,10 @@
 import { AwsStorage } from "./awsStorage.class.server";
+import { DiskStorage } from "./diskStorage.class.server";
 
 export const storageProviders = {
     aws: "aws",
     azure: "azure",
-    localFile: "localFile"
+    disk: "disk"
 };
 
 /**

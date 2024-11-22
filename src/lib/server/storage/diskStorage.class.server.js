@@ -2,9 +2,11 @@ import { env } from "$env/dynamic/private";
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import sharp from "sharp";
 import { existsSync } from "fs";
+import { env as publicEnv } from "$env/dynamic/public";
 
 export class DiskStorage {
     #uploadFolder = env.LOCAL_STORAGE_FOLDER_PATH ?? "";
+    #baseUrl = publicEnv.PUBLIC_BASE_URL ?? "";
 
     /**
      * @param {Object} [params]
@@ -83,5 +85,25 @@ export class DiskStorage {
         }
 
         return returnImageBuffers;
+    }
+
+    getContainerIdentifier() {
+        return this.#uploadFolder;
+    }
+
+    /**
+     * @param {Object} params
+     * @param {string} params.object_identifier
+     * @returns {string}
+     */
+    getStaticUrl({ object_identifier }) {
+        return `${this.#baseUrl}${this.#uploadFolder}/${object_identifier}`;
+    }
+
+    /**
+     * @returns {string}
+     */
+    getStaticBaseUrl() {
+        return `${this.#baseUrl}/${this.#uploadFolder}`;
     }
 }

@@ -10,6 +10,8 @@ import { DiskStorage } from "./diskStorage.class.server";
 
 export class UploadController {
     #storage;
+    #saveInCloud;
+    #cloudController;
     /**
      * @param {AwsStorage|DiskStorage} storage
      */
@@ -17,6 +19,17 @@ export class UploadController {
         this.#storage = storage;
     }
 
+    /**
+     *
+     * @param {Object} params
+     * @param {File[]} params.files
+     * @param {string} params.linked_entity
+     * @param {number} params.linked_entity_id
+     * @param {string} params.category
+     * @param {boolean} params.createThumbnailAndWebImages
+     * @param {boolean} params.cloud_is_publicly_available
+     * @returns
+     */
     async uploadFiles({
         files,
         linked_entity,
@@ -107,15 +120,13 @@ export class UploadController {
                 base_file_url: env.LOCAL_STORAGE_FOLDER_PATH
             };
 
-            if (this.#saveInCloud) {
-                data.cloud_is_publicly_available = cloud_is_publicly_available;
+            data.cloud_is_publicly_available = cloud_is_publicly_available;
 
-                data.cloud_container_identifier = this.#cloudController.getContainerIdentifier();
+            data.cloud_container_identifier = this.#storage.getContainerIdentifier();
 
-                data.base_file_url = this.#cloudController.getStaticBaseUrl({
-                    container_identifier: data.cloud_container_identifier
-                });
-            }
+            data.base_file_url = this.#storage.getStaticBaseUrl({
+                container_identifier: data.cloud_container_identifier
+            });
 
             for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
                 data.sizes_saved.push(sizeType);
@@ -124,7 +135,7 @@ export class UploadController {
             fileToCreateArray.push(data);
 
             const urls = {};
-            urls.original = await this.getUrlForDownload({
+            urls.original = await this.#storage.getUrlForDownload({
                 container_identifier: data.cloud_container_identifier,
                 object_identifier: `original_${data.object_identifier}`,
                 cloud_is_publicly_available
