@@ -21,6 +21,7 @@
     export let options = [];
 
     export let selectedValue = "";
+    export let allowNull = true;
 
     /**
      * @type {import('../../../../../app').GenericDropdownOption}
@@ -52,6 +53,9 @@
                     <Select.Item disabled value="" label="No options" />
                 {/if}
 
+                {#if allowNull}
+                    <Select.Item {...$$restProps} value={null} label={"-Please Select-"} class="bg-accent/80" />
+                {/if}
                 {#each options as option}
                     <Select.Item {...$$restProps} value={option.value} label={option.label} />
                 {/each}
