@@ -70,7 +70,7 @@ export const load__entityNamePascalCase__Array = async (constraints = {}) => {
 
 /**
  * @param {number} id
- * @return {Promise<{fundingEvent: ?FundingEvent, relationshipData?: any[], associatedData?: any[]}>}
+ * @return {Promise<{__entityName__: ?__entityNamePascalCase__, relationshipData?: any[], associatedData?: any[]}>}
  */
 export const load__entityNamePascalCase__ = async (id, relationshipOptions = true) => {
     const __entityName__ = await prisma.__entityNameSqlCase__.findUnique({
