@@ -20,7 +20,7 @@
         "@tailwindcss/forms": "^0.5.9",
         "@tailwindcss/typography": "^0.5.15",
         "autoprefixer": "^10.4.20",
-        "divblox": "^0.0.30",
+        "divblox": "^0.0.31",
         "postcss": "^8.4.49",
         "postcss-load-config": "^6.0.1",
         "prettier": "^3.3.3",
