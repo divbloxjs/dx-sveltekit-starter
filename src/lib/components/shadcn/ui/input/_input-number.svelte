@@ -28,6 +28,7 @@
     bind:this={inputEl}
     bind:value
     type="number"
+    step="any"
     {readonly}
     on:blur
     on:change
