@@ -13,8 +13,6 @@
     let disabledClasses = `disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50`;
     let stateClasses = `data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground`;
     let errorClasses = `data-[fs-error]:border-destructive data-[fs-error]:outline-destructive`;
-
-    $: checked, console.log(checked);
 </script>
 
 <CheckboxPrimitive.Root
