@@ -10,6 +10,6 @@ RUN npm ci
 
 RUN npm run build
 
-CMD npx divblox -s accept-all skip-pull && node build
+CMD npx divblox -s accept-all && node ./src/lib/server/boot.js && node build
 
 EXPOSE 3000

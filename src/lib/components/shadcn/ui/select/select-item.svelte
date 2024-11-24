@@ -2,11 +2,16 @@
     import Check from "lucide-svelte/icons/check";
     import { Select as SelectPrimitive } from "bits-ui";
     import { cn } from "$lib/components/shadcn/utils.js";
-    let className = undefined;
+
     export let value;
     export let label = undefined;
     export let disabled = undefined;
+
+    let className = undefined;
     export { className as class };
+
+    let disabledClasses = `disabled:cursor-not-allowed disabled:opacity-50 data-[disabled]:pointer-events-none`;
+    let highlightedClasses = `data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground`;
 </script>
 
 <SelectPrimitive.Item
@@ -14,7 +19,9 @@
     {disabled}
     {label}
     class={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
+        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-7 pr-2 text-sm outline-none",
+        highlightedClasses,
+        disabledClasses,
         className
     )}
     {...$$restProps}

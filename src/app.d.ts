@@ -10,7 +10,7 @@ export type UserInfo = {
     email_address: string;
     first_name: string;
     last_name: string;
-    user_role?: {
+    user_role: {
         id: int;
         role_name: string;
     };

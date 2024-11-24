@@ -3,14 +3,25 @@
     import Check from "lucide-svelte/icons/check";
     import Minus from "lucide-svelte/icons/minus";
     import { cn } from "$lib/components/shadcn/utils.js";
-    let className = undefined;
+
     export let checked = false;
+
+    let className = undefined;
     export { className as class };
+
+    let focusClasses = `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`;
+    let disabledClasses = `disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50`;
+    let stateClasses = `data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground`;
+    let errorClasses = `data-[fs-error]:border-destructive data-[fs-error]:outline-destructive`;
 </script>
 
 <CheckboxPrimitive.Root
     class={cn(
-        "peer box-content h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[disabled=true]:opacity-50",
+        "peer box-content h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background",
+        focusClasses,
+        disabledClasses,
+        stateClasses,
+        errorClasses,
         className
     )}
     bind:checked

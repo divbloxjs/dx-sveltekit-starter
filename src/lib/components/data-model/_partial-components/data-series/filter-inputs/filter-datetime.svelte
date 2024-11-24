@@ -10,14 +10,16 @@
     const dispatch = createEventDispatcher();
 </script>
 
-<Input
-    class="h-6"
-    type="datetime-local"
-    name={displayName}
-    placeholder="Filter..."
-    bind:value={filterValue}
-    on:change={() => dispatch("filter-change", { filterValue, filterComparison: "eq" })} />
+<div class="flex items-center gap-1">
+    <Input
+        class="h-6"
+        type="datetime-local"
+        name={displayName}
+        placeholder="Filter..."
+        bind:value={filterValue}
+        on:change={() => dispatch("filter-change", { filterValue, filterComparison: "eq" })} />
 
-<Button variant="link" size="inline-icon" class="ml-2 h-4 w-4" on:click={() => dispatch("filter-clear")}>
-    <RotateCcw />
-</Button>
+    <Button variant="link" size="inline-icon" class="ml-2 h-4 w-4" on:click={() => dispatch("filter-clear")}>
+        <RotateCcw size="18" />
+    </Button>
+</div>

@@ -8,11 +8,19 @@
     import { Button } from "$lib/components/shadcn/ui/button/index.js";
     import { Input } from "$lib/components/shadcn/ui/input/index.js";
     import { handleSuperFormUpdatedToast } from "$lib";
-    import { enhance } from "$app/forms";
     import { buttonVariants } from "$lib/components/shadcn/ui/button";
     import { env } from "$env/dynamic/public";
 
     export let data;
+
+    /**
+     * @type {HTMLFormElement}
+     */
+    let logoutForm;
+
+    const doLogout = () => {
+        logoutForm.submit();
+    };
 
     const form = superForm(data.userForm, {
         validators: zodClient(userAccountSchema),
@@ -25,6 +33,8 @@
 
     const { form: formData, enhance: submitEnhance, message, errors, formId, submitting, capture } = form;
 </script>
+
+<form bind:this={logoutForm} action="/api/logout" method="POST"></form>
 
 <form method="POST" action={`?/updateUser`} use:submitEnhance class="flex max-w-full flex-grow flex-col">
     <input type="hidden" name="id" bind:value={$formData.id} />
@@ -51,14 +61,15 @@
         <Form.FieldErrors />
     </Form.Field>
 
-    {#if env.PUBLIC_ENABLE_WEB_PUSH.toLowerCase() === "true"}
+    {#if env.PUBLIC_ENABLE_WEB_PUSH?.toLowerCase() === "true"}
         <a href="/notification-onboarding" class={`${buttonVariants({ variant: "link" })} w-fit self-center`}>Notification preferences</a>
     {/if}
     <div class="mt-2 flex flex-row justify-between">
-        <form action={`?/deleteUser`} method="POST" use:enhance>
-            <input type="hidden" name="id" bind:value={$formData.id} />
-            <Button type="submit" name="delete" variant="destructive-outline">Delete</Button>
-        </form>
+        <Button
+            variant="link"
+            on:click={() => {
+                doLogout();
+            }}>Logout</Button>
         <Button type="submit" disabled={$submitting} loading={$submitting}>Update</Button>
     </div>
 </form>

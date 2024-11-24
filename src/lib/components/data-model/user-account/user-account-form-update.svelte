@@ -15,6 +15,7 @@
     import FormCheckbox from "$lib/components/shadcn/ui/form/_form-checkbox.svelte";
 
     import AlertDialog from "$lib/components/shadcn/ui/alert-dialog/_alert-dialog.svelte";
+    import FormInputHidden from "$lib/components/shadcn/ui/form/_form-input-hidden.svelte";
 
     export let data;
     export let basePath = "/user-account";
@@ -39,7 +40,7 @@
 
 <form method="POST" action={`${basePath}/${$formData.id}?/update`} use:formEnhance class="w-full p-1 @container">
     <div class="columns-1 @xl:columns-2 @4xl:columns-3 @7xl:columns-4 child:break-inside-avoid-column">
-        <FormInput {form} name="id" label="id" type="hidden" bind:value={$formData.id} />
+        <FormInputHidden {form} name="id" label="id" bind:value={$formData.id} />
         <FormInput {form} name="first_name" label="First name" type="text" bind:value={$formData.first_name} />
         <FormInput {form} name="last_name" label="Last name" type="text" bind:value={$formData.last_name} />
         <FormInput {form} name="email_address" label="Email address" type="text" bind:value={$formData.email_address} />

@@ -71,7 +71,8 @@ export const actions = {
             path: "/",
             httpOnly: true,
             maxAge: 60 * newSession.duration_in_minutes,
-            expires: newSession.expires_at
+            expires: newSession.expires_at,
+            secure: true,
         });
 
         // Clear up expired tokens from DB

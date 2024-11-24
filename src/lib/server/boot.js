@@ -14,11 +14,9 @@ export const seedUserRoles = async () => {
 };
 
 export const seedUsers = async () => {
-    await seedUserRoles();
+    const existingUserRoles = await prisma.user_role.findMany({ where: { role_name: { in: ["Admin", "User"] } } });
 
-    const actualUserRoles = await prisma.user_role.findMany({ where: { role_name: { in: ["Admin", "User"] } } });
-
-    const userAccounts = await prisma.user_account.findMany();
+    const existingUserAccounts = await prisma.user_account.findMany();
 
     const defaultUserAccounts = [
         {
@@ -26,20 +24,31 @@ export const seedUsers = async () => {
             email_address: "admin@example.com",
             username: "admin@example.com",
             hashed_password: await argon2.hash("password"),
-            user_role_id: actualUserRoles.filter((role) => role.role_name === "Admin")[0].id
+            user_role_id: existingUserRoles.filter((role) => role.role_name === "Admin")[0].id
         },
         {
             first_name: "User",
             email_address: "user@example.com",
             username: "user@example.com",
             hashed_password: await argon2.hash("password"),
-            user_role_id: actualUserRoles.filter((role) => role.role_name === "User")[0].id
+            user_role_id: existingUserRoles.filter((role) => role.role_name === "User")[0].id
         }
-    ].filter((defaultUserAccount) => !userAccounts.map((userAccount) => userAccount.username).includes(defaultUserAccount.username));
+    ];
+
+    const toBeCreatedUserAccounts = defaultUserAccounts.filter(
+        (defaultUserAccount) => !existingUserAccounts.map((userAccount) => userAccount.username).includes(defaultUserAccount.username)
+    );
 
     const result = await prisma.user_account.createMany({
-        data: defaultUserAccounts
+        data: toBeCreatedUserAccounts
     });
 
     console.log(`Successfully created ${result.count} user accounts`);
 };
+
+export const initialise = async () => {
+    await seedUserRoles();
+    await seedUsers();
+};
+
+await initialise();

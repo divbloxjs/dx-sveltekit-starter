@@ -55,23 +55,15 @@ export const loadUserAccount = async (id = -1, relationshipOptions = true) => {
 
     if (!userAccount) return { userAccount: null };
 
-    userAccount.id = userAccount.id.toString();
-
     const attributeNameTypeMap = getEntityAttributeUiTypes("userAccount");
 
     for (const [key, val] of Object.entries(userAccount)) {
         if (val && attributeNameTypeMap[key] === "date") {
-            userAccount[key] = formatISO(val, { representation: "date" });
+            userAccount[key] = format(val, "yyyy-MM-dd");
         }
 
         if (val && attributeNameTypeMap[key] === "datetime-local") {
             userAccount[key] = format(val, "yyyy-MM-dd'T'hh:mm");
-        }
-    }
-
-    for (const [relatedEntityName, relationshipNames] of Object.entries(getRelationships("userAccount"))) {
-        for (const relationshipName of relationshipNames) {
-            userAccount[getSqlFromCamelCase(relationshipName)] = userAccount[getSqlFromCamelCase(relationshipName)]?.toString();
         }
     }
 
@@ -123,6 +115,7 @@ export const createUserAccount = async (data) => {
         });
     });
 
+    data.username = data.email_address;
     await prisma.user_account.create({ data });
 };
 
@@ -139,17 +132,17 @@ export const updateUserAccount = async (data) => {
     Object.values(relationships).forEach((relationshipNames) => {
         relationshipNames.forEach((relationshipName) => {
             relationshipName = getSqlFromCamelCase(relationshipName);
-            if (data.hasOwnProperty(relationshipName)) {
-                if (!isNumeric(data[relationshipName])) {
-                    delete data[relationshipName];
-                    console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
-                }
+            if (!data.hasOwnProperty(relationshipName)) {
+                return;
+            }
 
-                if (typeof data[relationshipName] === "string") {
-                    data[relationshipName] = parseInt(data[relationshipName]);
-                }
-            } else {
-                data[relationshipName] = null;
+            if (!isNumeric(data[relationshipName])) {
+                delete data[relationshipName];
+                console.error(`Removed non-numeric relationship '${relationshipName}' value: ${data[relationshipName]}`);
+            }
+
+            if (typeof data[relationshipName] === "string") {
+                data[relationshipName] = parseInt(data[relationshipName]);
             }
         });
     });
@@ -186,15 +179,11 @@ export const getUserAccountAssociatedData = async (userAccountId) => {
 
 const getUserRoleIdOptions = async () => {
     const userRoleIdArray = await prisma.user_role.findMany({
+        select: { id: true, role_name: true },
         take: RELATIONSHIP_LOAD_LIMIT
     });
 
-    const userRoleIdOptions = userRoleIdArray.map((user_role_id) => {
-        user_role_id.id = user_role_id.id.toString();
-        return user_role_id;
-    });
-
-    return userRoleIdOptions;
+    return userRoleIdArray;
 };
 const getAssociatedUserSessionArray = async (userAccountId) => {
     const userSessionArray = await prisma.user_session.findMany({

@@ -23,6 +23,10 @@ const config = {
                 "background-200": "hsl(var(--background-200) / <alpha-value>)",
                 "background-300": "hsl(var(--background-300) / <alpha-value>)",
                 foreground: "hsl(var(--foreground) / <alpha-value>)",
+                neutral: {
+                    DEFAULT: "hsl(var(--neutral) / <alpha-value>)",
+                    foreground: "hsl(var(--neutral-foreground) / <alpha-value>)"
+                },
                 primary: {
                     DEFAULT: "hsl(var(--primary) / <alpha-value>)",
                     foreground: "hsl(var(--primary-foreground) / <alpha-value>)"

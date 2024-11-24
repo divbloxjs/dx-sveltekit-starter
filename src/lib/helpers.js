@@ -1,5 +1,7 @@
 import { getCamelCaseSplittedToLowerCase, convertLowerCaseToPascalCase, convertLowerCaseToCamelCase } from "dx-utilities";
 import dxConfig from "../../dx.config";
+import { get } from "svelte/store";
+import { mode } from "mode-watcher";
 
 export const DB_IMPLEMENTATION_TYPES = { SNAKE_CASE: "snakecase", PASCAL_CASE: "pascalcase", CAMEL_CASE: "camelcase" };
 
@@ -45,4 +47,8 @@ export const getCamelFromSqlCase = (inputString = "", databaseCaseImplementation
         default:
             return convertLowerCaseToCamelCase(inputString, "_");
     }
+};
+
+export const isLightMode = () => {
+    return get(mode) === "light";
 };

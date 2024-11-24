@@ -28,7 +28,7 @@
         {#if label}
             <Form.Label>{label}</Form.Label>
         {/if}
-        <Textarea {...attrs} {placeholder} class={classNames} bind:value />
+        <Textarea {...$$restProps} {...attrs} {placeholder} class={classNames} bind:value />
     </Form.Control>
     <Form.FieldErrors />
 </Form.Field>

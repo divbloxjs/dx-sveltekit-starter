@@ -14,6 +14,7 @@
     import { focusTrap } from "$lib/actions/focus-trap.action";
 
     export let preloadedFile;
+    $: preloadedFile;
 
     export let index: number;
     export let deleteFileEndpoint: string;

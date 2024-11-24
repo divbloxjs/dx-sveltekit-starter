@@ -31,13 +31,16 @@ let newServiceWorker;
 
 export let firebaseApp;
 export let firebaseMessaging;
-
 export const initFirebase = async () => {
     try {
         // Initialize Firebase
         firebaseApp = initializeApp(firebaseConfig);
         // Init FCM Messaging
         firebaseMessaging = getMessaging(firebaseApp);
+
+        if (!serviceWorkerRegistration) {
+            serviceWorkerRegistration = (await navigator.serviceWorker.getRegistrations())[0];
+        }
 
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.controller.addEventListener("updatefound", () => {

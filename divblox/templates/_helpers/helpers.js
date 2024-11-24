@@ -17,7 +17,10 @@ export const normalizeDatabaseObject = (object = {}, removeLastUpdated = true, m
     if (!isValidObject(object)) return false;
 
     Object.keys(object).forEach((keyName) => {
-        // Prisma Decimal Object - weird non-serializable non-POJO (https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types)
+        // Prisma Decimal Object - weird non-serializable non-POJO
+        //      https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types
+        //      https://github.com/prisma/prisma/issues/6049
+        // This just checks based on the Decimal.js object keys, and converts the decimal to a string
         if (object[keyName] && typeof object[keyName] === "object") {
             if (
                 Object.keys(object[keyName])[1] === "s" &&
@@ -42,18 +45,6 @@ export const normalizeDatabaseObject = (object = {}, removeLastUpdated = true, m
             object[keyName] = parseInt(object[keyName]);
         }
     });
-};
-
-export const getIntId = (id) => {
-    if (!id || id === -1 || id === "-1") {
-        return null;
-    }
-
-    if (typeof id === "string") {
-        return parseInt(id);
-    }
-
-    return id;
 };
 
 export const getPrismaConditions = (searchConfig = {}, constraints = {}) => {

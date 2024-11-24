@@ -25,7 +25,7 @@
 
     {#if allowEdit || allowDelete}
         <td class="flex items-center justify-center text-center">
-            {#if env.PUBLIC_ENABLE_WEB_PUSH.toLowerCase() === "true"}
+            {#if env.PUBLIC_ENABLE_WEB_PUSH?.toLowerCase() === "true"}
                 <NotificationTest id={rowId} />
             {/if}
             <a href={`${basePath}/${rowId}`} class="bg-tranparent border border-none border-tertiary text-tertiary">

@@ -14,10 +14,12 @@
 
 <Form.Field {form} {name}>
     <Form.Control let:attrs>
-        {#if label}
-            <Form.Label>{label}</Form.Label>
-        {/if}
-        <Checkbox {...attrs} bind:checked />
+        <div class="flex items-center gap-2">
+            {#if label}
+                <Form.Label class="h-full">{label}</Form.Label>
+            {/if}
+            <Checkbox {...attrs} bind:checked />
+        </div>
     </Form.Control>
     <Form.FieldErrors />
 </Form.Field>

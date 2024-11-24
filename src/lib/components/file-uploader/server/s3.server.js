@@ -17,7 +17,7 @@ export class S3Controller {
     #fileUploadMaxSizeInBytes;
     #s3Client;
     constructor({ bucketName = undefined, fileUploadMaxSizeInBytes = 20 * 1024 * 1024 } = {}) {
-        this.#region = "af-south-1";
+        this.#region = "eu-west-2";
         this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes;
 
         this.bucketName = env.AWS_PRIVATE_BUCKET_NAME;

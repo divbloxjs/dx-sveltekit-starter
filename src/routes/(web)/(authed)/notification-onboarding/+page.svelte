@@ -20,6 +20,7 @@
     import * as Card from "$lib/components/shadcn/ui/card";
     import { env } from "$env/dynamic/public";
     import { getContext } from "svelte";
+    import { goto } from "$app/navigation";
 
     const pageTitle = getContext("pageTitle");
     $pageTitle = "";
@@ -68,6 +69,7 @@
             formData.append("pushSubscriptionDetailsString", JSON.stringify(pushSubscriptionDetails));
         } catch (error) {
             submittingAccept = false;
+
             console.error("Error storing token:", error);
             cancel();
         }
@@ -79,6 +81,7 @@
 
             $pushNotificationUniqueIdentifier = result?.data?.pushSubscription?.uniqueIdentifier ?? "";
             submittingAccept = false;
+            window.history.back();
         };
     };
 

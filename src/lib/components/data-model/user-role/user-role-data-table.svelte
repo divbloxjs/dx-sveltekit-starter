@@ -6,7 +6,7 @@
     import { buildAttributeMap, flattenRowObject } from "$lib/components/data-model/_helpers/helpers";
 
     import X from "lucide-svelte/icons/x";
-    
+
     import { Button, buttonVariants } from "$lib/components/shadcn/ui/button";
     import { Input } from "$lib/components/shadcn/ui/input";
     import { Label } from "$lib/components/shadcn/ui/label";
@@ -91,13 +91,11 @@
     };
 </script>
 
-<div class="flex flex-row justify-between p-2">
+<div class="mb-2 flex flex-row justify-between">
     <div class="flex flex-col">
         <div class="flex flex-row gap-2">
             <Input type="text" bind:value={search} name="search" placeholder="Search..." on:change={handleSearchChange}></Input>
-            <Button variant="link" size="sm" class="px-0" on:click={handleSearchClear}>
-                <X></X>
-            </Button>
+            <Button variant="link" size="sm" class="px-0" on:click={handleSearchClear}><X /></Button>
         </div>
     </div>
     {#if allowCreate}
@@ -131,7 +129,7 @@
             {/each}
         </tr>
         {#each flatRows as flatRow, index}
-            <UserRoleDataTableRow {flatRow} rowId={data?.userRoleArray[index]?.id} {basePath} {allowEdit} {allowDelete}/>
+            <UserRoleDataTableRow {flatRow} rowId={data?.userRoleArray[index]?.id} {basePath} {allowEdit} {allowDelete} />
         {/each}
     </table>
 </div>
