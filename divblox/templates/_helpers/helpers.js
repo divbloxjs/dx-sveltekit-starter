@@ -17,7 +17,10 @@ export const normalizeDatabaseObject = (object = {}, removeLastUpdated = true, m
     if (!isValidObject(object)) return false;
 
     Object.keys(object).forEach((keyName) => {
-        // Prisma Decimal Object - weird non-serializable non-POJO (https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types)
+        // Prisma Decimal Object - weird non-serializable non-POJO
+        //      https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types
+        //      https://github.com/prisma/prisma/issues/6049
+        // This just checks based on the Decimal.js object keys, and converts the decimal to a string
         if (object[keyName] && typeof object[keyName] === "object") {
             if (
                 Object.keys(object[keyName])[1] === "s" &&
@@ -130,12 +133,18 @@ export const getConstraintFromSearchParams = (url) => {
     return constraints;
 };
 
-export const buildAttributeMap = (entityName = "", tableConfig = {}, orderedAttributeMap = {}, relationshipStack = []) => {
+export const buildAttributeMap = (
+    entityName = "",
+    tableConfig = {},
+    orderedAttributeMap = {},
+    relationshipStack = [],
+) => {
     if (!isValidObject(tableConfig)) return {};
 
     Object.keys(tableConfig).forEach((keyName) => {
         const isNestedRelationship =
-            isValidObject(tableConfig[keyName]) && Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
+            isValidObject(tableConfig[keyName]) &&
+            Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
 
         if (isNestedRelationship) {
             const innerRelationshipStack = JSON.parse(JSON.stringify(relationshipStack));
@@ -153,7 +162,7 @@ export const buildAttributeMap = (entityName = "", tableConfig = {}, orderedAttr
                     : getSqlFromCamelCase(relationshipStack[relationshipStack.length - 1]),
             type: tableConfig[keyName]?.type ?? "text",
             stack: [...relationshipStack, getSqlFromCamelCase(keyName)],
-            displayName: tableConfig[keyName].displayName ?? keyName
+            displayName: tableConfig[keyName].displayName ?? keyName,
         };
     });
 };
@@ -174,7 +183,7 @@ export const flattenRowObject = (nestedRowData = {}, attributeMap = {}) => {
     Object.values(attributeMap).forEach((attributeDef) => {
         row.push({
             value: getDeepValue(nestedRowData, [...attributeDef.stack]),
-            type: attributeDef.type
+            type: attributeDef.type,
         });
     });
 

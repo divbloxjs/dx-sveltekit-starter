@@ -45,16 +45,20 @@ export const getRelationships = (entityName) => {
     return relationships;
 };
 
-export const getAllEnumOptions = (entityName, enums = {}) => {
+export const getAllEnumOptions = (entityName, enums = {}, baseEntityName = entityName) => {
     for (const [attributeName, attributeDef] of Object.entries(dataModel[entityName].attributes)) {
         if (attributeDef.type.toLowerCase() === "enum") {
             if (!enums[getSqlFromCamelCase(entityName)]) enums[getSqlFromCamelCase(entityName)] = {};
-            enums[getSqlFromCamelCase(entityName)][getSqlFromCamelCase(attributeName)] = getEnumOptions(entityName, attributeName);
+            enums[getSqlFromCamelCase(entityName)][getSqlFromCamelCase(attributeName)] = getEnumOptions(
+                entityName,
+                attributeName,
+            );
         }
     }
 
     for (const relatedEntityName of Object.keys(getRelationships(entityName))) {
-        getAllEnumOptions(relatedEntityName, enums);
+        if (baseEntityName === relatedEntityName) continue;
+        getAllEnumOptions(relatedEntityName, enums, baseEntityName);
     }
 };
 
@@ -68,7 +72,7 @@ export const getEnumOptions = (entityName, attributeName, formatAsSelectOptions 
     options.forEach((option) => {
         selectOptions.push({
             label: option,
-            value: option
+            value: option,
         });
     });
 
