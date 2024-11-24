@@ -8,6 +8,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model user_account {
+  id                Int                 @id @default(autoincrement())
+  last_name         String?             @db.VarChar(150)
+  username          String              @unique(map: "userAccountUsername") @db.VarChar(250)
+  first_name        String?             @db.VarChar(100)
+  email_address     String              @db.VarChar(250)
+  hashed_password   String?             @db.VarChar(100)
+  last_updated      DateTime            @default(now()) @db.DateTime(0)
+  user_role_id      Int?
+  push_subscription push_subscription[]
+  user_role         user_role?          @relation(fields: [user_role_id], references: [id], map: "423b4e4321253537640cf95f33c36b61")
+  user_session      user_session[]
+
+  @@index([user_role_id], map: "061ef044873abcf5ce235d2ea7c07399")
+}
+
+model user_role {
+  id           Int            @id @default(autoincrement())
+  role_name    String         @db.VarChar(100)
+  last_updated DateTime       @default(now()) @db.DateTime(0)
+  user_account user_account[]
+}
+
+model user_session {
+  id                  Int           @id @default(autoincrement())
+  session_id          String        @unique(map: "userSessionSessionid") @db.VarChar(50)
+  user_agent          String?       @db.VarChar(200)
+  session_data        Json
+  expires_at          DateTime      @db.DateTime(0)
+  duration_in_minutes Int
+  last_updated        DateTime      @default(now()) @db.DateTime(0)
+  user_account_id     Int?
+  user_account        user_account? @relation(fields: [user_account_id], references: [id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
+
+  @@index([user_account_id], map: "a6d3b1ba7c64d9f2c316489532292daf")
+}
+
 model file {
   id                          Int     @id @default(autoincrement())
   category                    String  @db.VarChar(300)
@@ -43,44 +80,7 @@ model push_subscription {
   push_subscription_details Json?
   last_updated              DateTime      @default(now()) @db.DateTime(0)
   user_account_id           Int?
-  user_account              user_account? @relation(fields: [user_account_id], references: [id], map: "a6830a6bd021bfd9a7dcc48677959e08")
+  user_account              user_account? @relation(fields: [user_account_id], references: [id], map: "c6cd234e927bdc157034c0b7287faf2b")
 
-  @@index([user_account_id], map: "a167b28e9c07901711c66e37efd333e5")
-}
-
-model user_account {
-  id                Int                 @id @default(autoincrement())
-  last_name         String?             @db.VarChar(150)
-  username          String              @unique(map: "userAccountUsername") @db.VarChar(250)
-  first_name        String?             @db.VarChar(100)
-  email_address     String              @db.VarChar(250)
-  hashed_password   String?             @db.VarChar(100)
-  last_updated      DateTime            @default(now()) @db.DateTime(0)
-  user_role_id      Int?
-  push_subscription push_subscription[]
-  user_role         user_role?          @relation(fields: [user_role_id], references: [id], map: "423b4e4321253537640cf95f33c36b61")
-  user_session      user_session[]
-
-  @@index([user_role_id], map: "3b789f9d496484fbd8259924d2fbb623")
-}
-
-model user_role {
-  id           Int            @id @default(autoincrement())
-  role_name    String         @db.VarChar(100)
-  last_updated DateTime       @default(now()) @db.DateTime(0)
-  user_account user_account[]
-}
-
-model user_session {
-  id                  Int           @id @default(autoincrement())
-  expires_at          DateTime      @db.DateTime(0)
-  session_id          String        @unique(map: "userSessionSessionid") @db.VarChar(50)
-  user_agent          String?       @db.VarChar(200)
-  session_data        Json
-  duration_in_minutes Int
-  last_updated        DateTime      @default(now()) @db.DateTime(0)
-  user_account_id     Int?
-  user_account        user_account? @relation(fields: [user_account_id], references: [id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
-
-  @@index([user_account_id], map: "3fe998c77db7428504875854645b7917")
+  @@index([user_account_id], map: "c6cd234e927bdc157034c0b7287faf2b")
 }
