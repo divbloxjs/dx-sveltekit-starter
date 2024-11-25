@@ -7,6 +7,12 @@
 			"enforceLockingConstraints": false
 		},
 		"attributes": {
+			"fileType": {
+				"type": "VARCHAR",
+				"default": null,
+				"allowNull": false,
+				"lengthOrValues": "300"
+			},
 			"category": {
 				"type": "VARCHAR",
 				"default": null,

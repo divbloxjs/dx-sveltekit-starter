@@ -2,7 +2,6 @@ import { error, fail, json } from "@sveltejs/kit";
 
 import { prisma } from "$lib/server/prisma-instance";
 import { getFileExtension } from "$lib/components/file-uploader/functions";
-import { FileController } from "$lib/components/file-uploader/server/upload.server";
 import { env } from "$env/dynamic/private";
 import { FILE_CATEGORY } from "$lib/constants/constants";
 import { getStorage, storageProviders } from "$lib/server/storage/storageFactory.server";

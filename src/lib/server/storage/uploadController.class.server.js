@@ -9,12 +9,10 @@ import { prisma } from "../prisma-instance";
 import { DiskStorage } from "./diskStorage.class.server";
 
 export class UploadController {
+    /** @type {AwsStorage} storage */
     #storage;
-    #saveInCloud;
-    #cloudController;
-    /**
-     * @param {AwsStorage|DiskStorage} storage
-     */
+
+    /** @param {AwsStorage} storage */
     constructor(storage) {
         this.#storage = storage;
     }
@@ -80,25 +78,13 @@ export class UploadController {
             };
         }
 
-        let staticFileUrls = [];
+        let fileUrls = [];
         for (let i = 0; i < filesToUpload.length; i++) {
-            staticFileUrls[i] = {};
+            fileUrls[i] = {};
             for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
-                this.#storage.uploadFile({ file: fileArrayBuffer, object_identifier });
-            }
-        }
-
-        for (let i = 0; i < filesToUpload.length; i++) {
-            for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
-                if (cloud_is_publicly_available) {
-                    object_identifier = `public/${object_identifier}`;
-                }
-
-                await this.#storage.uploadFile({
-                    file: fileArrayBuffer,
-                    object_identifier,
-                    isPublic: cloud_is_publicly_available
-                });
+                const uploadParams = { file: fileArrayBuffer, object_identifier, }
+                if (cloud_is_publicly_available) uploadParams.isPublic = true;
+                await this.#storage.uploadFile(uploadParams);
             }
         }
 
@@ -122,8 +108,8 @@ export class UploadController {
 
             data.cloud_is_publicly_available = cloud_is_publicly_available;
 
-            data.cloud_container_identifier = this.#storage.getContainerIdentifier();
-
+            // data.cloud_container_identifier = this.#storage.containerIdentifier;
+            this.#storage
             data.base_file_url = this.#storage.getStaticBaseUrl({
                 container_identifier: data.cloud_container_identifier
             });

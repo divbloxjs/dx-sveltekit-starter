@@ -17,8 +17,8 @@ export class AwsStorage {
     #s3Client;
 
     #region = "af-south-1";
-    #publicPrefix = "public/";
     #bucketName = env.AWS_PRIVATE_BUCKET_NAME ?? "";
+    #publicBucketName =  env.AWS_PUBLIC_BUCKET_NAME ??  `${this.#bucketName}/public`;
     #fileUploadMaxSizeInBytes = 20 * 1024 * 1024;
 
     /**
@@ -26,18 +26,22 @@ export class AwsStorage {
      * @param {string} [params.awsKey]
      * @param {string} [params.awsSecret]
      * @param {string} [params.region]
-     * @param {string} [params.publicPrefix]
+     * @param {string} [params.publicBucketName]
      * @param {string} [params.bucketName]
      * @param {number} [params.fileUploadMaxSizeInBytes]
      */
-    constructor({ awsKey, awsSecret, region, publicPrefix, bucketName, fileUploadMaxSizeInBytes } = {}) {
+    constructor({ awsKey, awsSecret, region, publicBucketName, bucketName, fileUploadMaxSizeInBytes } = {}) {
         this.#region = region ?? this.#region;
         this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes ?? this.#fileUploadMaxSizeInBytes;
-        this.#publicPrefix = publicPrefix ?? this.#publicPrefix;
+        this.#publicBucketName = publicBucketName ?? this.#publicBucketName;
         this.#bucketName = bucketName ?? this.#bucketName;
 
-        awsKey = awsKey ?? env.AWS_KEY ?? "";
-        awsSecret = awsSecret ?? env.AWS_SECRET ?? "";
+        awsKey = awsKey ?? env.AWS_KEY;
+        awsSecret = awsSecret ?? env.AWS_SECRET;
+
+        if (!awsKey || !awsSecret) {
+            throw new Error(`Invalid AWS credentials provided: awsKey:'${awsKey}', awsSecret:'${awsSecret}'`);
+        }
 
         this.#s3Client = new S3Client({
             region: this.#region,
@@ -45,8 +49,21 @@ export class AwsStorage {
         });
     }
 
-    getContainerIdentifier() {
+    get containerIdentifier() {
         return this.#bucketName;
+    }
+
+    set containerIdentifier(containerIdentifier) {
+        this.#bucketName = containerIdentifier;
+    }
+
+
+    get publicContainerIdentifier() {
+        return this.#publicBucketName;
+    }
+
+    set publicContainerIdentifier(publicContainerIdentifier) {
+        this.#publicBucketName = publicContainerIdentifier;
     }
 
     /**
@@ -76,10 +93,10 @@ export class AwsStorage {
      * @param {Object} params
      * @param {File|Buffer|ArrayBuffer} params.file
      * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
+     * @param {boolean} [params.isPublic]
      */
-    async uploadFile({ file, object_identifier, container_identifier }) {
-        if (container_identifier) this.#bucketName = container_identifier;
+    async uploadFile({ file, object_identifier, isPublic = false }) {
+        const currentBucketName = isPublic ? this.#publicBucketName : this.#bucketName;
 
         let fileBuffer = file;
         if (file instanceof File) {
@@ -93,7 +110,7 @@ export class AwsStorage {
 
         try {
             await this.#putObjectInBucket({
-                bucketName: this.#bucketName,
+                bucketName: currentBucketName,
                 objectKey: object_identifier,
                 file: fileBuffer
             });
@@ -106,8 +123,8 @@ export class AwsStorage {
             }
 
             try {
-                await this.#createBucket({ bucketName: this.#bucketName });
-                await this.uploadFile({ file, object_identifier, container_identifier });
+                await this.#createBucket({ bucketName: currentBucketName });
+                await this.uploadFile({ file, object_identifier, isPublic });
             } catch (createBucketError) {
                 console.error(createBucketError);
                 return false;
@@ -134,14 +151,12 @@ export class AwsStorage {
      * @param {string} [params.container_identifier]
      * @param {boolean} [params.cloud_is_publicly_available]
      */
-    async getUrlForDownload({ container_identifier, object_identifier, cloud_is_publicly_available = false }) {
-        if (!container_identifier) container_identifier = this.#bucketName;
-
+    async getUrlForDownload({ object_identifier, cloud_is_publicly_available = false }) {
         if (cloud_is_publicly_available) {
-            return this.getStaticUrl({ container_identifier, object_identifier: `public/${object_identifier}` });
+            return this.getStaticUrl({ container_identifier: this.#publicBucketName, object_identifier });
         }
 
-        return this.#getPresignedUrlForDownload({ container_identifier, object_identifier });
+        return this.#getPresignedUrlForDownload({ container_identifier:this.#bucketName, object_identifier });
     }
 
     /**
@@ -191,7 +206,7 @@ export class AwsStorage {
             new PutPublicAccessBlockCommand({ Bucket: bucketName, PublicAccessBlockConfiguration: { BlockPublicAcls: false } })
         );
 
-        // FInally update ACL to public-read
+        // Finally update ACL to public-read
         await this.#s3Client.send(new PutBucketAclCommand({ Bucket: bucketName, ACL: "public-read" }));
 
         return true;
@@ -268,7 +283,7 @@ export class AwsStorage {
      * @returns {string}
      */
     #getBaseUrlFromBucket({ bucketName } = {}) {
-        if (!bucketName) bucketName = this.#bucketName;
+        if (bucketName) this.#bucketName = bucketName;
 
         return `https://${this.#bucketName}.s3.${this.#region}.amazonaws.com/`;
     }

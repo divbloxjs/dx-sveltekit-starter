@@ -59,6 +59,7 @@ model file {
   uploaded_file_extension     String? @db.VarChar(150)
   cloud_container_identifier  String? @db.VarChar(150)
   cloud_is_publicly_available Boolean @default(false)
+  file_type                   String  @db.VarChar(300)
 }
 
 model one_time_token {
