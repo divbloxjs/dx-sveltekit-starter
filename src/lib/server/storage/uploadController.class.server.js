@@ -12,6 +12,10 @@ export class UploadController {
     /** @type {AwsStorage} storage */
     #storage;
 
+    #thumbnailPrefix = "thumbnail/";
+    #webPrefix = "web/";
+    #originalPrefix = "original/";
+
     /** @param {AwsStorage} storage */
     constructor(storage) {
         this.#storage = storage;
