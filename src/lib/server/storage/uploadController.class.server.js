@@ -1,12 +1,10 @@
 import { env } from "$env/dynamic/private";
 import { getFileExtension, getFileNameWithoutExtension, insertBeforeFileExtension } from "./functions";
-import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import sharp from "sharp";
 import imageType from "image-type";
-import { existsSync } from "fs";
 import { AwsStorage } from "./awsStorage.class.server";
 import { prisma } from "../prisma-instance";
-import { DiskStorage } from "./diskStorage.class.server";
+import { getCompression } from "$lib/server/compression/compression.factory.class.server.js";
 
 export class UploadController {
     /** @type {AwsStorage} storage */
@@ -45,50 +43,113 @@ export class UploadController {
         const filesToUpload = [];
         for (let i = 0; i < files.length; i++) {
             const arrayBuffer = await files[i].arrayBuffer();
-            const timestamp = new Date().getTime().toString();
 
+            const timestamp = new Date().getTime().toString();
             const timestampedFileName = insertBeforeFileExtension(files[i].name, `_${timestamp}`);
             const formattedTimestampedFileName = `${getFileNameWithoutExtension(timestampedFileName).replace(/[^a-z0-9+]+/gi, "_")}.${getFileExtension(timestampedFileName)}`;
 
-            filesToUpload.push({
-                isImage: false,
-                object_identifier: formattedTimestampedFileName,
-                sizes_saved: {
-                    original: {
-                        fileArrayBuffer: arrayBuffer,
-                        object_identifier: `original_${formattedTimestampedFileName}`
-                    }
+            // filesToUpload.push({
+            //     isImage: false,
+            //     object_identifier: formattedTimestampedFileName,
+            //     sizes_saved: {
+            //         original: {
+            //             fileArrayBuffer: arrayBuffer,
+            //             object_identifier: `original_${formattedTimestampedFileName}`
+            //         }
+            //     }
+            // });
+
+            const isImage = await imageType(arrayBuffer);
+
+            let configuration = {};
+            if (isImage) {
+                configuration = { original: { maxDimension: 2500 }, };
+                if (createThumbnailAndWebImages) {
+                    configuration.web =  { maxDimension: 1080 };
+                    configuration.thumbnail =  { maxDimension: 1080 }
                 }
-            });
+            }
 
-            if (!createThumbnailAndWebImages) continue;
+            const compression = getCompression({ fileType: isImage ? "image" : "file" }, configuration);
 
-            const isImage = await imageType(filesToUpload[i].sizes_saved.original.fileArrayBuffer);
+            const files = await compression.getAllFiles(arrayBuffer);
 
-            if (!isImage) continue;
+            for (const [size, file] of files) {
+                const object_identifier = `${size}_${formattedTimestampedFileName}`;
+                filesToUpload[i].sizes_saved[size] = { file, object_identifier };
 
-            filesToUpload[i].isImage = true;
-
-            const { original, web, thumbnail } = await this.getAllImageBuffers(filesToUpload[i].sizes_saved.original.fileArrayBuffer);
-
-            filesToUpload[i].sizes_saved.original = {
-                fileArrayBuffer: original,
-                object_identifier: `original_${formattedTimestampedFileName}`
-            };
-            filesToUpload[i].sizes_saved.web = { fileArrayBuffer: web, object_identifier: `web_${formattedTimestampedFileName}` };
-            filesToUpload[i].sizes_saved.thumbnail = {
-                fileArrayBuffer: thumbnail,
-                object_identifier: `thumbnail_${formattedTimestampedFileName}`
-            };
-        }
-
-        let fileUrls = [];
-        for (let i = 0; i < filesToUpload.length; i++) {
-            fileUrls[i] = {};
-            for (let [sizeType, { fileArrayBuffer, object_identifier }] of Object.entries(filesToUpload[i].sizes_saved)) {
-                const uploadParams = { file: fileArrayBuffer, object_identifier, }
+                const uploadParams = { file, object_identifier };
                 if (cloud_is_publicly_available) uploadParams.isPublic = true;
                 await this.#storage.uploadFile(uploadParams);
+
+                const filesDataToReturn = [];
+                let fileToCreateArray = [];
+                for (let i = 0; i < files.length; i++) {
+                    const data = {
+                        mime_type: files[i].type,
+                        original_size_in_bytes: files[i].size,
+                        uploaded_file_extension: getFileExtension(files[i].name),
+
+                        category,
+                        linked_entity,
+                        linked_entity_id,
+                        object_identifier: filesToUpload[i].object_identifier,
+
+                        display_name: files[i].name,
+                        sizes_saved: [],
+                        base_file_url: env.LOCAL_STORAGE_FOLDER_PATH
+                    };
+
+                    data.cloud_is_publicly_available = cloud_is_publicly_available;
+
+                    data.base_file_url = this.#storage.getStaticBaseUrl({
+                        container_identifier: data.cloud_container_identifier
+                    });
+
+                    for (let [sizeType, {
+                        fileArrayBuffer,
+                        object_identifier
+                    }] of Object.entries(filesToUpload[i].sizes_saved)) {
+                        data.sizes_saved.push(sizeType);
+                    }
+
+                    fileToCreateArray.push(data);
+
+                    const urls = {};
+                    urls.original = await this.#storage.getUrlForDownload({
+                        container_identifier: data.cloud_container_identifier,
+                        object_identifier: `original_${data.object_identifier}`,
+                        cloud_is_publicly_available
+                    });
+
+                    if ((filesToUpload[i].isImage = true)) {
+                        urls.thumbnail = await this.getUrlForDownload({
+                            container_identifier: data.cloud_container_identifier,
+                            object_identifier: `thumbnail_${data.object_identifier}`
+                        });
+
+                        urls.web = await this.getUrlForDownload({
+                            container_identifier: data.cloud_container_identifier,
+                            object_identifier: `web_${data.object_identifier}`
+                        });
+                    }
+
+                    const file = {
+                        urls,
+                        object_identifier: data.object_identifier,
+                        sizes_saved: data.sizes_saved,
+                        linked_entity: data.linked_entity,
+                        linked_entity_id: data.linked_entity_id?.toString(),
+                        mime_type: data.mime_type,
+                        original_size_in_bytes: data.original_size_in_bytes,
+                        uploaded_file_extension: getFileExtension(data.display_name),
+                        display_name: data.display_name
+                    };
+
+                    filesDataToReturn.push(file);
+                }
+
+                return fileToCreateArray;
             }
         }
 
@@ -113,7 +174,6 @@ export class UploadController {
             data.cloud_is_publicly_available = cloud_is_publicly_available;
 
             // data.cloud_container_identifier = this.#storage.containerIdentifier;
-            this.#storage
             data.base_file_url = this.#storage.getStaticBaseUrl({
                 container_identifier: data.cloud_container_identifier
             });
