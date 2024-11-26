@@ -50,7 +50,7 @@
 				"lengthOrValues": "150"
 			},
 			"linkedEntityId": {
-				"type": "BIGINT",
+				"type": "INT",
 				"default": null,
 				"allowNull": true,
 				"lengthOrValues": null
@@ -60,6 +60,12 @@
 				"default": null,
 				"allowNull": true,
 				"lengthOrValues": "500"
+			},
+			"containerIdentifier": {
+				"type": "VARCHAR",
+				"default": null,
+				"allowNull": true,
+				"lengthOrValues": "150"
 			},
 			"originalSizeInBytes": {
 				"type": "INT",
@@ -73,13 +79,7 @@
 				"allowNull": true,
 				"lengthOrValues": "150"
 			},
-			"cloudContainerIdentifier": {
-				"type": "VARCHAR",
-				"default": null,
-				"allowNull": true,
-				"lengthOrValues": "150"
-			},
-			"cloudIsPubliclyAvailable": {
+			"isPublic": {
 				"type": "TINYINT",
 				"default": 0,
 				"allowNull": false,
@@ -245,7 +245,7 @@
 				"lengthOrValues": "32"
 			},
 			"linkedEntityId": {
-				"type": "BIGINT",
+				"type": "INT",
 				"allowNull": false,
 				"lengthOrValues": null
 			},

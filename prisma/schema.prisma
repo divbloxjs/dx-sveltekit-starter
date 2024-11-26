@@ -46,20 +46,20 @@ model user_session {
 }
 
 model file {
-  id                          Int     @id @default(autoincrement())
-  category                    String  @db.VarChar(300)
-  mime_type                   String? @db.VarChar(150)
-  sizes_saved                 Json
-  base_file_url               String  @db.VarChar(1000)
-  display_name                String  @db.VarChar(500)
-  linked_entity               String? @db.VarChar(150)
-  linked_entity_id            BigInt?
-  object_identifier           String? @db.VarChar(500)
-  original_size_in_bytes      Int
-  uploaded_file_extension     String? @db.VarChar(150)
-  cloud_container_identifier  String? @db.VarChar(150)
-  cloud_is_publicly_available Boolean @default(false)
-  file_type                   String  @db.VarChar(300)
+  id                      Int     @id @default(autoincrement())
+  category                String  @db.VarChar(300)
+  mime_type               String? @db.VarChar(150)
+  sizes_saved             Json
+  base_file_url           String  @db.VarChar(1000)
+  display_name            String  @db.VarChar(500)
+  linked_entity           String? @db.VarChar(150)
+  linked_entity_id        Int?
+  object_identifier       String? @db.VarChar(500)
+  original_size_in_bytes  Int
+  uploaded_file_extension String? @db.VarChar(150)
+  file_type               String  @db.VarChar(300)
+  container_identifier    String? @db.VarChar(150)
+  is_public               Boolean @default(false)
 }
 
 model one_time_token {
@@ -67,7 +67,7 @@ model one_time_token {
   expires_at              DateTime @db.DateTime(0)
   token_type              String   @db.VarChar(100)
   token_value             String   @unique(map: "oneTimeTokenTokenValue") @db.VarChar(32)
-  linked_entity_id        BigInt
+  linked_entity_id        Int
   linked_entity_name      String   @db.VarChar(100)
   time_to_live_in_minutes Int
   last_updated            DateTime @default(now()) @db.DateTime(0)
