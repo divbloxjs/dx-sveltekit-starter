@@ -15,11 +15,22 @@ export class ImageCompression {
         return this.#getAllImageBuffers(imageArrayBuffer);
     }
 
+    /**
+     * @typedef {Object} imagesReturn
+     * @property {Buffer} original
+     * @property {Buffer} web
+     * @property {Buffer} thumbnail
+     */
+
+    /**
+     * @param {ArrayBuffer| Buffer} imageArrayBuffer
+     * @returns {Promise<imagesReturn>}
+     */
     async #getAllImageBuffers(imageArrayBuffer) {
         const { width, height } = await sharp(imageArrayBuffer).metadata();
 
         const returnImageBuffers = {};
-        for (const [type, { maxDimension }] of this.#configuration) {
+        for (const [type, { maxDimension }] of Object.entries(this.#configuration)) {
             const webSharpOptions = {
                 fit: sharp.fit.contain
             };

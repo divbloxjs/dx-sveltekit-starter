@@ -1,7 +1,14 @@
 {
 	"file": {
 		"module": "main",
-		"indexes": [],
+		"indexes": [
+			{
+				"type": "BTREE",
+				"attribute": "objectIdentifier",
+				"indexName": "fileObjectIdentifier",
+				"indexChoice": "unique"
+			}
+		],
 		"options": {
 			"isAuditEnabled": true,
 			"enforceLockingConstraints": false

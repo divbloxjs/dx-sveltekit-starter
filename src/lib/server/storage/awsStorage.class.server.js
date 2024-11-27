@@ -83,7 +83,7 @@ export class AwsStorage {
      * @param {string} [params.container_identifier]
      * @returns {string}
      */
-    getStaticBaseUrl({ container_identifier }) {
+    getStaticBaseUrl({ container_identifier } = {}) {
         if (container_identifier) this.#bucketName = container_identifier;
 
         return this.#getBaseUrlFromBucket();
@@ -148,11 +148,10 @@ export class AwsStorage {
     /**
      * @param {Object} params
      * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
-     * @param {boolean} [params.cloud_is_publicly_available]
+     * @param {boolean} [params.is_public]
      */
-    async getUrlForDownload({ object_identifier, cloud_is_publicly_available = false }) {
-        if (cloud_is_publicly_available) {
+    async getUrlForDownload({ object_identifier, is_public = false }) {
+        if (is_public) {
             return this.getStaticUrl({ container_identifier: this.#publicBucketName, object_identifier });
         }
 

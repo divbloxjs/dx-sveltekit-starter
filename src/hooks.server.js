@@ -1,11 +1,10 @@
 import { AuthorisationManager, authenticateUser } from "$lib/server/auth";
 import { redirect } from "@sveltejs/kit";
 
-/** @type {import('@sveltejs/kit').Handle} */
+/** @type {import("@sveltejs/kit").Handle} */
 export const handle = async ({ event, resolve }) => {
     event.locals.user = await authenticateUser(event);
     event.locals.auth = new AuthorisationManager(event);
-
     // If in the (authed) route group, check sessionId for current user
     if (event.route.id?.includes("/(authed)")) {
         if (!event.locals.user) {
@@ -24,13 +23,12 @@ export const handle = async ({ event, resolve }) => {
         event.locals.auth.isAdmin();
     }
 
-    // DX-NOTE: Can mutate the response for all requests here
     const response = await resolve(event);
-
+    // DX-NOTE: Can mutate the response for all requests here
     return response;
 };
 
-/** @type {import('@sveltejs/kit').HandleServerError} */
+/** @type {import("@sveltejs/kit").HandleServerError} */
 export async function handleError({ error, event, status, message }) {
     // DX-NOTE: Hook that handles any request that end with an error.
     // Global catch, can be used for logging or piping errors elsewhere

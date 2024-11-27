@@ -5,8 +5,8 @@ import { existsSync } from "fs";
 import { env as publicEnv } from "$env/dynamic/public";
 
 export class DiskStorage {
-    #uploadFolder = env.LOCAL_STORAGE_FOLDER_PATH ?? "";
-    #baseUrl = publicEnv.PUBLIC_BASE_URL ?? "";
+    #uploadFolder = env.UPLOAD_FOLDER;
+    #baseUrl = publicEnv.PUBLIC_BASE_URL;
 
     /**
      * @param {Object} [params]
@@ -14,6 +14,14 @@ export class DiskStorage {
      */
     constructor({ uploadFolder } = {}) {
         this.#uploadFolder = uploadFolder ?? this.#uploadFolder;
+    }
+
+    get containerIdentifier() {
+        return this.#uploadFolder;
+    }
+
+    set containerIdentifier(containerIdentifier) {
+        this.#uploadFolder = containerIdentifier;
     }
 
     /**

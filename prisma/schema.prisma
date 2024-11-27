@@ -54,7 +54,7 @@ model file {
   display_name            String  @db.VarChar(500)
   linked_entity           String? @db.VarChar(150)
   linked_entity_id        Int?
-  object_identifier       String? @db.VarChar(500)
+  object_identifier       String? @unique(map: "fileObjectIdentifier") @db.VarChar(500)
   original_size_in_bytes  Int
   uploaded_file_extension String? @db.VarChar(150)
   file_type               String  @db.VarChar(300)

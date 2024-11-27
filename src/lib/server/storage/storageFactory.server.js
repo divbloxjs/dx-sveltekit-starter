@@ -19,18 +19,24 @@ export const storageProviders = {
  */
 
 /**
- *
+ * @typedef {Object} diskConfig
+ * @property {string} [uploadFolder]
+ * @property {number} [fileUploadMaxSizeInBytes]
+ * @property {boolean} [isPublic]
+ */
+
+/**
  * @param {{storageProvider: string}} conditions
- * @param {awsConfig | {uploadFolder?: string}} config
+ * @param {awsConfig | diskConfig} config
  * @returns {AwsStorage|DiskStorage}
  */
 export const getStorage = (conditions, config = {}) => {
     // Based on a tenant, or env variable, or config, or something... Pick which storage implementation to use
     if (conditions.storageProvider === storageProviders.aws) {
         if (!config.bucketName) {
-            config.bucketName = env.AWS_PRIVATE_BUCKET_NAME ?? "";
+            config.bucketName = env.AWS_PRIVATE_BUCKET_NAME;
             if (config.isPublic) {
-                config.bucketName = env.AWS_PUBLIC_BUCKET_NAME ?? "";
+                config.bucketName = env.AWS_PUBLIC_BUCKET_NAME;
             }
         }
 

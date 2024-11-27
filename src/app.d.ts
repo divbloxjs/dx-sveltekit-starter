@@ -24,10 +24,14 @@ export type GenericDropdownOption = {
 
 declare global {
     namespace App {
-        // interface Error {}
         interface Locals {
             user: UserInfo | null; // Your type here
             auth: AuthorisationManager;
+        }
+        interface Error {
+            message: string;
+            code: string;
+            id: string;
         }
         // interface PageData {}
         // interface PageState {}
