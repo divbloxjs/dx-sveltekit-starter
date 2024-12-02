@@ -3,8 +3,8 @@ import { AwsStorage } from "./awsStorage.class.server";
 import { DiskStorage } from "./diskStorage.class.server";
 
 export const storageProviders = {
-    aws: "aws",
-    azure: "azure",
+    aws: "aws_s3",
+    // azure: "azure",
     disk: "disk"
 };
 
@@ -43,10 +43,8 @@ export const getStorage = (conditions, config = {}) => {
         return new AwsStorage(config);
     } else if (conditions.storageProvider === storageProviders.disk) {
         return new DiskStorage(config);
-    } else if (conditions.storageProvider === storageProviders.aws) {
-        return new AwsStorage(config);
-        // return new SftpStorage(config);
     } else {
-        throw new Error(`Invalid storageProvider provided: ${conditions?.storageProvider}`);
+        const message = `Invalid storageProvider provided: '${conditions?.storageProvider}'. Configured implementations: [${Object.values(storageProviders).join(",")}]`;
+        throw new Error(message);
     }
 };

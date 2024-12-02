@@ -54,7 +54,6 @@ export async function POST({ request, url, locals }) {
 
     try {
         const storage = getStorage({ storageProvider: STORAGE_PROVIDER }, { isPublic });
-
         const uploadController = new UploadController(storage);
 
         const filesToCreate = await uploadController.uploadFiles({
