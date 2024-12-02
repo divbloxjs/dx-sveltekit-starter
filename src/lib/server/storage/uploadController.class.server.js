@@ -3,12 +3,13 @@ import { getFileExtension, getFileNameWithoutExtension, insertBeforeFileExtensio
 import sharp from "sharp";
 import imageType from "image-type";
 import { AwsStorage } from "./awsStorage.class.server";
+import { StorageBase } from "./storage.class.js";
 import { prisma } from "../prisma-instance";
 import { getCompression } from "$lib/server/compression/compression.factory.class.server.js";
 import { ImageCompression } from "$lib/server/compression/imageCompression.class.server.js";
 
 export class UploadController {
-    /** @type {AwsStorage} storage */
+    /** @type {StorageBase} storage */
     #storage;
 
     // #compression;
@@ -46,8 +47,6 @@ export class UploadController {
                 is_public
             });
         }
-
-        console.log("uploadedFiles", uploadedFiles);
 
         return uploadedFiles;
     }
@@ -97,7 +96,6 @@ export class UploadController {
 
         const fileSet = await compression.getAllFiles(arrayBuffer);
 
-        console.log("fileSet", fileSet);
         for (const [size, file] of Object.entries(fileSet)) {
             const object_identifier = `${size}_${base_object_identifier}`;
 
@@ -106,6 +104,7 @@ export class UploadController {
 
             const uploadParams = { file, object_identifier };
             if (is_public) uploadParams.isPublic = true;
+
             await this.#storage.uploadFile(uploadParams);
         }
 

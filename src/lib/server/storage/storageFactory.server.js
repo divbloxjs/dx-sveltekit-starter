@@ -1,6 +1,7 @@
 import { env } from "$env/dynamic/private";
 import { AwsStorage } from "./awsStorage.class.server";
 import { DiskStorage } from "./diskStorage.class.server";
+import { StorageBase } from "$lib/server/storage/storage.class.js";
 
 export const storageProviders = {
     aws: "aws_s3",
@@ -28,7 +29,7 @@ export const storageProviders = {
 /**
  * @param {{storageProvider: string}} conditions
  * @param {awsConfig | diskConfig} config
- * @returns {AwsStorage|DiskStorage}
+ * @returns {StorageBase}
  */
 export const getStorage = (conditions, config = {}) => {
     // Based on a tenant, or env variable, or config, or something... Pick which storage implementation to use

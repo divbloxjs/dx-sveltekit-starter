@@ -11,15 +11,38 @@ import {
     S3Client
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { StorageBase } from "$lib/server/storage/storage.class.js";
 
-export class AwsStorage {
+export class AwsStorage extends StorageBase {
+    //#region Class Variables
     /** @type {S3Client} */
     #s3Client;
 
     #region = "af-south-1";
     #bucketName = env.AWS_PRIVATE_BUCKET_NAME ?? "";
-    #publicBucketName =  env.AWS_PUBLIC_BUCKET_NAME ??  `${this.#bucketName}/public`;
+    #publicBucketName = env.AWS_PUBLIC_BUCKET_NAME ?? `${this.#bucketName}/public`;
     #fileUploadMaxSizeInBytes = 20 * 1024 * 1024;
+
+    //#endregion
+
+    //#region Getters/Setters
+    get containerIdentifier() {
+        return this.#bucketName;
+    }
+
+    set containerIdentifier(containerIdentifier) {
+        this.#bucketName = containerIdentifier;
+    }
+
+    get publicContainerIdentifier() {
+        return this.#publicBucketName;
+    }
+
+    set publicContainerIdentifier(publicContainerIdentifier) {
+        this.#publicBucketName = publicContainerIdentifier;
+    }
+
+    //#endregion
 
     /**
      * @param {Object} params
@@ -31,6 +54,7 @@ export class AwsStorage {
      * @param {number} [params.fileUploadMaxSizeInBytes]
      */
     constructor({ awsKey, awsSecret, region, publicBucketName, bucketName, fileUploadMaxSizeInBytes } = {}) {
+        super();
         this.#region = region ?? this.#region;
         this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes ?? this.#fileUploadMaxSizeInBytes;
         this.#publicBucketName = publicBucketName ?? this.#publicBucketName;
@@ -47,23 +71,6 @@ export class AwsStorage {
             region: this.#region,
             credentials: { accessKeyId: awsKey, secretAccessKey: awsSecret }
         });
-    }
-
-    get containerIdentifier() {
-        return this.#bucketName;
-    }
-
-    set containerIdentifier(containerIdentifier) {
-        this.#bucketName = containerIdentifier;
-    }
-
-
-    get publicContainerIdentifier() {
-        return this.#publicBucketName;
-    }
-
-    set publicContainerIdentifier(publicContainerIdentifier) {
-        this.#publicBucketName = publicContainerIdentifier;
     }
 
     /**
@@ -143,6 +150,8 @@ export class AwsStorage {
         if (container_identifier) this.#bucketName = container_identifier;
 
         await this.#deleteObjectFromBucket({ objectKey: object_identifier });
+
+        return true;
     }
 
     /**
@@ -155,9 +164,10 @@ export class AwsStorage {
             return this.getStaticUrl({ container_identifier: this.#publicBucketName, object_identifier });
         }
 
-        return this.#getPresignedUrlForDownload({ container_identifier:this.#bucketName, object_identifier });
+        return this.#getPresignedUrlForDownload({ container_identifier: this.#bucketName, object_identifier });
     }
 
+    //#region Private Implementation Methods
     /**
      * @param {Object} params
      * @param {string} params.object_identifier
@@ -202,7 +212,10 @@ export class AwsStorage {
 
         // Update public access to not be blocked
         await this.#s3Client.send(
-            new PutPublicAccessBlockCommand({ Bucket: bucketName, PublicAccessBlockConfiguration: { BlockPublicAcls: false } })
+            new PutPublicAccessBlockCommand({
+                Bucket: bucketName,
+                PublicAccessBlockConfiguration: { BlockPublicAcls: false }
+            })
         );
 
         // Finally update ACL to public-read
@@ -248,7 +261,12 @@ export class AwsStorage {
     async #putObjectInBucket({ file, objectKey, bucketName }) {
         if (bucketName) this.#bucketName = bucketName;
 
-        const commandOptions = { Bucket: bucketName, Key: objectKey, Body: file, ContentLength: Buffer.byteLength(file) };
+        const commandOptions = {
+            Bucket: bucketName,
+            Key: objectKey,
+            Body: file,
+            ContentLength: Buffer.byteLength(file)
+        };
 
         await this.#s3Client.send(new PutObjectCommand(commandOptions));
     }
@@ -286,4 +304,6 @@ export class AwsStorage {
 
         return `https://${this.#bucketName}.s3.${this.#region}.amazonaws.com/`;
     }
+
+    //#endregion
 }
