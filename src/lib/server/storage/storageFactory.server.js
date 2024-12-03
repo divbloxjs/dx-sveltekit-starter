@@ -1,4 +1,5 @@
 import { env } from "$env/dynamic/private";
+import { env as publicEnv } from "$env/dynamic/public";
 import { AwsStorage } from "./awsStorage.class.server";
 import { DiskStorage } from "./diskStorage.class.server";
 import { StorageBase } from "$lib/server/storage/storage.class.js";
@@ -10,7 +11,7 @@ export const storageProviders = {
 };
 
 /**
- * @typedef {Object} awsConfig
+ * @typedef {Object} AwsConfig
  * @property {string} [bucketName]
  * @property {string} [awsKey]
  * @property {string} [awsSecret]
@@ -20,7 +21,7 @@ export const storageProviders = {
  */
 
 /**
- * @typedef {Object} diskConfig
+ * @typedef {Object} DiskConfig
  * @property {string} [uploadFolder]
  * @property {string} [baseUrl]
  * @property {number} [fileUploadMaxSizeInBytes]
@@ -29,13 +30,13 @@ export const storageProviders = {
 
 /**
  * @param {{storageProvider: string}} conditions
- * @param {awsConfig | diskConfig} config
+ * @param {AwsConfig | DiskConfig} config
  * @returns {StorageBase}
  */
 export const getStorage = (conditions, config = {}) => {
     // Based on a tenant, or env variable, or config, or something... Pick which storage implementation to use
     if (conditions.storageProvider === storageProviders.aws) {
-        /** @type {awsConfig} */
+        /** @type {AwsConfig} */
         const awsConfig = config;
 
         if (!awsConfig.hasOwnProperty("isPublic")) awsConfig.isPublic = false;
@@ -51,11 +52,11 @@ export const getStorage = (conditions, config = {}) => {
 
         return new AwsStorage(awsConfig);
     } else if (conditions.storageProvider === storageProviders.disk) {
-        /** @type {diskConfig} */
+        /** @type {DiskConfig} */
         const diskConfig = config;
 
         if (!diskConfig.uploadFolder) diskConfig.uploadFolder = env.UPLOAD_FOLDER;
-        if (!diskConfig.baseUrl) diskConfig.baseUrl = env.PUBLIC_BASE_URL;
+        if (!diskConfig.baseUrl) diskConfig.baseUrl = publicEnv.PUBLIC_BASE_URL;
 
         return new DiskStorage(diskConfig);
     } else {
