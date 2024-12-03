@@ -1,4 +1,4 @@
-export class FileCompression {
+export class CompressionBase {
     #configuration = {
         original: {}
     };
@@ -6,15 +6,12 @@ export class FileCompression {
     constructor() {
         // Can implement variability with how to compress images
     }
-    /**
-     * @typedef {Object} filesToReturn
-     * @property {Buffer} original
-     */
 
     /**
-     *
-     * @param {*} file
-     * @returns
+     * Returns the final set of files for the provided file
+     * Default FinalSet is just a single file: { original: file }
+     * @param {File|Buffer|ArrayBuffer} file
+     * @returns {Promise<Object>}
      */
     async getFinalFileSet(file) {
         const finalFiles = {};

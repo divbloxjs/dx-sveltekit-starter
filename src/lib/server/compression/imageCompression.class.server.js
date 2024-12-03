@@ -1,6 +1,7 @@
 import sharp from "sharp";
+import { CompressionBase } from "./compression.class";
 
-export class ImageCompression {
+export class ImageCompression extends CompressionBase {
     #configuration = {
         original: { maxDimension: 2500 },
         web: { maxDimension: 1080 },
@@ -8,30 +9,46 @@ export class ImageCompression {
     };
 
     constructor() {
+        super();
         // Can implement variability with how to compress images
     }
 
-    async getAllFiles(imageArrayBuffer) {
-        return this.#getAllImageBuffers(imageArrayBuffer);
+    /**
+     * @param {File|Buffer|ArrayBuffer} file
+     * @returns {Promise<imagesReturn>}
+     */
+    async getFinalFileSet(file) {
+        let arrayBuffer = file;
+        if (file instanceof File) {
+            arrayBuffer = await file.arrayBuffer();
+        }
+
+        return this.getAllArrayBuffers(arrayBuffer);
     }
 
     /**
      * @typedef {Object} imagesReturn
-     * @property {Buffer} original
-     * @property {Buffer} web
-     * @property {Buffer} thumbnail
+     * @property {ArrayBuffer} original
+     * @property {ArrayBuffer} web
+     * @property {ArrayBuffer} thumbnail
      */
 
     /**
-     * @param {ArrayBuffer| Buffer} imageArrayBuffer
+     * @param {ArrayBuffer} arrayBuffer
      * @returns {Promise<imagesReturn>}
      */
-    async #getAllImageBuffers(imageArrayBuffer) {
-        const { width, height } = await sharp(imageArrayBuffer).metadata();
+    async getAllArrayBuffers(arrayBuffer) {
+        const { width, height } = await sharp(arrayBuffer).metadata();
 
-        const returnImageBuffers = {};
+        if (!width || !height) {
+            throw new Error("Invalid imageArrayBuffer provided");
+        }
+
+        const returnArrayBuffers = {};
         for (const [type, { maxDimension }] of Object.entries(this.#configuration)) {
             const webSharpOptions = {
+                width,
+                height,
                 fit: sharp.fit.contain
             };
 
@@ -42,9 +59,9 @@ export class ImageCompression {
                 webSharpOptions.height = uploadedImageMaxDimension > maxDimension ? maxDimension : height;
             }
 
-            returnImageBuffers[type] = await sharp(imageArrayBuffer).resize(webSharpOptions).toBuffer();
+            returnArrayBuffers[type] = await sharp(arrayBuffer).resize(webSharpOptions).toBuffer();
         }
 
-        return returnImageBuffers;
+        return returnArrayBuffers;
     }
 }

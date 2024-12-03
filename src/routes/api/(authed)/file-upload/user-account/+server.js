@@ -6,6 +6,7 @@ import { env } from "$env/dynamic/private";
 import { FILE_CATEGORY } from "$lib/constants/constants";
 import { getStorage, storageProviders } from "$lib/server/storage/storageFactory.server";
 import { UploadController } from "$lib/server/storage/uploadController.class.server";
+import { getCompression } from "$lib/server/compression/compression.factory.class.server";
 
 const LINKED_ENTITY = "userAccount";
 const UPLOAD_TYPE = FILE_CATEGORY.PROFILE_PICTURE;
@@ -17,23 +18,22 @@ const GENERATE_SMALLER_IMAGES = true;
 
 /** @type {import("./$types").RequestHandler} */
 export async function POST({ request, url, locals }) {
-    console.log("HERE");
     // TODO Auth on who you are and what files you can update
-    const linked_entity_id = url.searchParams.get("id") ?? locals.user.id;
+    const linked_entity_id = Number(url.searchParams.get("id")) ?? locals.user?.id;
 
     let createThumbnailAndWebImages = GENERATE_SMALLER_IMAGES;
     if (url.searchParams.get("createThumbnailAndWebImages")) {
-        createThumbnailAndWebImages = url.searchParams.get("createThumbnailAndWebImages").toLowerCase() === "true" ? true : false;
+        createThumbnailAndWebImages = url.searchParams.get("createThumbnailAndWebImages")?.toLowerCase() === "true" ? true : false;
     }
 
     let isPublic = UPLOAD_AS_PUBLIC;
     if (url.searchParams.get("uploadAsPublic")) {
-        isPublic = url.searchParams.get("uploadAsPublic").toLowerCase() === "true" ? true : false;
+        isPublic = url.searchParams.get("uploadAsPublic")?.toLowerCase() === "true" ? true : false;
     }
 
     let replaceExistingFiles = false;
     if (url.searchParams.get("replaceExistingFiles")) {
-        replaceExistingFiles = url.searchParams.get("replaceExistingFiles").toLowerCase() === "true" ? true : false;
+        replaceExistingFiles = url.searchParams.get("replaceExistingFiles")?.toLowerCase() === "true" ? true : false;
     }
 
     if (replaceExistingFiles) {
@@ -55,7 +55,10 @@ export async function POST({ request, url, locals }) {
     try {
         const storage = getStorage({ storageProvider: STORAGE_PROVIDER }, { isPublic });
 
+        const compression = getCompression({ fileType: "image" }, { isPublic });
+
         const uploadController = new UploadController(storage);
+
         const filesToCreate = await uploadController.uploadFiles({
             files: filesToUpload,
             linked_entity_id,

@@ -94,7 +94,7 @@ export class UploadController {
 
         const compression = getCompression({ fileType: isImage ? "image" : "file" }, configuration);
 
-        const fileSet = await compression.getAllFiles(arrayBuffer);
+        const fileSet = await compression.getFinalFileSet(arrayBuffer);
 
         for (const [size, file] of Object.entries(fileSet)) {
             const object_identifier = `${size}_${base_object_identifier}`;
@@ -102,10 +102,7 @@ export class UploadController {
             if (!fileData.sizes_saved) fileData.sizes_saved = [];
             fileData.sizes_saved.push(size);
 
-            const uploadParams = { file, object_identifier };
-            if (is_public) uploadParams.isPublic = true;
-
-            await this.#storage.uploadFile(uploadParams);
+            await this.#storage.uploadFile({ file, object_identifier });
         }
 
         return fileData;

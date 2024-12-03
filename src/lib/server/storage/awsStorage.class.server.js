@@ -1,4 +1,3 @@
-import { env } from "$env/dynamic/private";
 import {
     CreateBucketCommand,
     DeleteObjectCommand,
@@ -18,9 +17,9 @@ export class AwsStorage extends StorageBase {
     /** @type {S3Client} */
     #s3Client;
 
-    #region = "af-south-1";
-    #bucketName = env.AWS_PRIVATE_BUCKET_NAME ?? "";
-    #publicBucketName = env.AWS_PUBLIC_BUCKET_NAME ?? `${this.#bucketName}/public`;
+    #region;
+    #bucketName;
+    #isPublic = false;
     #fileUploadMaxSizeInBytes = 20 * 1024 * 1024;
 
     //#endregion
@@ -34,38 +33,33 @@ export class AwsStorage extends StorageBase {
         this.#bucketName = containerIdentifier;
     }
 
-    get publicContainerIdentifier() {
-        return this.#publicBucketName;
-    }
-
-    set publicContainerIdentifier(publicContainerIdentifier) {
-        this.#publicBucketName = publicContainerIdentifier;
-    }
-
     //#endregion
 
     /**
      * @param {Object} params
-     * @param {string} [params.awsKey]
-     * @param {string} [params.awsSecret]
-     * @param {string} [params.region]
-     * @param {string} [params.publicBucketName]
-     * @param {string} [params.bucketName]
+     * @param {string} params.awsKey
+     * @param {string} params.awsSecret
+     * @param {string} params.region
+     * @param {string} params.bucketName
+     * @param {boolean} [params.isPublic]
      * @param {number} [params.fileUploadMaxSizeInBytes]
      */
-    constructor({ awsKey, awsSecret, region, publicBucketName, bucketName, fileUploadMaxSizeInBytes } = {}) {
+    constructor({ awsKey, awsSecret, region, bucketName, fileUploadMaxSizeInBytes, isPublic }) {
         super();
-        this.#region = region ?? this.#region;
-        this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes ?? this.#fileUploadMaxSizeInBytes;
-        this.#publicBucketName = publicBucketName ?? this.#publicBucketName;
-        this.#bucketName = bucketName ?? this.#bucketName;
 
-        awsKey = awsKey ?? env.AWS_KEY;
-        awsSecret = awsSecret ?? env.AWS_SECRET;
+        if (!bucketName) {
+            throw new Error(`Invalid AWS bucket provided: '${bucketName}'`);
+        }
 
-        if (!awsKey || !awsSecret) {
+        if (!awsKey || !awsSecret || !region) {
             throw new Error(`Invalid AWS credentials provided: awsKey:'${awsKey}', awsSecret:'${awsSecret}'`);
         }
+
+        this.#region = region;
+        this.#bucketName = bucketName;
+
+        this.#fileUploadMaxSizeInBytes = fileUploadMaxSizeInBytes ?? this.#fileUploadMaxSizeInBytes;
+        this.#isPublic = isPublic ?? this.#isPublic;
 
         this.#s3Client = new S3Client({
             region: this.#region,
@@ -74,25 +68,17 @@ export class AwsStorage extends StorageBase {
     }
 
     /**
-     * @param {Object} params
-     * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
+     * @param {string} object_identifier
      * @returns {string}
      */
-    getStaticUrl({ object_identifier, container_identifier }) {
-        if (container_identifier) this.#bucketName = container_identifier;
-
+    getStaticUrl(object_identifier) {
         return this.#getUrlFromBucketAndObjectKey({ objectKey: object_identifier });
     }
 
     /**
-     * @param {Object} params
-     * @param {string} [params.container_identifier]
      * @returns {string}
      */
-    getStaticBaseUrl({ container_identifier } = {}) {
-        if (container_identifier) this.#bucketName = container_identifier;
-
+    getStaticBaseUrl() {
         return this.#getBaseUrlFromBucket();
     }
 
@@ -100,11 +86,8 @@ export class AwsStorage extends StorageBase {
      * @param {Object} params
      * @param {File|Buffer|ArrayBuffer} params.file
      * @param {string} params.object_identifier
-     * @param {boolean} [params.isPublic]
      */
-    async uploadFile({ file, object_identifier, isPublic = false }) {
-        const currentBucketName = isPublic ? this.#publicBucketName : this.#bucketName;
-
+    async uploadFile({ file, object_identifier }) {
         let fileBuffer = file;
         if (file instanceof File) {
             fileBuffer = await file.arrayBuffer();
@@ -117,7 +100,7 @@ export class AwsStorage extends StorageBase {
 
         try {
             await this.#putObjectInBucket({
-                bucketName: currentBucketName,
+                bucketName: this.#bucketName,
                 objectKey: object_identifier,
                 file: fileBuffer
             });
@@ -142,53 +125,37 @@ export class AwsStorage extends StorageBase {
     }
 
     /**
-     * @param {Object} params
-     * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
+     * @param {string} object_identifier
      */
-    async deleteFile({ object_identifier, container_identifier }) {
-        if (container_identifier) this.#bucketName = container_identifier;
-
+    async deleteFile(object_identifier) {
         await this.#deleteObjectFromBucket({ objectKey: object_identifier });
-
-        return true;
     }
 
     /**
-     * @param {Object} params
-     * @param {string} params.object_identifier
-     * @param {boolean} [params.is_public]
+     * @param {string} object_identifier
      */
-    async getUrlForDownload({ object_identifier, is_public = false }) {
-        if (is_public) {
-            return this.getStaticUrl({ container_identifier: this.#publicBucketName, object_identifier });
+    async getUrlForDownload(object_identifier) {
+        if (this.#isPublic) {
+            return this.getStaticUrl(object_identifier);
         }
 
-        return this.#getPresignedUrlForDownload({ container_identifier: this.#bucketName, object_identifier });
+        return this.#getPresignedUrlForDownload(object_identifier);
     }
 
     //#region Private Implementation Methods
     /**
-     * @param {Object} params
-     * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
+     * @param {string} object_identifier
      */
-    async #getPresignedUrlForDownload({ object_identifier, container_identifier }) {
-        if (container_identifier) this.#bucketName = container_identifier;
-
+    async #getPresignedUrlForDownload(object_identifier) {
         const command = new GetObjectCommand({ Bucket: this.#bucketName, Key: object_identifier });
 
         return await getSignedUrl(this.#s3Client, command, { expiresIn: 3600 });
     }
 
     /**
-     * @param {Object} params
-     * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
+     * @param {string} object_identifier
      */
-    async #getPresignedUrlForUpload({ object_identifier, container_identifier }) {
-        if (container_identifier) this.#bucketName = container_identifier;
-
+    async #getPresignedUrlForUpload(object_identifier) {
         const command = new PutObjectCommand({ Bucket: this.#bucketName, Key: object_identifier });
 
         return await getSignedUrl(this.#s3Client, command, { expiresIn: 3600 });

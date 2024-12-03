@@ -22,6 +22,7 @@ export const storageProviders = {
 /**
  * @typedef {Object} diskConfig
  * @property {string} [uploadFolder]
+ * @property {string} [baseUrl]
  * @property {number} [fileUploadMaxSizeInBytes]
  * @property {boolean} [isPublic]
  */
@@ -34,18 +35,32 @@ export const storageProviders = {
 export const getStorage = (conditions, config = {}) => {
     // Based on a tenant, or env variable, or config, or something... Pick which storage implementation to use
     if (conditions.storageProvider === storageProviders.aws) {
-        if (!config.bucketName) {
-            config.bucketName = env.AWS_PRIVATE_BUCKET_NAME;
-            if (config.isPublic) {
-                config.bucketName = env.AWS_PUBLIC_BUCKET_NAME;
+        /** @type {awsConfig} */
+        const awsConfig = config;
+
+        if (!awsConfig.hasOwnProperty("isPublic")) awsConfig.isPublic = false;
+        if (!awsConfig.awsKey) awsConfig.awsKey = env.AWS_KEY;
+        if (!awsConfig.awsSecret) awsConfig.awsKey = env.AWS_SECRET;
+        if (!awsConfig.region) awsConfig.region = env.AWS_REGION;
+        if (!awsConfig.bucketName) {
+            awsConfig.bucketName = env.AWS_PRIVATE_BUCKET_NAME;
+            if (awsConfig.isPublic) {
+                awsConfig.bucketName = env.AWS_PUBLIC_BUCKET_NAME;
             }
         }
 
-        return new AwsStorage(config);
+        return new AwsStorage(awsConfig);
     } else if (conditions.storageProvider === storageProviders.disk) {
-        return new DiskStorage(config);
+        /** @type {diskConfig} */
+        const diskConfig = config;
+
+        if (!diskConfig.uploadFolder) diskConfig.uploadFolder = env.UPLOAD_FOLDER;
+        if (!diskConfig.baseUrl) diskConfig.baseUrl = env.PUBLIC_BASE_URL;
+
+        return new DiskStorage(diskConfig);
     } else {
         const message = `Invalid storageProvider provided: '${conditions?.storageProvider}'. Configured implementations: [${Object.values(storageProviders).join(",")}]`;
+
         throw new Error(message);
     }
 };

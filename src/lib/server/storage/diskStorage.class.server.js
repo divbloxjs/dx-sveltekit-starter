@@ -1,19 +1,26 @@
-import { env } from "$env/dynamic/private";
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
-import sharp from "sharp";
 import { existsSync } from "fs";
-import { env as publicEnv } from "$env/dynamic/public";
 
-export class DiskStorage {
-    #uploadFolder = env.UPLOAD_FOLDER;
-    #baseUrl = publicEnv.PUBLIC_BASE_URL;
+import sharp from "sharp";
+import { StorageBase } from "$lib/server/storage/storage.class.js";
+
+export class DiskStorage extends StorageBase {
+    #uploadFolder;
+    #baseUrl;
 
     /**
-     * @param {Object} [params]
-     * @param {string} [params.uploadFolder]
+     * @param {Object} params
+     * @param {string} params.uploadFolder
+     * @param {string} params.baseUrl
      */
-    constructor({ uploadFolder } = {}) {
-        this.#uploadFolder = uploadFolder ?? this.#uploadFolder;
+    constructor({ uploadFolder, baseUrl }) {
+        super();
+        if (!uploadFolder || !baseUrl) {
+            throw new Error(`Invalid parameters provided: uploadFolder:'${uploadFolder}', baseUrl:'${baseUrl}'`);
+        }
+
+        this.#uploadFolder = uploadFolder;
+        this.#baseUrl = baseUrl;
     }
 
     get containerIdentifier() {
@@ -40,7 +47,7 @@ export class DiskStorage {
 
         writeFileSync(localStaticFilePath, Buffer.from(file));
 
-        return localStaticFilePath;
+        return true;
     }
 
     /**
@@ -49,8 +56,7 @@ export class DiskStorage {
      */
     async deleteFile({ object_identifier }) {
         const localStaticFilePath = `${this.#uploadFolder}/${object_identifier}`;
-        const result = unlinkSync(localStaticFilePath);
-        console.log("result", result);
+        unlinkSync(localStaticFilePath);
     }
 
     /**
@@ -95,17 +101,13 @@ export class DiskStorage {
         return returnImageBuffers;
     }
 
-    getContainerIdentifier() {
-        return this.#uploadFolder;
-    }
-
     /**
      * @param {Object} params
      * @param {string} params.object_identifier
      * @returns {string}
      */
     getStaticUrl({ object_identifier }) {
-        return `${this.#baseUrl}${this.#uploadFolder}/${object_identifier}`;
+        return `${this.#baseUrl}/${this.#uploadFolder}/${object_identifier}`;
     }
 
     /**
