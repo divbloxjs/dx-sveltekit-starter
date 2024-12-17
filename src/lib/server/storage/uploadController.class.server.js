@@ -12,14 +12,11 @@ export class UploadController {
     /** @type {StorageBase} storage */
     #storage;
 
-    // #compression;
-
     /**
-     * @param {AwsStorage} storage
-     * @param {ImageCompression} compression */
-    constructor(storage, compression) {
+     * @param {StorageBase} storage
+     */
+    constructor(storage) {
         this.#storage = storage;
-        // this.#compression = compression;
     }
 
     /**
@@ -66,6 +63,7 @@ export class UploadController {
         const arrayBuffer = await file.arrayBuffer();
         const isImage = await imageType(arrayBuffer);
 
+        /** @type {import("@prisma/client").Prisma.fileCreateInput} */
         const fileData = {
             object_identifier: base_object_identifier,
             sizes_saved: [],
@@ -125,7 +123,7 @@ export class UploadController {
      * @param {string} object_identifier
      * @returns {Promise<*>}
      */
-    async deleteFile({ object_identifier }) {
+    async deleteFile(object_identifier) {
         const file = await prisma.file.findUniqueOrThrow({ where: { object_identifier } });
         if (!file) return;
 
@@ -144,21 +142,20 @@ export class UploadController {
         await prisma.file.delete({ where: { id: file.id } });
     }
 
-    async deleteFiles({ object_identifiers = [] }) {
+    /**
+     *
+     * @param {string[]} object_identifiers
+     * @returns
+     */
+    async deleteFiles(object_identifiers = []) {
+        const files = await prisma.file.findMany({ where: { object_identifier: { in: object_identifiers } } });
+        if (files.length !== object_identifiers.length) return;
+
         try {
             for (const file of files) {
                 for (let sizeType of file?.sizes_saved ?? []) {
-                    let finalObjectIdentifier = `${sizeType}_${file.object_identifier}`;
-                    let containerIdentifier = env.AWS_PRIVATE_BUCKET_NAME;
-                    if (file?.cloudIsPubliclyAvailable) {
-                        finalObjectIdentifier = `public/${finalObjectIdentifier}`;
-                        containerIdentifier = env.AWS_PUBLIC_BUCKET_NAME;
-                    }
-
-                    const result = this.#storage.deleteFile({
-                        object_identifier: finalObjectIdentifier,
-                        containerIdentifier
-                    });
+                    let objectIdentifier = `${sizeType}_${file.object_identifier}`;
+                    await this.#storage.deleteFile(objectIdentifier);
                     await prisma.file.delete({ where: { id: file.id } });
                 }
             }

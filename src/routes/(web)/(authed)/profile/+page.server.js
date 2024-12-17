@@ -75,14 +75,13 @@ export const actions = {
     },
     updateProfilePictureDisplayName: async (event) => {
         event.locals.auth.isAuthenticated();
-
         const data = await event.request.formData();
         const display_name = data.get("display_name");
-        const fileId = data.get("id");
+        const id = Number(data.get("id"));
 
         await prisma.file.update({
             where: {
-                id: fileId,
+                id,
                 linked_entity: "userAccount",
                 linked_entity_id: event.locals.user?.id,
                 category: FILE_CATEGORY.PROFILE_PICTURE

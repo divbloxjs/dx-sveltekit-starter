@@ -41,6 +41,8 @@ export class DiskStorage extends StorageBase {
     async uploadFile({ file, object_identifier, isPublic = false, container_identifier }) {
         const localStaticFilePath = `${this.#uploadFolder}/${object_identifier}`;
 
+        console.log("localStaticFilePath", localStaticFilePath);
+
         if (!existsSync(this.#uploadFolder)) {
             mkdirSync(this.#uploadFolder);
         }
@@ -56,7 +58,12 @@ export class DiskStorage extends StorageBase {
      */
     async deleteFile({ object_identifier }) {
         const localStaticFilePath = `${this.#uploadFolder}/${object_identifier}`;
-        unlinkSync(localStaticFilePath);
+        try {
+            unlinkSync(localStaticFilePath);
+        } catch (error) {
+            console.error(error);
+            // If no file present, do not break just do not delete
+        }
     }
 
     /**
