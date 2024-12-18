@@ -41,7 +41,7 @@ export const getStorage = (conditions, config = {}) => {
 
         if (!awsConfig.hasOwnProperty("isPublic")) awsConfig.isPublic = false;
         if (!awsConfig.awsKey) awsConfig.awsKey = env.AWS_KEY;
-        if (!awsConfig.awsSecret) awsConfig.awsKey = env.AWS_SECRET;
+        if (!awsConfig.awsSecret) awsConfig.awsSecret = env.AWS_SECRET;
         if (!awsConfig.region) awsConfig.region = env.AWS_REGION;
         if (!awsConfig.bucketName) {
             awsConfig.bucketName = env.AWS_PRIVATE_BUCKET_NAME;

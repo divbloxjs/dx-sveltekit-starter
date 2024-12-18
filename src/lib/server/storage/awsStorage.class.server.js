@@ -99,7 +99,7 @@ export class AwsStorage extends StorageBase {
         }
 
         try {
-            await this.#putObjectInBucket({
+            const result = await this.#putObjectInBucket({
                 bucketName: this.#bucketName,
                 objectKey: object_identifier,
                 file: fileBuffer
@@ -126,9 +126,10 @@ export class AwsStorage extends StorageBase {
 
     /**
      * @param {string} object_identifier
+     * @returns {Promise<import("@aws-sdk/client-s3").DeleteBucketCommandOutput>}
      */
     async deleteFile(object_identifier) {
-        await this.#deleteObjectFromBucket({ objectKey: object_identifier });
+        return await this.#deleteObjectFromBucket({ objectKey: object_identifier });
     }
 
     /**
@@ -235,18 +236,28 @@ export class AwsStorage extends StorageBase {
             ContentLength: Buffer.byteLength(file)
         };
 
-        await this.#s3Client.send(new PutObjectCommand(commandOptions));
+        const result = await this.#s3Client.send(new PutObjectCommand(commandOptions));
+        console.log("putObjectInBucket result", result);
+
+        if (result["$metadata"]?.httpStatusCode !== 200) {
+            return { ok: false, error: result["$metadata"] };
+        }
+
+        return { ok: true };
     }
 
     /**
      * @param {Object} params
      * @param {string} params.objectKey
      * @param {string} [params.bucketName]
+     * @returns {Promise<import("@aws-sdk/client-s3").DeleteBucketCommandOutput>}
      */
     async #deleteObjectFromBucket({ objectKey, bucketName }) {
         if (bucketName) this.#bucketName = bucketName;
 
-        await this.#s3Client.send(new DeleteObjectCommand({ Bucket: this.#bucketName, Key: objectKey }));
+        const result = await this.#s3Client.send(new DeleteObjectCommand({ Bucket: this.#bucketName, Key: objectKey }));
+        console.log("deleteObjectFromBucket", result);
+        return result;
     }
 
     /**

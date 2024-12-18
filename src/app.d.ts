@@ -30,8 +30,6 @@ declare global {
         }
         interface Error {
             message: string;
-            code: string;
-            id: string;
         }
         // interface PageData {}
         // interface PageState {}

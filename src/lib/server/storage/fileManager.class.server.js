@@ -1,19 +1,16 @@
-import { env } from "$env/dynamic/private";
 import { getFileExtension, getFileNameWithoutExtension, insertBeforeFileExtension } from "./functions";
-import sharp from "sharp";
 import imageType from "image-type";
-import { AwsStorage } from "./awsStorage.class.server";
 import { StorageBase } from "./storage.class.js";
 import { prisma } from "../prisma-instance";
 import { getCompression } from "$lib/server/compression/compression.factory.class.server.js";
-import { ImageCompression } from "$lib/server/compression/imageCompression.class.server.js";
+import { AwsStorage } from "./awsStorage.class.server";
 
-export class UploadController {
-    /** @type {StorageBase} storage */
+export class FileManager {
+    /** @type {AwsStorage} storage */
     #storage;
 
     /**
-     * @param {StorageBase} storage
+     * @param {AwsStorage} storage
      */
     constructor(storage) {
         this.#storage = storage;
@@ -35,7 +32,7 @@ export class UploadController {
 
         const uploadedFiles = [];
         for (const [index, file] of files.entries()) {
-            uploadedFiles[index] = await this.uploadFile({
+            const result = await this.uploadFile({
                 file,
                 linked_entity,
                 linked_entity_id,
@@ -43,6 +40,10 @@ export class UploadController {
                 createThumbnailAndWebImages,
                 is_public
             });
+
+            console.log("uploadFiles result ", result);
+
+            uploadedFiles[index] = result;
         }
 
         return uploadedFiles;
@@ -83,7 +84,7 @@ export class UploadController {
 
         let configuration = {};
         if (isImage) {
-            configuration = { original: { maxDimension: 2500 } };
+            configuration.original = { maxDimension: 2500 };
             if (createThumbnailAndWebImages) {
                 configuration.web = { maxDimension: 1080 };
                 configuration.thumbnail = { maxDimension: 1080 };
@@ -100,23 +101,11 @@ export class UploadController {
             if (!fileData.sizes_saved) fileData.sizes_saved = [];
             fileData.sizes_saved.push(size);
 
-            await this.#storage.uploadFile({ file, object_identifier });
+            const result = await this.#storage.uploadFile({ file, object_identifier });
+            console.log("result", result);
         }
 
         return fileData;
-    }
-
-    /**
-     * Helper function to generate the unique timestamped file/object identifier
-     * @param {string} initialFileName
-     * @returns {string}
-     */
-    #generateObjectIdentifier(initialFileName) {
-        const timestamp = new Date().getTime().toString();
-        const timestampedFileName = insertBeforeFileExtension(initialFileName, `_${timestamp}`);
-        const formattedTimestampedFileName = `${getFileNameWithoutExtension(timestampedFileName).replace(/[^a-z0-9+]+/gi, "_")}.${getFileExtension(timestampedFileName)}`;
-
-        return formattedTimestampedFileName;
     }
 
     /**
@@ -133,6 +122,8 @@ export class UploadController {
                     object_identifier: `${size}_${file.object_identifier}`,
                     containerIdentifier: file.container_identifier
                 });
+
+                console.log("result", result);
             }
         } catch (err) {
             console.error(err);
@@ -143,27 +134,52 @@ export class UploadController {
     }
 
     /**
-     *
-     * @param {string[]} object_identifiers
-     * @returns
+     * @param {import("@prisma/client").file[]} files
+     * @returns {Promise<boolean>}
      */
-    async deleteFiles(object_identifiers = []) {
-        const files = await prisma.file.findMany({ where: { object_identifier: { in: object_identifiers } } });
-        if (files.length !== object_identifiers.length) return;
+    async deleteFiles(files = []) {
+        const fileIds = files.map((file) => file.id);
 
+        let errors = [];
         try {
             for (const file of files) {
                 for (let sizeType of file?.sizes_saved ?? []) {
                     let objectIdentifier = `${sizeType}_${file.object_identifier}`;
-                    await this.#storage.deleteFile(objectIdentifier);
-                    await prisma.file.delete({ where: { id: file.id } });
+                    const storageResult = await this.#storage.deleteFile(objectIdentifier);
+
+                    if (storageResult?.["$metadata"]?.httpStatusCode !== 204) {
+                        errors.push({ id: file.id, objectIdentifier, errorInfo: storageResult?.["$metadata"] });
+                        continue;
+                    }
                 }
             }
         } catch (err) {
             console.error(err);
-            return fail(400);
         }
 
-        await prisma.file.deleteMany({ where: { id: { in: files.map((file) => file.id) } } });
+        const errorFileIds = errors.map((err) => err.id);
+        const dbResult = await prisma.file.deleteMany({
+            where: {
+                id: {
+                    in: fileIds.filter((id) => !errorFileIds.includes(id))
+                }
+            }
+        });
+
+        console.log("dbResult", dbResult);
+        return true;
+    }
+
+    /**
+     * Helper function to generate the unique timestamped file/object identifier
+     * @param {string} initialFileName
+     * @returns {string}
+     */
+    #generateObjectIdentifier(initialFileName) {
+        const timestamp = new Date().getTime().toString();
+        const timestampedFileName = insertBeforeFileExtension(initialFileName, `_${timestamp}`);
+        const formattedTimestampedFileName = `${getFileNameWithoutExtension(timestampedFileName).replace(/[^a-z0-9+]+/gi, "_")}.${getFileExtension(timestampedFileName)}`;
+
+        return formattedTimestampedFileName;
     }
 }

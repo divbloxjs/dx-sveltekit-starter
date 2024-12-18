@@ -41,8 +41,6 @@ export class DiskStorage extends StorageBase {
     async uploadFile({ file, object_identifier, isPublic = false, container_identifier }) {
         const localStaticFilePath = `${this.#uploadFolder}/${object_identifier}`;
 
-        console.log("localStaticFilePath", localStaticFilePath);
-
         if (!existsSync(this.#uploadFolder)) {
             mkdirSync(this.#uploadFolder);
         }

@@ -4,13 +4,13 @@ import { prisma } from "$lib/server/prisma-instance";
 import { env } from "$env/dynamic/private";
 import { FILE_CATEGORY } from "$lib/constants/constants";
 import { getStorage } from "$lib/server/storage/storageFactory.server";
-import { UploadController } from "$lib/server/storage/uploadController.class.server";
+import { FileManager } from "$lib/server/storage/fileManager.class.server";
+import { urlParamParser } from "$lib/server/urlParamParser.server";
 
 const LINKED_ENTITY = "userAccount";
 const UPLOAD_TYPE = FILE_CATEGORY.PROFILE_PICTURE;
 const STORAGE_PROVIDER = env.STORAGE_PROVIDER;
 
-// TODO COMMENT
 const UPLOAD_AS_PUBLIC = false;
 const GENERATE_SMALLER_IMAGES = true;
 const REPLACE_EXISTING_IMAGES = true;
@@ -18,29 +18,20 @@ const REPLACE_EXISTING_IMAGES = true;
 /** @type {import("./$types").RequestHandler} */
 export async function POST({ request, url, locals }) {
     // TODO Auth on who you are and what files you can update
-    const linked_entity_id = Number(url.searchParams.get("id")) ?? locals.user?.id;
+    const linked_entity_id = Number(url.searchParams.get("id") ?? locals.user?.id);
 
-    let createThumbnailAndWebImages = GENERATE_SMALLER_IMAGES;
-    if (url.searchParams.get("createThumbnailAndWebImages")) {
-        createThumbnailAndWebImages = url.searchParams.get("createThumbnailAndWebImages")?.toLowerCase() === "true";
-    }
+    let createThumbnailAndWebImages = urlParamParser.getBoolean(url.searchParams, "createThumbnailAndWebImages") ?? GENERATE_SMALLER_IMAGES;
+    let isPublic = urlParamParser.getBoolean(url.searchParams, "uploadAsPublic") ?? UPLOAD_AS_PUBLIC;
+    let replaceExistingFiles = urlParamParser.getBoolean(url.searchParams, "replaceExistingFiles") ?? REPLACE_EXISTING_IMAGES;
 
-    let isPublic = UPLOAD_AS_PUBLIC;
-    if (url.searchParams.get("uploadAsPublic")) {
-        isPublic = url.searchParams.get("uploadAsPublic")?.toLowerCase() === "true";
-    }
-
-    let replaceExistingFiles = REPLACE_EXISTING_IMAGES;
-    if (url.searchParams.get("replaceExistingFiles")) {
-        replaceExistingFiles = url.searchParams.get("replaceExistingFiles")?.toLowerCase() === "true";
-    }
-
+    const storage = getStorage({ storageProvider: STORAGE_PROVIDER }, { isPublic });
+    const fileManager = new FileManager(storage);
     if (replaceExistingFiles) {
         const files = await prisma.file.findMany({
             where: { linked_entity_id, linked_entity: LINKED_ENTITY, category: UPLOAD_TYPE }
         });
 
-        await deleteFiles(files);
+        await fileManager.deleteFiles(files);
     }
 
     const formData = Object.fromEntries(await request.formData());
@@ -53,10 +44,7 @@ export async function POST({ request, url, locals }) {
     }
 
     try {
-        const storage = getStorage({ storageProvider: STORAGE_PROVIDER }, { isPublic });
-        const uploadController = new UploadController(storage);
-
-        const fileDataToCreateArr = await uploadController.uploadFiles({
+        const fileDataToCreateArr = await fileManager.uploadFiles({
             files: filesToUpload,
             linked_entity_id,
             linked_entity: LINKED_ENTITY,
@@ -72,9 +60,7 @@ export async function POST({ request, url, locals }) {
         for (const fileDataToCreate of fileDataToCreateArr) {
             const urls = {};
             for (let sizeType of fileDataToCreate.sizes_saved) {
-                urls[sizeType] = await storage.getUrlForDownload({
-                    object_identifier: `${sizeType}_${fileDataToCreate.object_identifier}`
-                });
+                urls[sizeType] = await storage.getUrlForDownload(`${sizeType}_${fileDataToCreate.object_identifier}`);
             }
 
             fileDataToCreate.urls = urls;
@@ -94,28 +80,29 @@ export async function POST({ request, url, locals }) {
 export async function PUT({ request, url, locals }) {
     // TODO Auth on who you are and what files you can update
 
-    const linked_entity_id = url.searchParams.get("id") ?? locals.user.id;
+    if (!url.searchParams.get("id")) error(400, { message: "Invalid ID provided" });
+
+    const id = Number(url.searchParams.get("id"));
+    const linked_entity_id = locals.user?.id;
     const linked_entity = "userAccount";
 
-    prisma.file.update({ where: { id: fileId } });
+    const formData = Object.fromEntries(await request.formData());
 
     try {
-        return json({});
+        const result = await prisma.file.update({ where: { id, linked_entity, linked_entity_id }, data: formData });
+        return json(result);
     } catch (err) {
-        console.error(err);
-        return error(400, err?.message);
+        console.log("err.meta.cause", err.meta.cause);
+        return error(400, { message: err.meta.cause });
     }
 }
 
 /** @type {import("./$types").RequestHandler} */
 export async function GET({ request, url, locals }) {
-    locals.auth.isAuthenticated();
+    const linked_entity_id = Number(url.searchParams.get("id") ?? locals.user?.id);
+    const category = urlParamParser.getOrError(url.searchParams, "category");
 
     try {
-        const linked_entity_id = url.searchParams.get("id") ?? locals?.user?.id;
-
-        const category = url.searchParams.get("category") ?? "";
-
         /** @type {import("@prisma/client").Prisma.fileSelect[]} */
         const files = await prisma.file.findMany({
             where: {
@@ -130,9 +117,7 @@ export async function GET({ request, url, locals }) {
         for (let i = 0; i < files.length; i++) {
             const urls = {};
             for (let sizeType of files[i].sizes_saved) {
-                urls[sizeType] = await storage.getUrlForDownload({
-                    object_identifier: `${sizeType}_${files[i].object_identifier}`
-                });
+                urls[sizeType] = await storage.getUrlForDownload(`${sizeType}_${files[i].object_identifier}`);
             }
 
             files[0]["urls"] = urls;
@@ -141,7 +126,7 @@ export async function GET({ request, url, locals }) {
         return json({ files });
     } catch (err) {
         console.error(err);
-        return json({ message: err?.message ?? "Error occurred. Please try again" }, { status: 400 });
+        return error(400, { message: err?.message ?? "Error occurred. Please try again" });
     }
 }
 
@@ -155,33 +140,13 @@ export async function DELETE({ request }) {
     const file = await prisma.file.findUnique({ where: { id } });
     if (!file) error(404, "No file found");
 
-    const storage = getStorage({ storageProvider: STORAGE_PROVIDER }, { isPublic: file.is_public });
+    const storage = getStorage({ storageProvider: STORAGE_PROVIDER }, { isPublic: file.is_public, bucketName: file.container_identifier });
 
     for (let sizeType of file?.sizes_saved ?? []) {
-        await storage.deleteFile({
-            object_identifier: `${sizeType}_${file.object_identifier}`,
-            container_identifier: file.container_identifier
-        });
+        await storage.deleteFile(`${sizeType}_${file.object_identifier}`);
     }
 
     await prisma.file.delete({ where: { id } });
 
     return json({ message: "Deleted successfully!" });
 }
-
-const deleteFiles = async (files) => {
-    const storage = getStorage({ storageProvider: STORAGE_PROVIDER });
-
-    for (const file of files) {
-        for (let sizeType of file?.sizes_saved ?? []) {
-            await storage.deleteFile({
-                object_identifier: `${sizeType}_${file.object_identifier}`,
-                container_identifier: file.container_identifier
-            });
-        }
-    }
-
-    await prisma.file.deleteMany({ where: { id: { in: files.map((file) => file.id) } } });
-
-    return json({ message: "Deleted successfully!" });
-};

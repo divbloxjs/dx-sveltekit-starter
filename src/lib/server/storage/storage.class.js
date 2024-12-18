@@ -24,7 +24,7 @@ export class StorageBase {
 
     /**
      * @param {string} object_identifier
-     * @return {Promise<void>}
+     * @return {Promise<Object>}
      */
     async deleteFile(object_identifier) {
         throw new Error("deleteFile() must be implemented");
