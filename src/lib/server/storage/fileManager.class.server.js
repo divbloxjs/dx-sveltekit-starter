@@ -79,7 +79,9 @@ export class FileManager {
             }
         }
 
-        return StorageResult.ok({ file: fileData });
+        const result = await prisma.file.create({ data: fileData });
+
+        return StorageResult.ok({ file: result });
     }
 
     /**
@@ -113,8 +115,6 @@ export class FileManager {
 
             uploadedFiles[index] = result.file;
         }
-
-        await prisma.file.createMany({ data: uploadedFiles });
 
         return StorageResult.ok({ files: uploadedFiles });
     }

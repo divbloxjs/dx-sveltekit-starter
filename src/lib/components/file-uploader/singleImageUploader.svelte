@@ -29,18 +29,20 @@
     <Button class="mx-auto w-full max-w-xs" variant="link" on:click={toggleView}>Edit</Button>
 {/if}
 <div class:hidden={viewOnly} class="mx-auto w-56 sm:w-72">
-    <Uploader
-        multiple={false}
-        replaceExistingFiles={true}
-        bind:preloadedFiles
-        FILE_NUMBER_LIMIT={1}
-        on:updated={toggleView}
-        on:transferComplete={toggleView}
-        getFilesEndpoint={`/api/file-upload/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
-        postFilesEndpoint="/api/file-upload/user-account"
-        deleteFileEndpoint="api/file-upload/user-account"
-        updateFileNameEndpoint="api/file-upload"
-        {...$$restProps}>
-    </Uploader>
+    {#key viewOnly}
+        <Uploader
+            multiple={false}
+            replaceExistingFiles={true}
+            bind:preloadedFiles
+            FILE_NUMBER_LIMIT={1}
+            on:updated={toggleView}
+            on:transferComplete={toggleView}
+            getFilesEndpoint={`/api/file-upload/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
+            postFilesEndpoint="/api/file-upload/user-account"
+            deleteFileEndpoint="api/file-upload/user-account"
+            updateFileNameEndpoint="api/file-upload"
+            {...$$restProps}>
+        </Uploader>
+    {/key}
     <Button class="mx-auto w-full max-w-xs" variant="link" on:click={toggleView}>Cancel</Button>
 </div>

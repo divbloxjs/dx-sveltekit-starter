@@ -136,18 +136,16 @@ export async function DELETE({ request }) {
 
     const body = await request.json();
     const id = Number(body.id);
+    if (!id) error(400, `No ID provided`);
 
-    const file = await prisma.file.findUnique({ where: { id } });
-    if (!file) error(404, "No file found");
-
-    const storage = getStorage(
-        { storageProvider: STORAGE_PROVIDER },
-        { isPublic: file.is_public, uploadFolder: file.container_identifier }
-    );
+    const storage = getStorage({ storageProvider: STORAGE_PROVIDER });
 
     const fileManager = new FileManager(storage);
-    const deleteResult = await fileManager.deleteFile(file.object_identifier);
+    const deleteResult = await fileManager.deleteFileById(id);
     console.log("deleteResult", deleteResult);
+    if (!deleteResult.ok) {
+        error(400, deleteResult?.error);
+    }
 
     return json({ message: "Deleted successfully!" });
 }
