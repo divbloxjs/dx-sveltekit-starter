@@ -1,6 +1,6 @@
 import { getFileExtension, getFileNameWithoutExtension, insertBeforeFileExtension } from "./functions";
 import imageType from "image-type";
-import { StorageBase } from "./storage.class.js";
+import { StorageBase, StorageResult } from "./storage.class.js";
 import { prisma } from "../prisma-instance";
 import { getCompression } from "$lib/server/compression/compression.factory.class.server.js";
 import { AwsStorage } from "./awsStorage.class.server";
@@ -18,40 +18,6 @@ export class FileManager {
     constructor(storage) {
         this.#storage = storage;
     }
-
-    /**
-     *
-     * @param {Object} params
-     * @param {File[]} params.files
-     * @param {string} params.linked_entity
-     * @param {number} params.linked_entity_id
-     * @param {string} params.category
-     * @param {boolean} params.createThumbnailAndWebImages
-     * @param {boolean} params.is_public
-     * @returns
-     */
-    async uploadFiles({ files, linked_entity, linked_entity_id, category, createThumbnailAndWebImages = false, is_public = false }) {
-        if (files?.length === 0) return [];
-
-        const uploadedFiles = [];
-        for (const [index, file] of files.entries()) {
-            const result = await this.uploadFile({
-                file,
-                linked_entity,
-                linked_entity_id,
-                category,
-                createThumbnailAndWebImages,
-                is_public
-            });
-
-            console.log("uploadFiles result ", result);
-
-            uploadedFiles[index] = result;
-        }
-
-        return uploadedFiles;
-    }
-
     /**
      * @param {Object} params
      * @param {File} params.file
@@ -60,7 +26,7 @@ export class FileManager {
      * @param {string} params.category
      * @param {boolean} [params.createThumbnailAndWebImages]
      * @param {boolean} [params.is_public]
-     * @returns
+     * @returns {Promise<{ok: boolean, error?: any, file?: import("@prisma/client").Prisma.fileCreateInput}>}
      */
     async uploadFile({ file, linked_entity, linked_entity_id, category, createThumbnailAndWebImages = false, is_public = false }) {
         const base_object_identifier = this.#generateObjectIdentifier(file.name);
@@ -82,8 +48,9 @@ export class FileManager {
 
             display_name: file.name,
             base_file_url: this.#storage.getStaticBaseUrl(),
-            container_identifier: this.#storage.containerIdentifier
-            storageProvider: this.#storage.storageProvider
+            container_identifier: this.#storage.containerIdentifier,
+            is_public,
+            storage_provider: this.#storage.storageProvider
         };
 
         let configuration = {};
@@ -106,20 +73,59 @@ export class FileManager {
             fileData.sizes_saved.push(size);
 
             const result = await this.#storage.uploadFile({ file, object_identifier });
-            console.log("result", result);
+
+            if (!result.ok) {
+                return StorageResult.err({ error: result.error });
+            }
         }
 
-        return fileData;
+        return StorageResult.ok({ file: fileData });
     }
 
     /**
-     * @param {string} object_identifier
-     * @returns {Promise<*>}
+     *
+     * @param {Object} params
+     * @param {File[]} params.files
+     * @param {string} params.linked_entity
+     * @param {number} params.linked_entity_id
+     * @param {string} params.category
+     * @param {boolean} [params.createThumbnailAndWebImages]
+     * @param {boolean} [params.is_public]
+     * @returns {Promise<{ok: boolean, error?: any, files?: import("@prisma/client").Prisma.fileCreateInput[]}>}
      */
-    async deleteFile(object_identifier) {
-        const file = await prisma.file.findUniqueOrThrow({ where: { object_identifier } });
-        if (!file) return;
+    async uploadFiles({ files, linked_entity, linked_entity_id, category, createThumbnailAndWebImages = false, is_public = false }) {
+        if (files?.length === 0) return StorageResult.err("No files provided");
 
+        const uploadedFiles = [];
+        for (const [index, file] of files.entries()) {
+            const result = await this.uploadFile({
+                file,
+                linked_entity,
+                linked_entity_id,
+                category,
+                createThumbnailAndWebImages,
+                is_public
+            });
+
+            if (!result.ok) {
+                return StorageResult.err({ error: result.error });
+            }
+
+            uploadedFiles[index] = result.file;
+        }
+
+        await prisma.file.createMany({ data: uploadedFiles });
+
+        return StorageResult.ok({ files: uploadedFiles });
+    }
+
+    //#region Delete
+
+    /**
+     * @param {import("@prisma/client").file} file
+     * @returns {Promise<{ok: boolean, error?: any}>}
+     */
+    async deleteFile(file) {
         try {
             for (let size of file?.sizes_saved ?? []) {
                 const result = await this.#storage.deleteFile({
@@ -129,50 +135,109 @@ export class FileManager {
 
                 console.log("result", result);
             }
-        } catch (err) {
-            console.error(err);
-            return fail(400);
+        } catch (error) {
+            return StorageResult.err({ error });
         }
 
         await prisma.file.delete({ where: { id: file.id } });
+
+        return StorageResult.ok();
     }
 
     /**
+     * NOT Optimised for bulk
      * @param {import("@prisma/client").file[]} files
-     * @returns {Promise<boolean>}
+     * @returns {Promise<{ok: boolean, error?: any}>}
      */
     async deleteFiles(files = []) {
-        const fileIds = files.map((file) => file.id);
-
         let errors = [];
         try {
             for (const file of files) {
                 for (let sizeType of file?.sizes_saved ?? []) {
-                    let objectIdentifier = `${sizeType}_${file.object_identifier}`;
-                    const storageResult = await this.#storage.deleteFile(objectIdentifier);
-
-                    if (storageResult?.["$metadata"]?.httpStatusCode !== 204) {
-                        errors.push({ id: file.id, objectIdentifier, errorInfo: storageResult?.["$metadata"] });
+                    let object_identifier = `${sizeType}_${file.object_identifier}`;
+                    const storageResult = await this.#storage.deleteFile({ object_identifier });
+                    if (!storageResult.ok) {
+                        errors.push({ id: file.id, object_identifier, error: storageResult.error });
                         continue;
                     }
                 }
+
+                if (errors.length > 0) {
+                    StorageResult.err({ message: "Some files could not be deleted", errors });
+                }
+
+                await prisma.file.delete({ where: { id: file.id } });
             }
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            StorageResult.err({ error });
         }
 
-        const errorFileIds = errors.map((err) => err.id);
-        const dbResult = await prisma.file.deleteMany({
-            where: {
-                id: {
-                    in: fileIds.filter((id) => !errorFileIds.includes(id))
-                }
-            }
-        });
+        if (errors.length > 0) {
+            StorageResult.err({ message: "Some files could not be deleted", errors });
+        }
 
-        console.log("dbResult", dbResult);
-        return true;
+        return StorageResult.ok();
     }
+    /**
+     * @param {string} object_identifier
+     * @returns {Promise<{ok: boolean, error?: any}>}
+     */
+    async deleteFileByObjectIdentifier(object_identifier) {
+        const file = await prisma.file.findUnique({ where: { object_identifier } });
+        if (!file) StorageResult.err(`No file found for object_identifier: ${object_identifier}`);
+
+        let errors = {};
+        for (let size of file?.sizes_saved ?? []) {
+            try {
+                const result = await this.#storage.deleteFile({
+                    object_identifier: `${size}_${file?.object_identifier}`,
+                    container_identifier: file?.container_identifier
+                });
+
+                if (!result.ok) {
+                    errors[size] = result.error;
+                }
+            } catch (error) {
+                return StorageResult.err({ error });
+            }
+        }
+
+        if (Object.keys(errors).length > 0) {
+            return StorageResult.err({ error: { message: "Could not delete certain file sizes", errors } });
+        }
+
+        await prisma.file.delete({ where: { id: file?.id } });
+
+        return StorageResult.ok();
+    }
+
+    /**
+     * @param {number} id
+     * @returns {Promise<{ok: boolean, error?: any}>}
+     */
+    async deleteFileById(id) {
+        const file = await prisma.file.findUnique({ where: { id } });
+        if (!file) StorageResult.err(`No file found for ID: ${id}`);
+
+        try {
+            for (let size of file?.sizes_saved ?? []) {
+                const result = await this.#storage.deleteFile({
+                    object_identifier: `${size}_${file?.object_identifier}`,
+                    container_identifier: file?.container_identifier
+                });
+
+                console.log("result", result);
+            }
+        } catch (error) {
+            return StorageResult.err({ error });
+        }
+
+        await prisma.file.delete({ where: { id } });
+
+        return StorageResult.ok();
+    }
+
+    //#endregion
 
     /**
      * Helper function to generate the unique timestamped file/object identifier

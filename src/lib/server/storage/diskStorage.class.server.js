@@ -2,10 +2,10 @@ import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { existsSync } from "fs";
 
 import sharp from "sharp";
-import { StorageBase } from "$lib/server/storage/storage.class.js";
+import { StorageBase, StorageResult } from "$lib/server/storage/storage.class.js";
 
 export class DiskStorage extends StorageBase {
-    #storageProvider = "disk";
+    storageProvider = "disk";
 
     #uploadFolder;
     #baseUrl;
@@ -38,10 +38,11 @@ export class DiskStorage extends StorageBase {
      * @param {File|Buffer|ArrayBuffer} params.file
      * @param {string} params.object_identifier
      * @param {boolean} [params.isPublic]
-     * @param {string} [params.container_identifier]
+     * @param {string?} [params.container_identifier]
      */
     async uploadFile({ file, object_identifier, isPublic = false, container_identifier }) {
-        const localStaticFilePath = `${this.#uploadFolder}/${object_identifier}`;
+        if (!container_identifier) container_identifier = this.#uploadFolder;
+        const localStaticFilePath = `${container_identifier}/${object_identifier}`;
 
         if (!existsSync(this.#uploadFolder)) {
             mkdirSync(this.#uploadFolder);
@@ -49,21 +50,31 @@ export class DiskStorage extends StorageBase {
 
         writeFileSync(localStaticFilePath, Buffer.from(file));
 
-        return true;
+        return StorageResult.ok();
     }
 
     /**
      * @param {Object} params
-     * @param {string} params.object_identifier
+     * @param {string} params.object_identifier Unique identifier for the file
+     * @param {string?} [params.container_identifier] Unique identifier for the folder/container the file is located
+     * @returns {Promise<{ok: boolean, value?: any}>}
      */
-    async deleteFile({ object_identifier }) {
-        const localStaticFilePath = `${this.#uploadFolder}/${object_identifier}`;
+    async deleteFile({ object_identifier, container_identifier }) {
+        console.log("deleteFile");
+        console.log("object_identifier", object_identifier);
+        console.log("container_identifier", container_identifier);
+
+        if (!container_identifier) container_identifier = this.#uploadFolder;
+        const localStaticFilePath = `${container_identifier}/${object_identifier}`;
+        console.log("localStaticFilePath", localStaticFilePath);
+
         try {
             unlinkSync(localStaticFilePath);
         } catch (error) {
-            console.error(error);
-            // If no file present, do not break just do not delete
+            return StorageResult.err({ error });
         }
+
+        return StorageResult.ok();
     }
 
     /**
@@ -76,8 +87,10 @@ export class DiskStorage extends StorageBase {
         }
     }
 
-    async getUrlForDownload({ object_identifier }) {
-        return `${this.#uploadFolder}/${object_identifier}`;
+    async getUrlForDownload({ object_identifier, container_identifier }) {
+        if (!container_identifier) container_identifier = this.#uploadFolder;
+
+        return `${container_identifier}/${object_identifier}`;
     }
 
     async getAllImageBuffers(imageArrayBuffer) {

@@ -10,41 +10,7 @@ import {
     S3Client
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { StorageBase } from "$lib/server/storage/storage.class.js";
-
-const logErrors = false;
-const Result = {
-    /**
-     * @param {Object|string|undefined} value
-     * @returns {{ok: boolean, value?: any}}
-     */
-    ok: (value = undefined) => {
-        let returnObj = { ok: true };
-
-        if (typeof value === "string") value = { message: value };
-
-        if (value !== undefined) {
-            returnObj = { ...returnObj, ...value };
-        }
-
-        return returnObj;
-    },
-    /**
-     * @param {Object|string} error
-     * @returns {{ok: boolean, error?: any}}
-     */
-    err: (error) => {
-        let returnObj = { ok: false };
-
-        if (typeof error === "string") error = { message: error };
-
-        if (error !== undefined) {
-            returnObj = { ...returnObj, ...error };
-        }
-
-        return returnObj;
-    }
-};
+import { StorageBase, StorageResult } from "$lib/server/storage/storage.class.js";
 
 export class AwsStorage extends StorageBase {
     //#region Class Variables
@@ -105,7 +71,7 @@ export class AwsStorage extends StorageBase {
     /**
      * @param {Object} params
      * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
+     * @param {string?} [params.container_identifier]
      * @returns {string}
      */
     getStaticUrl({ object_identifier, container_identifier }) {
@@ -125,8 +91,8 @@ export class AwsStorage extends StorageBase {
      * @param {Object} params
      * @param {File|Buffer|ArrayBuffer} params.file
      * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
-     * @returns {Promise<{ok: boolean, values?: any, error?: any}>}
+     * @param {string?} [params.container_identifier]
+     * @returns {Promise<{ok: boolean, error?: any, value?: any}>}
      */
     async uploadFile({ file, object_identifier, container_identifier }) {
         if (!container_identifier) container_identifier = this.#bucketName;
@@ -137,7 +103,7 @@ export class AwsStorage extends StorageBase {
         }
 
         if (fileBuffer.byteLength > this.#fileUploadMaxSizeInBytes) {
-            return Result.err(`Exceeded file size limit: ${fileBuffer.byteLength}`);
+            return StorageResult.err(`Exceeded file size limit: ${fileBuffer.byteLength}`);
         }
 
         try {
@@ -148,38 +114,38 @@ export class AwsStorage extends StorageBase {
             });
 
             if (!result.ok) {
-                return Result.err({ error: result.error });
+                return StorageResult.err({ error: result.error });
             }
 
-            return Result.ok();
+            return StorageResult.ok();
         } catch (error) {
             if (error?.Code !== "NoSuchBucket") {
-                return Result.err(error);
+                return StorageResult.err(error);
             }
 
             try {
                 const createBucketResult = await this.#createBucket({ bucketName: this.#bucketName, isPublic: this.#isPublic });
                 if (!createBucketResult.ok) {
-                    return Result.err(createBucketResult.error);
+                    return StorageResult.err(createBucketResult.error);
                 }
 
                 const uploadFileResult = await this.uploadFile({ file, object_identifier });
                 if (!uploadFileResult.ok) {
-                    return Result.err(uploadFileResult.error);
+                    return StorageResult.err(uploadFileResult.error);
                 }
             } catch (error) {
-                return Result.err({ error });
+                return StorageResult.err({ error });
             }
         }
 
-        return Result.ok();
+        return StorageResult.ok();
     }
 
     /**
      * @param {Object} params
      * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
-     * @returns {Promise<{ok: boolean, value?: any}>}
+     * @param {string?} [params.container_identifier]
+     * @returns {Promise<{ok: boolean, error?: any, value?: any}>}
      */
     async deleteFile({ object_identifier, container_identifier }) {
         if (!container_identifier) container_identifier = this.#bucketName;
@@ -190,7 +156,7 @@ export class AwsStorage extends StorageBase {
     /**
      * @param {Object} params
      * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
+     * @param {string?} [params.container_identifier]
      */
     async getUrlForDownload({ object_identifier, container_identifier }) {
         if (!container_identifier) container_identifier = this.#bucketName;
@@ -206,7 +172,7 @@ export class AwsStorage extends StorageBase {
     /**
      * @param {Object} params
      * @param {string} params.object_identifier
-     * @param {string} [params.container_identifier]
+     * @param {string?} [params.container_identifier]
      */
     async #getPresignedUrlForDownload({ object_identifier, container_identifier }) {
         if (!container_identifier) container_identifier = this.#bucketName;
@@ -229,17 +195,17 @@ export class AwsStorage extends StorageBase {
      * @param {Object} params
      * @param {string} params.bucketName
      * @param {boolean} [params.isPublic]
-     * @returns {Promise<{ok: boolean, value?: any, error?: any}>}
+     * @returns {Promise<{ok: boolean, error?: any, value?: any}>}
      */
     async #createBucket({ bucketName, isPublic }) {
         if (!isPublic) {
             // Default bucket creation has restricted access
             const result = await this.#s3Client.send(new CreateBucketCommand({ Bucket: bucketName }));
             if (result["$metadata"].httpStatusCode !== 200) {
-                return Result.err({ error: result["$metadata"] });
+                return StorageResult.err({ error: result["$metadata"] });
             }
 
-            return Result.ok();
+            return StorageResult.ok();
         }
 
         // https://stackoverflow.com/questions/76330998/aws-s3-invalidbucketaclwithobjectownershipbucket-cannot-have-acls-set-with-obje
@@ -261,7 +227,7 @@ export class AwsStorage extends StorageBase {
         console.log("createBucket createBucketResult", createBucketResult);
         console.log("createBucket updateAccessResult", updateAccessResult);
         console.log("createBucket updateAclResult", updateAclResult);
-        return Result.ok();
+        return StorageResult.ok();
     }
 
     /**
@@ -298,7 +264,7 @@ export class AwsStorage extends StorageBase {
      * @param {Buffer} params.file
      * @param {string} params.objectKey
      * @param {string} [params.bucketName]
-     * @returns {Promise<{ok: boolean, error?: Object}>}
+     * @returns {Promise<{ok: boolean, error?: any, value?: any}>}
      */
     async #putObjectInBucket({ file, objectKey, bucketName }) {
         if (bucketName) this.#bucketName = bucketName;
@@ -312,27 +278,27 @@ export class AwsStorage extends StorageBase {
 
         const result = await this.#s3Client.send(new PutObjectCommand(commandOptions));
         if (result["$metadata"]?.httpStatusCode !== 200) {
-            return Result.err({ error: result["$metadata"] });
+            return StorageResult.err({ error: result["$metadata"] });
         }
 
-        return Result.ok();
+        return StorageResult.ok();
     }
 
     /**
      * @param {Object} params
      * @param {string} params.objectKey
      * @param {string} [params.bucketName]
-     * @returns {Promise<{ok: boolean, value?: any}>}
+     * @returns {Promise<{ok: boolean, error?: any, value?: any}>}
      */
     async #deleteObjectFromBucket({ objectKey, bucketName }) {
         if (bucketName) this.#bucketName = bucketName;
 
         const result = await this.#s3Client.send(new DeleteObjectCommand({ Bucket: this.#bucketName, Key: objectKey }));
         if (result["$metadata"]?.httpStatusCode !== 200) {
-            return Result.err({ error: result["$metadata"] });
+            return StorageResult.err({ error: result["$metadata"] });
         }
 
-        return Result.ok();
+        return StorageResult.ok();
     }
 
     /**

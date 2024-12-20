@@ -10,7 +10,7 @@
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
         "lint": "prettier --check .",
         "format": "prettier --write .",
-        "initialise": "node ./src/lib/server/boot.js"
+        "init": "node ./src/lib/server/boot.js"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.3.1",

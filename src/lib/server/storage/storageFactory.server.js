@@ -6,8 +6,8 @@ import { StorageBase } from "$lib/server/storage/storage.class.js";
 
 export const storageProviders = {
     aws: "aws_s3",
-    // azure: "azure",
     disk: "disk"
+    // azure: "azure",
 };
 
 /**

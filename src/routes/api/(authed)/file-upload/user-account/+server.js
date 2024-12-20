@@ -44,7 +44,7 @@ export async function POST({ request, url, locals }) {
     }
 
     try {
-        const fileDataToCreateArr = await fileManager.uploadFiles({
+        const result = await fileManager.uploadFiles({
             files: filesToUpload,
             linked_entity_id,
             linked_entity: LINKED_ENTITY,
@@ -53,11 +53,9 @@ export async function POST({ request, url, locals }) {
             is_public: isPublic
         });
 
-        if (!fileDataToCreateArr) error(400, "Could not upload files");
+        if (!result.ok) error(400, "Could not upload files");
 
-        await prisma.file.createMany({ data: fileDataToCreateArr });
-
-        for (const fileDataToCreate of fileDataToCreateArr) {
+        for (const fileDataToCreate of result.files) {
             const urls = {};
             for (let sizeType of fileDataToCreate.sizes_saved) {
                 urls[sizeType] = await storage.getUrlForDownload({
@@ -70,7 +68,7 @@ export async function POST({ request, url, locals }) {
 
         return json({
             success: true,
-            files: fileDataToCreateArr
+            files: result.files
         });
     } catch (err) {
         console.error(err);
@@ -142,13 +140,14 @@ export async function DELETE({ request }) {
     const file = await prisma.file.findUnique({ where: { id } });
     if (!file) error(404, "No file found");
 
-    const storage = getStorage({ storageProvider: STORAGE_PROVIDER }, { isPublic: file.is_public, bucketName: file.container_identifier });
+    const storage = getStorage(
+        { storageProvider: STORAGE_PROVIDER },
+        { isPublic: file.is_public, uploadFolder: file.container_identifier }
+    );
 
-    for (let sizeType of file?.sizes_saved ?? []) {
-        await storage.deleteFile(`${sizeType}_${file.object_identifier}`);
-    }
-
-    await prisma.file.delete({ where: { id } });
+    const fileManager = new FileManager(storage);
+    const deleteResult = await fileManager.deleteFile(file.object_identifier);
+    console.log("deleteResult", deleteResult);
 
     return json({ message: "Deleted successfully!" });
 }
