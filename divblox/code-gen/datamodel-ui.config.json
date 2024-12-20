@@ -1,5 +1,11 @@
 {
 	"file": {
+		"fileType": {
+			"type": "text",
+			"displayName": "File type",
+			"placeholder": "fileType",
+			"default": ""
+		},
 		"category": {
 			"type": "text",
 			"displayName": "Category",
@@ -48,6 +54,12 @@
 			"placeholder": "objectIdentifier",
 			"default": ""
 		},
+		"containerIdentifier": {
+			"type": "text",
+			"displayName": "Container identifier",
+			"placeholder": "containerIdentifier",
+			"default": ""
+		},
 		"originalSizeInBytes": {
 			"type": "number",
 			"displayName": "Original size in bytes",
@@ -60,16 +72,16 @@
 			"placeholder": "uploadedFileExtension",
 			"default": ""
 		},
-		"cloudContainerIdentifier": {
-			"type": "text",
-			"displayName": "Cloud container identifier",
-			"placeholder": "cloudContainerIdentifier",
+		"isPublic": {
+			"type": "checkbox",
+			"displayName": "Is public",
+			"placeholder": "isPublic",
 			"default": ""
 		},
-		"cloudIsPubliclyAvailable": {
-			"type": "checkbox",
-			"displayName": "Cloud is publicly available",
-			"placeholder": "cloudIsPubliclyAvailable",
+		"storageProvider": {
+			"type": "text",
+			"displayName": "Storage provider",
+			"placeholder": "storageProvider",
 			"default": ""
 		}
 	},

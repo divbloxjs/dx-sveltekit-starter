@@ -91,13 +91,16 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
     on:dragstart|preventDefault|stopPropagation={() => {}}
-    class="mt-1 flex w-full min-w-0 justify-between overflow-hidden rounded-xl bg-gray-200"
+    class="mt-1 flex w-full min-w-0 justify-between overflow-hidden rounded-xl bg-background-200"
     transition:slide={{ delay: 250, duration: 300, easing: quintOut, axis: "y" }}>
     {#if isEditingDisplayName}
         <div class="flex h-12 w-12 min-w-12 overflow-hidden">
             <MimeType {file} />
         </div>
-        <span class="items-left flex min-w-0 grow flex-col justify-center px-2 transition-colors duration-1000" class:bg-green-200={isNew}>
+        <span
+            class="items-left flex min-w-0 grow flex-col justify-center px-2 transition-colors duration-1000"
+            class:bg-success={isNew}
+            class:text-success-foreground={isNew}>
             <form
                 bind:this={updateDisplayNameFormEl}
                 action={`${updateFileNameEndpoint}`}
@@ -111,7 +114,7 @@
 
         <span class="flex flex-nowrap items-center gap-1 px-2">
             <Button
-                class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600 hover:text-white"
+                class="hover:primary border border-none border-slate-600 bg-transparent text-slate-600 hover:text-white"
                 size="inline-icon"
                 on:click={() => {
                     updateDisplayNameFormEl?.requestSubmit();
@@ -130,7 +133,10 @@
         <div class="flex h-12 w-12 min-w-12 overflow-hidden">
             <MimeType {file} />
         </div>
-        <span class="items-left flex min-w-0 grow flex-col justify-center px-2 transition-colors duration-1000" class:bg-green-200={isNew}>
+        <span
+            class="items-left flex min-w-0 grow flex-col justify-center px-2 transition-colors duration-1000"
+            class:bg-success={isNew}
+            class:text-success-foreground={isNew}>
             <a href={file.url} target="_blank" class="truncate">
                 {file.display_name}
             </a>
@@ -139,7 +145,7 @@
 
         <span class="flex flex-nowrap items-center gap-1 px-2">
             <Button
-                class="bg-tranparent hover:slate-800 border border-none border-slate-600 text-slate-600 hover:text-white"
+                class="border border-none bg-transparent text-foreground hover:bg-neutral hover:text-neutral-foreground"
                 size="inline-icon"
                 on:click={() => (isEditingDisplayName = !isEditingDisplayName)}>
                 <Pencil class="h-4 w-4" />

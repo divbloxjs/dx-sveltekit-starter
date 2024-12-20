@@ -21,7 +21,7 @@ model user_account {
   user_role         user_role?          @relation(fields: [user_role_id], references: [id], map: "423b4e4321253537640cf95f33c36b61")
   user_session      user_session[]
 
-  @@index([user_role_id], map: "061ef044873abcf5ce235d2ea7c07399")
+  @@index([user_role_id], map: "ff43792da0a1db6c70bee35589e674a7")
 }
 
 model user_role {
@@ -33,32 +33,34 @@ model user_role {
 
 model user_session {
   id                  Int           @id @default(autoincrement())
+  expires_at          DateTime      @db.DateTime(0)
   session_id          String        @unique(map: "userSessionSessionid") @db.VarChar(50)
   user_agent          String?       @db.VarChar(200)
   session_data        Json
-  expires_at          DateTime      @db.DateTime(0)
   duration_in_minutes Int
   last_updated        DateTime      @default(now()) @db.DateTime(0)
   user_account_id     Int?
   user_account        user_account? @relation(fields: [user_account_id], references: [id], map: "c914b3bbb55c0ee0bae6d8a43468b571")
 
-  @@index([user_account_id], map: "a6d3b1ba7c64d9f2c316489532292daf")
+  @@index([user_account_id], map: "6c0cee2e18ed93c5756dddebc0569b81")
 }
 
 model file {
-  id                          Int     @id @default(autoincrement())
-  category                    String  @db.VarChar(300)
-  mime_type                   String? @db.VarChar(150)
-  sizes_saved                 Json
-  base_file_url               String  @db.VarChar(1000)
-  display_name                String  @db.VarChar(500)
-  linked_entity               String? @db.VarChar(150)
-  linked_entity_id            BigInt?
-  object_identifier           String? @db.VarChar(500)
-  original_size_in_bytes      Int
-  uploaded_file_extension     String? @db.VarChar(150)
-  cloud_container_identifier  String? @db.VarChar(150)
-  cloud_is_publicly_available Boolean @default(false)
+  id                      Int     @id @default(autoincrement())
+  file_type               String  @db.VarChar(300)
+  category                String  @db.VarChar(300)
+  mime_type               String? @db.VarChar(150)
+  sizes_saved             Json
+  base_file_url           String  @db.VarChar(1000)
+  display_name            String  @db.VarChar(500)
+  linked_entity           String? @db.VarChar(150)
+  linked_entity_id        Int?
+  object_identifier       String? @unique(map: "fileObjectIdentifier") @db.VarChar(500)
+  container_identifier    String? @db.VarChar(150)
+  original_size_in_bytes  Int
+  uploaded_file_extension String? @db.VarChar(150)
+  is_public               Boolean @default(false)
+  storage_provider        String? @db.VarChar(150)
 }
 
 model one_time_token {
@@ -66,7 +68,7 @@ model one_time_token {
   expires_at              DateTime @db.DateTime(0)
   token_type              String   @db.VarChar(100)
   token_value             String   @unique(map: "oneTimeTokenTokenValue") @db.VarChar(32)
-  linked_entity_id        BigInt
+  linked_entity_id        Int
   linked_entity_name      String   @db.VarChar(100)
   time_to_live_in_minutes Int
   last_updated            DateTime @default(now()) @db.DateTime(0)
@@ -82,5 +84,5 @@ model push_subscription {
   user_account_id           Int?
   user_account              user_account? @relation(fields: [user_account_id], references: [id], map: "c6cd234e927bdc157034c0b7287faf2b")
 
-  @@index([user_account_id], map: "c6cd234e927bdc157034c0b7287faf2b")
+  @@index([user_account_id], map: "bef05e08eaf487cf436ca10f780cd60b")
 }
