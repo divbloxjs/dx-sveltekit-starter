@@ -133,12 +133,18 @@ export const getConstraintFromSearchParams = (url) => {
     return constraints;
 };
 
-export const buildAttributeMap = (entityName = "", tableConfig = {}, orderedAttributeMap = {}, relationshipStack = []) => {
+export const buildAttributeMap = (
+    entityName = "",
+    tableConfig = {},
+    orderedAttributeMap = {},
+    relationshipStack = [],
+) => {
     if (!isValidObject(tableConfig)) return {};
 
     Object.keys(tableConfig).forEach((keyName) => {
         const isNestedRelationship =
-            isValidObject(tableConfig[keyName]) && Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
+            isValidObject(tableConfig[keyName]) &&
+            Object.values(tableConfig[keyName]).every((value) => isValidObject(value));
 
         if (isNestedRelationship) {
             const innerRelationshipStack = JSON.parse(JSON.stringify(relationshipStack));
@@ -156,7 +162,7 @@ export const buildAttributeMap = (entityName = "", tableConfig = {}, orderedAttr
                     : getSqlFromCamelCase(relationshipStack[relationshipStack.length - 1]),
             type: tableConfig[keyName]?.type ?? "text",
             stack: [...relationshipStack, getSqlFromCamelCase(keyName)],
-            displayName: tableConfig[keyName].displayName ?? keyName
+            displayName: tableConfig[keyName].displayName ?? keyName,
         };
     });
 };
@@ -177,7 +183,7 @@ export const flattenRowObject = (nestedRowData = {}, attributeMap = {}) => {
     Object.values(attributeMap).forEach((attributeDef) => {
         row.push({
             value: getDeepValue(nestedRowData, [...attributeDef.stack]),
-            type: attributeDef.type
+            type: attributeDef.type,
         });
     });
 

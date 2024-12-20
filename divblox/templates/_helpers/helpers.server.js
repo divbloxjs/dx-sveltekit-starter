@@ -49,7 +49,10 @@ export const getAllEnumOptions = (entityName, enums = {}, baseEntityName = entit
     for (const [attributeName, attributeDef] of Object.entries(dataModel[entityName].attributes)) {
         if (attributeDef.type.toLowerCase() === "enum") {
             if (!enums[getSqlFromCamelCase(entityName)]) enums[getSqlFromCamelCase(entityName)] = {};
-            enums[getSqlFromCamelCase(entityName)][getSqlFromCamelCase(attributeName)] = getEnumOptions(entityName, attributeName);
+            enums[getSqlFromCamelCase(entityName)][getSqlFromCamelCase(attributeName)] = getEnumOptions(
+                entityName,
+                attributeName,
+            );
         }
     }
 
@@ -69,7 +72,7 @@ export const getEnumOptions = (entityName, attributeName, formatAsSelectOptions 
     options.forEach((option) => {
         selectOptions.push({
             label: option,
-            value: option
+            value: option,
         });
     });
 

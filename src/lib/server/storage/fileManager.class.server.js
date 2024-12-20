@@ -83,7 +83,7 @@ export class FileManager {
             display_name: file.name,
             base_file_url: this.#storage.getStaticBaseUrl(),
             container_identifier: this.#storage.containerIdentifier
-            storageProvider: this.#storage.storageProvider;
+            storageProvider: this.#storage.storageProvider
         };
 
         let configuration = {};
