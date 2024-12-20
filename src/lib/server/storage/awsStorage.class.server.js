@@ -48,7 +48,7 @@ const Result = {
 
 export class AwsStorage extends StorageBase {
     //#region Class Variables
-    #storageProvider = "aws_s3";
+    storageProvider = "aws_s3";
     /** @type {S3Client} */
     #s3Client;
 
