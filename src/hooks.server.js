@@ -33,9 +33,11 @@ export async function handleError({ error, event, status, message }) {
     // DX-NOTE: Hook that handles any request that end with an error.
     // Global catch, can be used for logging or piping errors elsewhere
 
-    console.log("error", error);
+    console.log("ERROR -----------");
     console.log("status", status);
     console.log("message", message);
+    console.log("error", error);
+    console.log("event", event);
 
     return { message };
 }

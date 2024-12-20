@@ -6,7 +6,6 @@ import { prisma } from "$lib/server/prisma-instance";
 import { fail, message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import argon2 from "argon2";
-import { error } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export const load = async (event) => {

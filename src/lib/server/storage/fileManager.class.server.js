@@ -6,9 +6,6 @@ import { getCompression } from "$lib/server/compression/compression.factory.clas
 import { AwsStorage } from "./awsStorage.class.server";
 
 export class FileManager {
-    static configuredCategories = {
-        profilePicture: "Profile Picture"
-    };
     /** @type {AwsStorage} storage */
     #storage;
 
@@ -163,17 +160,17 @@ export class FileManager {
                 }
 
                 if (errors.length > 0) {
-                    StorageResult.err({ message: "Some files could not be deleted", errors });
+                    return StorageResult.err({ message: "Some files could not be deleted", errors });
                 }
 
                 await prisma.file.delete({ where: { id: file.id } });
             }
         } catch (error) {
-            StorageResult.err({ error });
+            return StorageResult.err({ error });
         }
 
         if (errors.length > 0) {
-            StorageResult.err({ message: "Some files could not be deleted", errors });
+            return StorageResult.err({ message: "Some files could not be deleted", errors });
         }
 
         return StorageResult.ok();
@@ -184,7 +181,7 @@ export class FileManager {
      */
     async deleteFileByObjectIdentifier(object_identifier) {
         const file = await prisma.file.findUnique({ where: { object_identifier } });
-        if (!file) StorageResult.err(`No file found for object_identifier: ${object_identifier}`);
+        if (!file) return StorageResult.err(`No file found for object_identifier: ${object_identifier}`);
 
         let errors = {};
         for (let size of file?.sizes_saved ?? []) {
@@ -217,8 +214,9 @@ export class FileManager {
      */
     async deleteFileById(id) {
         const file = await prisma.file.findUnique({ where: { id } });
-        if (!file) StorageResult.err(`No file found for ID: ${id}`);
+        if (!file) return StorageResult.err(`No file found for ID: ${id}`);
 
+        let errors = [];
         try {
             for (let size of file?.sizes_saved ?? []) {
                 const result = await this.#storage.deleteFile({
@@ -226,7 +224,14 @@ export class FileManager {
                     container_identifier: file?.container_identifier
                 });
 
-                console.log("result", result);
+                if (!result.ok) {
+                    errors.push({ id: file?.id, object_identifier: file?.object_identifier, error: storageResult.error });
+                    continue;
+                }
+            }
+
+            if (errors.length > 0) {
+                return StorageResult.err({ message: "Some files could not be deleted", errors });
             }
         } catch (error) {
             return StorageResult.err({ error });

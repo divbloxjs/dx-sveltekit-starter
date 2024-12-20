@@ -92,7 +92,6 @@ export async function PUT({ request, url, locals }) {
         const result = await prisma.file.update({ where: { id, linked_entity, linked_entity_id }, data: formData });
         return json(result);
     } catch (err) {
-        console.log("err.meta.cause", err.meta.cause);
         return error(400, { message: err.meta.cause });
     }
 }
@@ -125,7 +124,6 @@ export async function GET({ request, url, locals }) {
 
         return json({ files });
     } catch (err) {
-        console.error(err);
         return error(400, { message: err?.message ?? "Error occurred. Please try again" });
     }
 }
@@ -139,10 +137,10 @@ export async function DELETE({ request }) {
     if (!id) error(400, `No ID provided`);
 
     const storage = getStorage({ storageProvider: STORAGE_PROVIDER });
-
     const fileManager = new FileManager(storage);
+
     const deleteResult = await fileManager.deleteFileById(id);
-    console.log("deleteResult", deleteResult);
+
     if (!deleteResult.ok) {
         error(400, deleteResult?.error);
     }
