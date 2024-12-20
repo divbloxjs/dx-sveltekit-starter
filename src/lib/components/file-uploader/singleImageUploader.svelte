@@ -37,10 +37,10 @@
             FILE_NUMBER_LIMIT={1}
             on:updated={toggleView}
             on:transferComplete={toggleView}
-            getFilesEndpoint={`/api/file-upload/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
-            postFilesEndpoint="/api/file-upload/user-account"
-            deleteFileEndpoint="api/file-upload/user-account"
-            updateFileNameEndpoint="api/file-upload"
+            getFilesEndpoint={`/api/file/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
+            postFilesEndpoint="/api/file/user-account"
+            deleteFileEndpoint="api/file/user-account"
+            updateFileNameEndpoint="api/file"
             {...$$restProps}>
         </Uploader>
     {/key}
