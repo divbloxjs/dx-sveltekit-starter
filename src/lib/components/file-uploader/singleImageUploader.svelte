@@ -21,7 +21,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="mx-auto flex h-40 w-40 overflow-hidden rounded-full sm:h-48 sm:w-48" on:click={toggleView}>
-        <img class="transition-all duration-500 hover:cursor-pointer hover:brightness-50 object-cover" src={displayUrl} alt="profile" />
+        <img
+            class="w-full object-cover transition-all duration-500 hover:cursor-pointer hover:brightness-50"
+            src={displayUrl}
+            alt="profile" />
     </div>
     <Button class="mx-auto w-full max-w-xs" variant="link" on:click={toggleView}>Edit</Button>
 {/if}

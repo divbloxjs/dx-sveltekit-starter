@@ -60,6 +60,7 @@ model file {
   file_type               String  @db.VarChar(300)
   container_identifier    String? @db.VarChar(150)
   is_public               Boolean @default(false)
+  storage_provider        String? @db.VarChar(150)
 }
 
 model one_time_token {

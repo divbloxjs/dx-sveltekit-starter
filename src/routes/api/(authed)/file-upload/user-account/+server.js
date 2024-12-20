@@ -9,7 +9,7 @@ import { urlParamParser } from "$lib/server/urlParamParser.server";
 
 const LINKED_ENTITY = "userAccount";
 const UPLOAD_TYPE = FILE_CATEGORY.PROFILE_PICTURE;
-const STORAGE_PROVIDER = env.STORAGE_PROVIDER;
+const STORAGE_PROVIDER = env.STORAGE_PROVIDER ?? "disk";
 
 const UPLOAD_AS_PUBLIC = false;
 const GENERATE_SMALLER_IMAGES = true;
@@ -60,7 +60,9 @@ export async function POST({ request, url, locals }) {
         for (const fileDataToCreate of fileDataToCreateArr) {
             const urls = {};
             for (let sizeType of fileDataToCreate.sizes_saved) {
-                urls[sizeType] = await storage.getUrlForDownload(`${sizeType}_${fileDataToCreate.object_identifier}`);
+                urls[sizeType] = await storage.getUrlForDownload({
+                    object_identifier: `${sizeType}_${fileDataToCreate.object_identifier}`
+                });
             }
 
             fileDataToCreate.urls = urls;
@@ -117,7 +119,7 @@ export async function GET({ request, url, locals }) {
         for (let i = 0; i < files.length; i++) {
             const urls = {};
             for (let sizeType of files[i].sizes_saved) {
-                urls[sizeType] = await storage.getUrlForDownload(`${sizeType}_${files[i].object_identifier}`);
+                urls[sizeType] = await storage.getUrlForDownload({ object_identifier: `${sizeType}_${files[i].object_identifier}` });
             }
 
             files[0]["urls"] = urls;

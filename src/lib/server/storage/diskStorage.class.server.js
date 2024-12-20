@@ -5,6 +5,8 @@ import sharp from "sharp";
 import { StorageBase } from "$lib/server/storage/storage.class.js";
 
 export class DiskStorage extends StorageBase {
+    #storageProvider = "disk";
+
     #uploadFolder;
     #baseUrl;
 

@@ -12,8 +12,43 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { StorageBase } from "$lib/server/storage/storage.class.js";
 
+const logErrors = false;
+const Result = {
+    /**
+     * @param {Object|string|undefined} value
+     * @returns {{ok: boolean, value?: any}}
+     */
+    ok: (value = undefined) => {
+        let returnObj = { ok: true };
+
+        if (typeof value === "string") value = { message: value };
+
+        if (value !== undefined) {
+            returnObj = { ...returnObj, ...value };
+        }
+
+        return returnObj;
+    },
+    /**
+     * @param {Object|string} error
+     * @returns {{ok: boolean, error?: any}}
+     */
+    err: (error) => {
+        let returnObj = { ok: false };
+
+        if (typeof error === "string") error = { message: error };
+
+        if (error !== undefined) {
+            returnObj = { ...returnObj, ...error };
+        }
+
+        return returnObj;
+    }
+};
+
 export class AwsStorage extends StorageBase {
     //#region Class Variables
+    #storageProvider = "aws_s3";
     /** @type {S3Client} */
     #s3Client;
 
@@ -68,11 +103,15 @@ export class AwsStorage extends StorageBase {
     }
 
     /**
-     * @param {string} object_identifier
+     * @param {Object} params
+     * @param {string} params.object_identifier
+     * @param {string} [params.container_identifier]
      * @returns {string}
      */
-    getStaticUrl(object_identifier) {
-        return this.#getUrlFromBucketAndObjectKey({ objectKey: object_identifier });
+    getStaticUrl({ object_identifier, container_identifier }) {
+        if (!container_identifier) container_identifier = this.#bucketName;
+
+        return this.#getUrlFromBucketAndObjectKey({ objectKey: object_identifier, bucketName: container_identifier });
     }
 
     /**
@@ -86,69 +125,93 @@ export class AwsStorage extends StorageBase {
      * @param {Object} params
      * @param {File|Buffer|ArrayBuffer} params.file
      * @param {string} params.object_identifier
+     * @param {string} [params.container_identifier]
+     * @returns {Promise<{ok: boolean, values?: any, error?: any}>}
      */
-    async uploadFile({ file, object_identifier }) {
+    async uploadFile({ file, object_identifier, container_identifier }) {
+        if (!container_identifier) container_identifier = this.#bucketName;
+
         let fileBuffer = file;
         if (file instanceof File) {
             fileBuffer = await file.arrayBuffer();
         }
 
         if (fileBuffer.byteLength > this.#fileUploadMaxSizeInBytes) {
-            console.error(`Exceeded file size limit: ${fileBuffer.byteLength}`);
-            return false;
+            return Result.err(`Exceeded file size limit: ${fileBuffer.byteLength}`);
         }
 
         try {
             const result = await this.#putObjectInBucket({
-                bucketName: this.#bucketName,
+                bucketName: container_identifier,
                 objectKey: object_identifier,
                 file: fileBuffer
             });
 
-            return true;
+            if (!result.ok) {
+                return Result.err({ error: result.error });
+            }
+
+            return Result.ok();
         } catch (error) {
-            console.error(error);
             if (error?.Code !== "NoSuchBucket") {
-                return false;
+                return Result.err(error);
             }
 
             try {
-                await this.#createBucket({ bucketName: currentBucketName });
-                await this.uploadFile({ file, object_identifier, isPublic });
-            } catch (createBucketError) {
-                console.error(createBucketError);
-                return false;
+                const createBucketResult = await this.#createBucket({ bucketName: this.#bucketName, isPublic: this.#isPublic });
+                if (!createBucketResult.ok) {
+                    return Result.err(createBucketResult.error);
+                }
+
+                const uploadFileResult = await this.uploadFile({ file, object_identifier });
+                if (!uploadFileResult.ok) {
+                    return Result.err(uploadFileResult.error);
+                }
+            } catch (error) {
+                return Result.err({ error });
             }
         }
 
-        return true;
+        return Result.ok();
     }
 
     /**
-     * @param {string} object_identifier
-     * @returns {Promise<import("@aws-sdk/client-s3").DeleteBucketCommandOutput>}
+     * @param {Object} params
+     * @param {string} params.object_identifier
+     * @param {string} [params.container_identifier]
+     * @returns {Promise<{ok: boolean, value?: any}>}
      */
-    async deleteFile(object_identifier) {
-        return await this.#deleteObjectFromBucket({ objectKey: object_identifier });
+    async deleteFile({ object_identifier, container_identifier }) {
+        if (!container_identifier) container_identifier = this.#bucketName;
+
+        return await this.#deleteObjectFromBucket({ objectKey: object_identifier, bucketName: container_identifier });
     }
 
     /**
-     * @param {string} object_identifier
+     * @param {Object} params
+     * @param {string} params.object_identifier
+     * @param {string} [params.container_identifier]
      */
-    async getUrlForDownload(object_identifier) {
+    async getUrlForDownload({ object_identifier, container_identifier }) {
+        if (!container_identifier) container_identifier = this.#bucketName;
+
         if (this.#isPublic) {
-            return this.getStaticUrl(object_identifier);
+            return this.getStaticUrl({ object_identifier, container_identifier });
         }
 
-        return this.#getPresignedUrlForDownload(object_identifier);
+        return this.#getPresignedUrlForDownload({ object_identifier, container_identifier });
     }
 
     //#region Private Implementation Methods
     /**
-     * @param {string} object_identifier
+     * @param {Object} params
+     * @param {string} params.object_identifier
+     * @param {string} [params.container_identifier]
      */
-    async #getPresignedUrlForDownload(object_identifier) {
-        const command = new GetObjectCommand({ Bucket: this.#bucketName, Key: object_identifier });
+    async #getPresignedUrlForDownload({ object_identifier, container_identifier }) {
+        if (!container_identifier) container_identifier = this.#bucketName;
+
+        const command = new GetObjectCommand({ Bucket: container_identifier, Key: object_identifier });
 
         return await getSignedUrl(this.#s3Client, command, { expiresIn: 3600 });
     }
@@ -166,20 +229,27 @@ export class AwsStorage extends StorageBase {
      * @param {Object} params
      * @param {string} params.bucketName
      * @param {boolean} [params.isPublic]
-     * @returns {Promise<boolean>}
+     * @returns {Promise<{ok: boolean, value?: any, error?: any}>}
      */
     async #createBucket({ bucketName, isPublic }) {
         if (!isPublic) {
-            await this.#s3Client.send(new CreateBucketCommand({ Bucket: bucketName }));
-            return true;
+            // Default bucket creation has restricted access
+            const result = await this.#s3Client.send(new CreateBucketCommand({ Bucket: bucketName }));
+            if (result["$metadata"].httpStatusCode !== 200) {
+                return Result.err({ error: result["$metadata"] });
+            }
+
+            return Result.ok();
         }
 
         // https://stackoverflow.com/questions/76330998/aws-s3-invalidbucketaclwithobjectownershipbucket-cannot-have-acls-set-with-obje
         // Create new bucket without enforcing bucket owner writes
-        await this.#s3Client.send(new CreateBucketCommand({ Bucket: bucketName, ObjectOwnership: "ObjectWriter" }));
+        const createBucketResult = await this.#s3Client.send(
+            new CreateBucketCommand({ Bucket: bucketName, ObjectOwnership: "ObjectWriter" })
+        );
 
         // Update public access to not be blocked
-        await this.#s3Client.send(
+        const updateAccessResult = await this.#s3Client.send(
             new PutPublicAccessBlockCommand({
                 Bucket: bucketName,
                 PublicAccessBlockConfiguration: { BlockPublicAcls: false }
@@ -187,9 +257,11 @@ export class AwsStorage extends StorageBase {
         );
 
         // Finally update ACL to public-read
-        await this.#s3Client.send(new PutBucketAclCommand({ Bucket: bucketName, ACL: "public-read" }));
-
-        return true;
+        const updateAclResult = await this.#s3Client.send(new PutBucketAclCommand({ Bucket: bucketName, ACL: "public-read" }));
+        console.log("createBucket createBucketResult", createBucketResult);
+        console.log("createBucket updateAccessResult", updateAccessResult);
+        console.log("createBucket updateAclResult", updateAclResult);
+        return Result.ok();
     }
 
     /**
@@ -217,7 +289,8 @@ export class AwsStorage extends StorageBase {
     }
 
     async #listBuckets() {
-        return await this.#s3Client.send(new ListBucketsCommand({}));
+        const result = await this.#s3Client.send(new ListBucketsCommand({}));
+        return result;
     }
 
     /**
@@ -225,6 +298,7 @@ export class AwsStorage extends StorageBase {
      * @param {Buffer} params.file
      * @param {string} params.objectKey
      * @param {string} [params.bucketName]
+     * @returns {Promise<{ok: boolean, error?: Object}>}
      */
     async #putObjectInBucket({ file, objectKey, bucketName }) {
         if (bucketName) this.#bucketName = bucketName;
@@ -237,27 +311,28 @@ export class AwsStorage extends StorageBase {
         };
 
         const result = await this.#s3Client.send(new PutObjectCommand(commandOptions));
-        console.log("putObjectInBucket result", result);
-
         if (result["$metadata"]?.httpStatusCode !== 200) {
-            return { ok: false, error: result["$metadata"] };
+            return Result.err({ error: result["$metadata"] });
         }
 
-        return { ok: true };
+        return Result.ok();
     }
 
     /**
      * @param {Object} params
      * @param {string} params.objectKey
      * @param {string} [params.bucketName]
-     * @returns {Promise<import("@aws-sdk/client-s3").DeleteBucketCommandOutput>}
+     * @returns {Promise<{ok: boolean, value?: any}>}
      */
     async #deleteObjectFromBucket({ objectKey, bucketName }) {
         if (bucketName) this.#bucketName = bucketName;
 
         const result = await this.#s3Client.send(new DeleteObjectCommand({ Bucket: this.#bucketName, Key: objectKey }));
-        console.log("deleteObjectFromBucket", result);
-        return result;
+        if (result["$metadata"]?.httpStatusCode !== 200) {
+            return Result.err({ error: result["$metadata"] });
+        }
+
+        return Result.ok();
     }
 
     /**

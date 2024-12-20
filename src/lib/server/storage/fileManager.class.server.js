@@ -6,6 +6,9 @@ import { getCompression } from "$lib/server/compression/compression.factory.clas
 import { AwsStorage } from "./awsStorage.class.server";
 
 export class FileManager {
+    static configuredCategories = {
+        profilePicture: "Profile Picture"
+    };
     /** @type {AwsStorage} storage */
     #storage;
 
@@ -55,8 +58,8 @@ export class FileManager {
      * @param {string} params.linked_entity
      * @param {number} params.linked_entity_id
      * @param {string} params.category
-     * @param {boolean} params.createThumbnailAndWebImages
-     * @param {boolean} params.is_public
+     * @param {boolean} [params.createThumbnailAndWebImages]
+     * @param {boolean} [params.is_public]
      * @returns
      */
     async uploadFile({ file, linked_entity, linked_entity_id, category, createThumbnailAndWebImages = false, is_public = false }) {
@@ -120,7 +123,7 @@ export class FileManager {
             for (let size of file?.sizes_saved ?? []) {
                 const result = await this.#storage.deleteFile({
                     object_identifier: `${size}_${file.object_identifier}`,
-                    containerIdentifier: file.container_identifier
+                    container_identifier: file.container_identifier
                 });
 
                 console.log("result", result);

@@ -90,6 +90,12 @@
                 "default": 0,
                 "allowNull": false,
                 "lengthOrValues": 1
+            },
+            "storageProvider": {
+                "type": "VARCHAR",
+                "default": null,
+                "allowNull": true,
+                "lengthOrValues": "150"
             }
         },
         "relationships": {},
