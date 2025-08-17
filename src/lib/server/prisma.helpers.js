@@ -13,6 +13,8 @@ import { getCamelFromSqlCase, getSqlFromCamelCase } from "$lib/helpers";
 export const getPrismaSelectAllFromEntity = (entityName, select = {}, baseEntityName = entityName) => {
     if (isEmptyObject(select)) select.id = true;
 
+    console.log("entityName", entityName);
+
     // Add all attributes
     Object.keys(dataModel[entityName].attributes).forEach((attributeName) => {
         select[getSqlFromCamelCase(attributeName)] = true;

@@ -56,9 +56,9 @@
                             </div>
 
                             <SingleImageUploader
-                                getFilesEndpoint={`/api/file-upload/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
-                                postFilesEndpoint="/api/file-upload/user-account"
-                                deleteFileEndpoint="api/file-upload/user-account"
+                                getFilesEndpoint={`/api/file/user-account?category=${FILE_CATEGORY.PROFILE_PICTURE}`}
+                                postFilesEndpoint="/api/file/user-account"
+                                deleteFileEndpoint="api/file/user-account"
                                 updateFileNameEndpoint="?/updateProfilePictureDisplayName" />
                         </div>
 
